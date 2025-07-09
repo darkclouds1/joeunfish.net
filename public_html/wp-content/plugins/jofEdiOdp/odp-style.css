@@ -1,0 +1,63 @@
+/* 폼 컨트롤 한줄 정렬을 위한 스타일 추가 */
+#odp-form {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+#odp-form select,
+#odp-form input,
+#odp-form button {
+    height: 40px !important;
+    padding: 0px !important;
+    margin-right: 0px !important;
+    box-sizing: border-box;
+}
+
+#odp-results table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#odp-results th,
+#odp-results td {
+    border: 1px solid #ddd;
+    padding: 3px;
+    text-align: left;
+}
+
+#odp-results th {
+    background-color: #f2f2f2;
+}
+
+body {
+    font-size: 13px;
+} 
+
+.order-table tr:hover {
+    background-color: #bbf731;
+    cursor: pointer;
+}
+.order-table tr.selected-row {
+    background-color: #bbf731;
+}
+.mobile-orders .order-header.selected {
+    background-color: #bbf731 !important;
+}
+
+/* 모바일 환경에서 odp-form-row 스타일 조정 (한 줄 유지) */
+@media (max-width: 600px) {
+    .odp-form-row {
+        font-size: 11px;
+        width: auto;      /* 한 줄에 나오도록 auto로 설정 */
+        padding: 2px 0;
+        margin-right: 2px;
+        display: flex;    /* flex로 한 줄 정렬 유지 */
+        align-items: center;
+        gap: 2px;
+    }
+    #odp-form {
+        gap: 2px;         /* 폼 전체 간격도 줄임 */
+    }
+}

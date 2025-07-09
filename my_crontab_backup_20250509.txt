@@ -1,0 +1,36 @@
+
+0 * * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/plogical/findBWUsage.py >/dev/null 2>&1
+0 * * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/postfixSenderPolicy/client.py hourlyCleanup >/dev/null 2>&1
+0 0 1 * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/postfixSenderPolicy/client.py monthlyCleanup >/dev/null 2>&1
+0 2 * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/plogical/upgradeCritical.py >/dev/null 2>&1
+0 0 * * 4 /usr/local/CyberCP/bin/python /usr/local/CyberCP/plogical/renew.py >/dev/null 2>&1
+7 0 * * * "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" > /dev/null
+0 0 * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py Daily
+0 0 * * 0 /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py Weekly
+
+*/30 * * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py '30 Minutes'
+0 * * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py '1 Hour'
+0 */6 * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py '6 Hours'
+0 */12 * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py '12 Hours'
+0 1 * * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py '1 Day'
+0 0 */3 * * /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py '3 Days'
+0 0 * * 0 /usr/local/CyberCP/bin/python /usr/local/CyberCP/IncBackups/IncScheduler.py '1 Week'
+
+*/3 * * * * if ! find /home/*/public_html/ -maxdepth 2 -type f -newer /usr/local/lsws/cgid -name '.htaccess' -exec false {} +; then systemctl restart lsws; fi
+09,39 * * * * /usr/local/CyberCP/bin/cleansessions >/dev/null 2>&1
+
+# sql dump  
+0 */6 * * * /bin/bash /home/joeunfish.net/backup/import_latest_sql.sh >> /var/log/cron.log 2>&1
+
+# 주문데이터 ecommerce.sh 실행 
+*/10 7-21 * * * /bin/bash /home/joeunfish.net/public_html/ecommerce_java/ecommerce.sh >> /var/log/cron.log 2>&1 && echo "ecommerce.sh Finished script at $(date)" >> /var/log/cron.log
+
+# 주문데이터 실행 후 .dat 를 joeunfish.net으로 보내기
+*/5 7-21 * * * /bin/bash /home/joeunfish.net/backup/transfer_latest_dat.sh >> /var/log/cron.log 2>&1 && echo "transfer Finished script at $(date)" >> /var/log/cron.log
+
+# 주문데이터 .dat -3일 남겨놓고 지움
+0 0 * * * /bin/bash /home/joeunfish.net/backup/delete_old_edi-dat.sh
+
+# logfile.log 파일 모두 지움 (화요일::일주일에 한번만)
+0 0 * * 2 /bin/bash /home/joeunfish.net/backup/delete_old_logfile.log.sh
+# 0 0 * * * /bin/bash /home/joeunfish.net/backup/delete_old_logfile.log.sh

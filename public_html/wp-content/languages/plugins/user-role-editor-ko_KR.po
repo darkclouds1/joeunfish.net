@@ -1,0 +1,1048 @@
+# Translation of Plugins - User Role Editor - Stable (latest release) in Korean
+# This file is distributed under the same license as the Plugins - User Role Editor - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-05-13 07:41:55+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: ko_KR\n"
+"Project-Id-Version: Plugins - User Role Editor - Stable (latest release)\n"
+
+#: includes/classes/capability.php:90
+msgid "Wrong Request"
+msgstr "잘못된 요청"
+
+#: includes/classes/editor.php:1286
+msgid "Wrong role ID"
+msgstr "잘못된 역할 ID"
+
+#: includes/classes/editor.php:1258
+msgid "There are no roles for deletion"
+msgstr "삭제할 역할이 없습니다."
+
+#: includes/classes/grant-roles.php:454
+msgid "Revoke"
+msgstr "취소"
+
+#: includes/classes/grant-roles.php:449 includes/classes/grant-roles.php:451
+msgid "Revoke role&hellip;"
+msgstr "역할 취소…"
+
+#: includes/classes/grant-roles.php:447
+msgid "Add"
+msgstr "추가"
+
+#: includes/classes/grant-roles.php:442 includes/classes/grant-roles.php:444
+msgid "Add role&hellip;"
+msgstr "역할 추가…"
+
+#: includes/classes/editor.php:1329
+msgid "Wrong request. Default role can not be empty"
+msgstr "잘못된 요청입니다. 기본 역할은 비워둘 수 없습니다."
+
+#: includes/classes/editor.php:1325
+msgid "This method is only for a single site of WordPress multisite installation."
+msgstr "이 방법은 WordPress 다중 사이트 설치의 단일 사이트에만 해당됩니다."
+
+#: includes/classes/editor.php:1232
+msgid "You can not delete role"
+msgstr "역할을 삭제할 수 없습니다."
+
+#: includes/classes/editor.php:1228
+msgid "Role does not exist"
+msgstr "역할이 존재하지 않습니다"
+
+#: includes/classes/screen-help.php:85
+msgid "Super administrator only may create, edit and delete users under WordPress multi-site by default. Turn this option on in order to remove this limitation."
+msgstr "최고 관리자만 기본적으로 WordPress 다중 사이트에서 사용자를 생성, 편집 및 삭제할 수 있습니다. 이 제한을 제거하려면 이 옵션을 켜십시오."
+
+#: includes/classes/screen-help.php:66
+msgid "select roles below to assign them to the new user automatically as an addition to the primary role. Note for multisite environment: take into account that other default roles should exist at the site, in order to be assigned to the new registered users."
+msgstr "아래에서 역할을 선택하여 기본 역할에 추가하여 새 사용자에게 자동으로 할당하십시오. 다중 사이트 환경에 대한 참고 사항: 새로 등록된 사용자에게 할당하려면 사이트에 다른 기본 역할이 있어야 한다는 점을 고려하십시오."
+
+#: includes/classes/screen-help.php:48
+msgid "Show at the \"Users\" page a quant of users without role. Module allows to assign all of them an empty role \"No rights\", in order to look on the users list with role \"No rights\" at the separate tab then."
+msgstr "역할이 없는 사용자의 양을 \"사용자\" 페이지에 표시합니다. 모듈을 사용하면 별도의 탭에서 \"권한 없음\" 역할을 가진 사용자 목록을 보기 위해 그들 모두에게 \"권한 없음\" 역할을 할당할 수 있습니다."
+
+#: includes/classes/screen-help.php:28
+msgid "If turned off - capabilities section of selected user is shown in readonly mode. Administrator can not assign capabilities to the user directly. He should do it using roles only."
+msgstr "끄면 선택한 사용자의 기능 섹션이 읽기 전용 모드로 표시됩니다. 관리자는 사용자에게 직접 기능을 할당할 수 없습니다. 역할만 사용하여 수행해야 합니다."
+
+#: includes/classes/screen-help.php:22
+msgid "Capabilities like \"level_0\", \"level_1\" are deprecated and are not used by WordPress. They are left at the user roles for the compatibility purpose with old themes and plugins code. Turning on this option will show those deprecated capabilities."
+msgstr "\"level_0\", \"level_1\"과 같은 기능은 더 이상 사용되지 않으며 WordPress에서 사용되지 않습니다. 이전 테마 및 플러그인 코드와의 호환성을 위해 사용자 역할에 남겨둡니다. 이 옵션을 켜면 사용되지 않는 기능이 표시됩니다."
+
+#: includes/classes/screen-help.php:19
+msgid "automatically converts capability names from the technical form for internal use like \"edit_others_posts\" to more user friendly form, e.g. \"Edit others posts\"."
+msgstr "기능 이름을 \"edit_others_posts\"와 같은 내부 사용을 위한 기술 형식에서 보다 사용자 친화적인 형식으로 자동 변환합니다. \"다른 사람의 게시물 편집\"."
+
+#: includes/classes/screen-help.php:16
+msgid "turn this option on in order to make the \"Administrator\" role available at the User Role Editor roles selection drop-down list. It is hidden by default for security reasons."
+msgstr "사용자 역할 편집자 역할 선택 드롭다운 목록에서 \"관리자\" 역할을 사용할 수 있도록 하려면 이 옵션을 켜십시오. 보안상의 이유로 기본적으로 숨겨져 있습니다."
+
+#: includes/classes/editor.php:234
+msgid "Wrong request!"
+msgstr "잘못된 요청!"
+
+#: includes/classes/capability.php:51
+msgid "Error: this word is used by WordPress as a role ID"
+msgstr "오류: 이 단어는 WordPress에서 역할 ID로 사용됩니다."
+
+#: includes/settings-template.php:107
+msgid "columns"
+msgstr "열"
+
+#: includes/settings-template.php:101
+msgid "Show capabilities in"
+msgstr "기능 표시"
+
+#: includes/settings-template.php:42
+msgid "Tools"
+msgstr "도구"
+
+#: includes/classes/view.php:338
+msgid "Columns:"
+msgstr "열:"
+
+#: includes/classes/view.php:335
+msgid "Granted Only"
+msgstr "부여만"
+
+#: includes/classes/view.php:319
+msgid "Granted"
+msgstr "부여됨"
+
+#: includes/classes/view.php:319
+msgid "Total"
+msgstr "총"
+
+#: includes/classes/view.php:319
+msgid "Group"
+msgstr "그룹"
+
+#: includes/classes/user-view.php:59
+msgid "Switch&nbsp;To"
+msgstr "전환: "
+
+#: includes/classes/user-role-editor.php:813
+msgid "If any plugins (such as WooCommerce, S2Member and many others) have changed user roles and capabilities during installation, all those changes will be LOST!"
+msgstr "플러그인(WooCommerce, S2Member 등)이 설치 중에 사용자 역할과 기능을 변경한 경우 해당 변경 사항은 모두 손실됩니다!"
+
+#: includes/classes/user-role-editor.php:812
+msgid " Resetting will restore default user roles and capabilities from WordPress core."
+msgstr " 재설정하면 WordPress 코어에서 기본 사용자 역할 및 기능이 복원됩니다."
+
+#: includes/classes/user-role-editor.php:811
+msgid "DANGER!"
+msgstr "위험!"
+
+#: includes/classes/user-role-editor.php:763
+#: includes/classes/user-role-editor.php:809
+msgid "No"
+msgstr "아니요"
+
+#: includes/classes/user-role-editor.php:762
+#: includes/classes/user-role-editor.php:808
+msgid "Yes"
+msgstr "예"
+
+#: includes/classes/user-role-editor.php:761
+#: includes/classes/user-role-editor.php:807
+msgid "Confirm"
+msgstr "확인"
+
+#: includes/classes/user-role-editor.php:297
+msgid "To:"
+msgstr "To:"
+
+#: includes/classes/tools.php:40
+msgid "Reset Roles to its original state"
+msgstr "역할을 원래 상태로 재설정"
+
+#: includes/classes/tools.php:32
+msgid "If checked, then apply action to ALL sites. Main site only is affected in other case."
+msgstr "선택하면 모든 사이트에 작업을 적용합니다. 다른 경우에는 기본 사이트만 영향을 받습니다."
+
+#: includes/classes/tools.php:24
+msgid "For more information on how to undo undesired changes and restore plugins capabilities in case you lost them by mistake go to: "
+msgstr "원하지 않는 변경 사항을 취소하고 실수로 플러그인 기능을 잃어버린 경우 플러그인 기능을 복원하는 방법에 대한 자세한 내용은 다음으로 이동하십시오."
+
+#: includes/classes/tools.php:23
+msgid "If any plugins (such as WooCommerce, S2Member and many others) have changed user roles and capabilities during installation, those changes will be LOST!"
+msgstr "플러그인(WooCommerce, S2Member 등)이 설치 중에 사용자 역할과 기능을 변경한 경우 해당 변경 사항은 손실됩니다!"
+
+#: includes/classes/tools.php:22
+msgid "Resetting will setup default user roles and capabilities from WordPress core."
+msgstr "재설정하면 WordPress 코어에서 기본 사용자 역할 및 기능이 설정됩니다."
+
+#: includes/classes/tools.php:20
+msgid "WARNING!"
+msgstr "경고!"
+
+#: includes/classes/tools.php:64
+msgid "Tools: Reset: User Roles were initialized"
+msgstr "도구: 재설정: 사용자 역할이 초기화되었습니다."
+
+#: includes/classes/screen-help.php:26
+msgid "Show confirmation dialog before save changes made to a current role."
+msgstr "현재 역할에 대한 변경 사항을 저장하기 전에 확인 대화 상자를 표시합니다."
+
+#: includes/classes/screen-help.php:25 includes/settings-template.php:86
+msgid "Confirm role update"
+msgstr "역할 업데이트 확인"
+
+#: includes/classes/role-additional-options.php:113
+msgid "Additional Options"
+msgstr "추가 옵션"
+
+#: includes/classes/role-additional-options.php:53
+msgid "Hide admin bar"
+msgstr "관리자 표시줄 숨기기"
+
+#: includes/classes/grant-roles.php:488
+msgid "Select role(s) which you wish to grant!"
+msgstr "부여할 역할을 선택하십시오!"
+
+#: includes/classes/grant-roles.php:487
+msgid "Select users to which you wish to grant roles!"
+msgstr "역할을 부여할 사용자를 선택하십시오!"
+
+#: includes/classes/grant-roles.php:486
+msgid "Grant roles to selected users"
+msgstr "선택한 사용자에게 역할 부여"
+
+#: includes/classes/view.php:288
+msgid "Working..."
+msgstr "일하는 중..."
+
+#: includes/classes/grant-roles.php:440
+msgid "Grant Roles"
+msgstr "역할 부여"
+
+#: includes/classes/grant-roles.php:398
+msgid "Other Roles: "
+msgstr "기타 역할:"
+
+#: includes/classes/grant-roles.php:378
+msgid "Primary Role: "
+msgstr "기본 역할:"
+
+#: includes/classes/grant-roles.php:355
+msgid "Requested user does not exist"
+msgstr "요청한 사용자가 존재하지 않습니다"
+
+#: includes/classes/grant-roles.php:349
+msgid "Wrong request, valid user ID was missed"
+msgstr "잘못된 요청, 유효한 사용자 ID가 누락되었습니다."
+
+#: includes/classes/grant-roles.php:332
+msgid "Roles were granted to users successfully"
+msgstr "사용자에게 역할이 성공적으로 부여되었습니다."
+
+#: includes/classes/grant-roles.php:323
+msgid "Invalid data at the other roles list"
+msgstr "다른 역할 목록의 잘못된 데이터"
+
+#: includes/classes/grant-roles.php:310
+msgid "Invalid primary role"
+msgstr "잘못된 기본 역할"
+
+#: includes/classes/grant-roles.php:302
+msgid "Can not edit user or invalid data at the users list"
+msgstr "사용자 목록에서 사용자 또는 잘못된 데이터를 편집할 수 없습니다."
+
+#: includes/classes/grant-roles.php:296 includes/classes/grant-roles.php:342
+msgid "Not enough permissions"
+msgstr "권한이 충분하지 않습니다."
+
+#: includes/classes/capability.php:226
+msgid "capabilities were removed successfully"
+msgstr "기능이 성공적으로 제거되었습니다."
+
+#: includes/classes/capability.php:211 includes/classes/capability.php:216
+msgid "There are no capabilities available for deletion!"
+msgstr "삭제할 수 있는 기능이 없습니다!"
+
+#: includes/classes/capability.php:43
+msgid "Error: this capability is used internally by WordPress"
+msgstr "오류: 이 기능은 WordPress에서 내부적으로 사용됩니다."
+
+#: includes/classes/capabilities-groups-manager.php:194
+msgid "Deprecated"
+msgstr "폐기 예정"
+
+#: includes/classes/capabilities-groups-manager.php:165
+msgid "Users"
+msgstr "사용자"
+
+#: includes/classes/capabilities-groups-manager.php:160
+msgid "Plugins"
+msgstr "플러그인"
+
+#: includes/classes/capabilities-groups-manager.php:155
+msgid "Pages"
+msgstr "페이지"
+
+#: includes/classes/capabilities-groups-manager.php:150
+msgid "Posts"
+msgstr "게시물"
+
+#: includes/classes/capabilities-groups-manager.php:145
+msgid "Themes"
+msgstr "테마"
+
+#: includes/classes/capabilities-groups-manager.php:130
+msgid "All"
+msgstr "모두"
+
+#: includes/classes/capabilities-groups-manager.php:108
+#: includes/classes/capabilities-groups-manager.php:135
+msgid "Core"
+msgstr "코어"
+
+#: includes/classes/capabilities-groups-manager.php:103
+msgid "WooCommerce"
+msgstr "우커머스"
+
+#: includes/classes/capabilities-groups-manager.php:45
+msgid "Custom Post Types"
+msgstr "사용자 정의 게시물 유형"
+
+#. Author of the plugin
+msgid "Vladimir Garagulya"
+msgstr "블라디미르 가라굴랴"
+
+#. Description of the plugin
+msgid "Change/add/delete WordPress user roles and capabilities."
+msgstr "WordPress 사용자 역할 및 기능을 변경/추가/삭제합니다."
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+msgid "https://www.role-editor.com"
+msgstr "https://www.role-editor.com"
+
+#: includes/classes/user-view.php:190
+msgid "Other Roles:"
+msgstr "기타 역할:"
+
+#: includes/classes/user-view.php:181
+msgid "bbPress Role:"
+msgstr "bbPress 역할:"
+
+#: includes/classes/user-view.php:175
+msgid "Primary Role:"
+msgstr "기본 역할:"
+
+#: includes/classes/user-view.php:137
+msgid "Change capabilities for user"
+msgstr "사용자의 기능 변경"
+
+#: includes/classes/user-view.php:71
+msgid "Network Super Admin"
+msgstr "네트워크 최고 관리자"
+
+#: includes/classes/capabilities-groups-manager.php:201
+msgid "Custom capabilities"
+msgstr "맞춤형 기능"
+
+#: includes/classes/view.php:332
+msgid "Quick filter:"
+msgstr "빠른 필터:"
+
+#: includes/classes/role-view.php:380 includes/classes/tools.php:31
+msgid "Apply to All Sites"
+msgstr "모든 사이트에 적용"
+
+#: includes/classes/role-view.php:367
+msgid "If checked, then apply action to ALL sites of this Network"
+msgstr "선택하면 이 네트워크의 모든 사이트에 작업을 적용합니다."
+
+#: includes/classes/role-view.php:353 includes/classes/user-view.php:154
+msgid "Show capabilities in human readable form"
+msgstr "사람이 읽을 수 있는 형식으로 기능 표시"
+
+#: includes/classes/role-view.php:397
+msgid "Select Role and change its capabilities:"
+msgstr "역할을 선택하고 기능을 변경합니다."
+
+#: includes/settings-template.php:207
+msgid "Allow non super administrators to create, edit, and delete users"
+msgstr "최고 관리자가 아닌 사용자가 사용자를 생성, 편집, 삭제하도록 허용"
+
+#: includes/settings-template.php:181
+msgid "Note for multisite environment: take into account that other default roles should exist at the site, in order to be assigned to the new registered users."
+msgstr "다중 사이트 환경에 대한 참고 사항: 새로 등록된 사용자에게 할당하려면 사이트에 다른 기본 역할이 있어야 한다는 점을 고려하십시오."
+
+#: includes/settings-template.php:175
+msgid "Other default roles for new registered user: "
+msgstr "새로 등록된 사용자의 기타 기본 역할:"
+
+#: includes/settings-template.php:168
+msgid "Primary default role: "
+msgstr "주된 기본 역할:"
+
+#: includes/settings-template.php:121 includes/settings-template.php:156
+#: includes/settings-template.php:188 includes/settings-template.php:220
+msgid "Save"
+msgstr "저장"
+
+#: includes/settings-template.php:46
+msgid "About"
+msgstr "에 대한"
+
+#: includes/settings-template.php:16
+msgid "User Role Editor - Options"
+msgstr "사용자 역할 편집기 - 옵션"
+
+#: includes/classes/user-role-editor.php:782
+msgid " Capability name (ID) must contain latin characters, digits, hyphens or underscore only!"
+msgstr " 기능 이름(ID)에는 라틴 문자, 숫자, 하이픈 또는 밑줄만 포함해야 합니다!"
+
+#: includes/classes/user-role-editor.php:781
+msgid " Capability name (ID) can not be empty!"
+msgstr " 기능 이름(ID)은 비워둘 수 없습니다!"
+
+#: includes/classes/user-role-editor.php:780
+msgid "Warning! Be careful - removing critical capability could crash some plugin or other custom code"
+msgstr "경고! 주의 - 중요한 기능을 제거하면 일부 플러그인 또는 기타 사용자 정의 코드가 충돌할 수 있습니다."
+
+#: includes/classes/user-role-editor.php:778
+msgid "Set New Default Role"
+msgstr "새 기본 역할 설정"
+
+#: includes/classes/user-role-editor.php:777
+msgid "Default Role"
+msgstr "기본 역할"
+
+#: includes/classes/user-role-editor.php:816
+msgid "Continue?"
+msgstr "계속할까요?"
+
+#: includes/classes/user-role-editor.php:814
+msgid "For more information on how to undo undesired changes and restore plugin capabilities go to"
+msgstr "원하지 않는 변경 사항을 취소하고 플러그인 기능을 복원하는 방법에 대한 자세한 내용은"
+
+#: includes/classes/tools.php:40 includes/classes/user-role-editor.php:810
+msgid "Reset"
+msgstr "초기화"
+
+#: includes/classes/user-role-editor.php:776
+#: includes/classes/user-role-editor.php:779
+msgid "Delete Capability"
+msgstr "기능 삭제"
+
+#: includes/classes/user-role-editor.php:775
+msgid "Add Capability"
+msgstr "기능 추가"
+
+#: includes/classes/user-role-editor.php:774
+msgid "Cancel"
+msgstr "취소"
+
+#: includes/classes/user-role-editor.php:773
+msgid "Delete Role"
+msgstr "역할 삭제"
+
+#: includes/classes/user-role-editor.php:771
+msgid "Add Role"
+msgstr "역할 추가"
+
+#: includes/classes/user-role-editor.php:770
+msgid " WordPress does not support numeric Role name (ID). Add latin characters to it."
+msgstr " WordPress는 숫자 역할 이름(ID)을 지원하지 않습니다. 여기에 라틴 문자를 추가하십시오."
+
+#: includes/classes/user-role-editor.php:769
+msgid " Role name (ID) must contain latin characters, digits, hyphens or underscore only!"
+msgstr " 역할 이름(ID)에는 라틴 문자, 숫자, 하이픈 또는 밑줄만 포함해야 합니다!"
+
+#: includes/classes/user-role-editor.php:768
+msgid " Role name (ID) can not be empty!"
+msgstr " 역할 이름(ID)은 비워둘 수 없습니다!"
+
+#: includes/classes/user-role-editor.php:767
+#: includes/classes/user-role-editor.php:772
+msgid "Rename Role"
+msgstr "역할 이름 바꾸기"
+
+#: includes/classes/user-role-editor.php:766
+msgid "Add New Role"
+msgstr "새 역할 추가"
+
+#: includes/classes/user-role-editor.php:765
+msgid "Please confirm permissions update"
+msgstr "권한 업데이트를 확인하십시오"
+
+#: includes/classes/user-role-editor.php:764
+msgid "Update"
+msgstr "업데이트"
+
+#: includes/classes/user-role-editor.php:638
+msgid "You do not have sufficient permissions to manage options for User Role Editor."
+msgstr "사용자 역할 편집자의 옵션을 관리할 수 있는 권한이 없습니다."
+
+#: includes/classes/settings.php:120
+msgid "Default Roles are updated"
+msgstr "기본 역할이 업데이트되었습니다."
+
+#: includes/classes/settings.php:70 includes/classes/settings.php:90
+#: includes/classes/settings.php:140
+msgid "User Role Editor options are updated"
+msgstr "사용자 역할 편집기 옵션이 업데이트되었습니다."
+
+#: includes/classes/capabilities-groups-manager.php:187
+#: includes/classes/user-role-editor.php:579 includes/settings-template.php:36
+msgid "Multisite"
+msgstr "다중 사이트"
+
+#: includes/classes/user-role-editor.php:573 includes/settings-template.php:31
+msgid "Default Roles"
+msgstr "기본 역할"
+
+#: includes/classes/user-role-editor.php:567 includes/settings-template.php:26
+msgid "Additional Modules"
+msgstr "추가 모듈"
+
+#: includes/classes/capabilities-groups-manager.php:140
+#: includes/classes/user-role-editor.php:561 includes/settings-template.php:20
+msgid "General"
+msgstr "일반적인"
+
+#: includes/classes/user-role-editor.php:512
+#: includes/classes/user-role-editor.php:525
+msgid "Settings"
+msgstr "설정"
+
+#: includes/classes/user-role-editor.php:376
+#: includes/classes/user-role-editor.php:378
+msgid "You do not have permission to edit this user."
+msgstr "이 사용자를 편집할 권한이 없습니다."
+
+#: includes/classes/user-role-editor.php:299
+msgid "Provide new role"
+msgstr "새로운 역할 제공"
+
+#: includes/classes/user-role-editor.php:298
+msgid "No rights"
+msgstr "권한 없음"
+
+#: includes/classes/user-role-editor.php:296
+msgid "Change role for users without role"
+msgstr "역할이 없는 사용자의 역할 변경"
+
+#: includes/classes/user-other-roles.php:309
+msgid "Additional Capabilities"
+msgstr "추가 기능"
+
+#: includes/classes/user-other-roles.php:245
+msgid "Edit"
+msgstr "편집"
+
+#: includes/classes/user-other-roles.php:238
+#: includes/classes/user-role-editor.php:404
+msgid "Capabilities"
+msgstr "기능"
+
+#: includes/classes/user-other-roles.php:125
+msgid "Select additional roles for this user"
+msgstr "이 사용자에 대한 추가 역할 선택"
+
+#: includes/classes/user-other-roles.php:124
+#: includes/classes/user-other-roles.php:259
+msgid "Other Roles"
+msgstr "기타 역할"
+
+#: includes/classes/screen-help.php:84
+msgid "Allow non super-administrators to create, edit and delete users"
+msgstr "최고 관리자가 아닌 사용자가 사용자를 생성, 편집, 삭제하도록 허용"
+
+#: includes/classes/screen-help.php:65
+msgid "Other default roles for new registered user"
+msgstr "신규 등록 사용자의 기타 기본 역할"
+
+#: includes/classes/screen-help.php:47 includes/settings-template.php:141
+msgid "Count users without role"
+msgstr "역할이 없는 사용자 계산"
+
+#: includes/classes/screen-help.php:27 includes/settings-template.php:94
+msgid "Edit user capabilities"
+msgstr "사용자 기능 편집"
+
+#: includes/classes/role-view.php:363 includes/classes/screen-help.php:21
+#: includes/classes/user-view.php:164 includes/settings-template.php:78
+msgid "Show deprecated capabilities"
+msgstr "사용되지 않는 기능 표시"
+
+#: includes/classes/screen-help.php:18 includes/settings-template.php:70
+msgid "Show capabilities in the human readable form"
+msgstr "사람이 읽을 수 있는 형식으로 기능 표시"
+
+#: includes/classes/screen-help.php:15 includes/settings-template.php:61
+msgid "Show Administrator role at User Role Editor"
+msgstr "사용자 역할 편집기에서 관리자 역할 표시"
+
+#: includes/classes/screen-help.php:12 includes/classes/screen-help.php:43
+#: includes/classes/screen-help.php:62 includes/classes/screen-help.php:81
+msgid "User Role Editor Options page help"
+msgstr "사용자 역할 편집기 옵션 페이지 도움말"
+
+#: includes/classes/user-other-roles.php:222
+msgid "Denied: %s"
+msgstr "거부됨: %s"
+
+#: includes/classes/grant-roles.php:384 includes/classes/user-view.php:96
+msgid "&mdash; No role for this site &mdash;"
+msgstr "— 이 사이트에 대한 역할 없음 —"
+
+#: includes/classes/role-view.php:64
+msgid "None"
+msgstr "없음"
+
+#: includes/classes/role-view.php:96
+msgid "Delete All Unused Roles"
+msgstr "사용하지 않는 모든 역할 삭제"
+
+#: includes/classes/lib.php:388
+msgid "FAQ"
+msgstr "자주하는 질문"
+
+#: includes/classes/lib.php:387 includes/classes/user-role-editor.php:538
+msgid "Changelog"
+msgstr "변경 로그"
+
+#: includes/classes/lib.php:386
+msgid "Plugin download"
+msgstr "플러그인 다운로드"
+
+#: includes/classes/lib.php:385
+msgid "Plugin webpage"
+msgstr "플러그인 웹페이지"
+
+#: includes/classes/lib.php:384
+msgid "Author's website"
+msgstr "작성자의 웹사이트"
+
+#: includes/classes/lib.php:383
+msgid "Version:"
+msgstr "버전:"
+
+#: includes/classes/capability.php:222
+msgid "Capability %s was removed successfully"
+msgstr "기능 %s이(가) 성공적으로 제거되었습니다."
+
+#: includes/classes/capability.php:112
+msgid "Capability %s exists already"
+msgstr "기능 %s이(가) 이미 있습니다."
+
+#: includes/classes/capability.php:110
+msgid "Capability %s was added successfully"
+msgstr "기능 %s이(가) 성공적으로 추가되었습니다."
+
+#: includes/classes/capability.php:33
+msgid "Error: Capability name must contain latin characters and digits only!"
+msgstr "오류: 기능 이름에는 라틴 문자와 숫자만 포함해야 합니다!"
+
+#: includes/classes/editor.php:1619
+msgid "Export"
+msgstr "내보내기"
+
+#: includes/classes/editor.php:1618
+msgid "Delete themes"
+msgstr "테마 삭제"
+
+#: includes/classes/editor.php:1617
+msgid "Edit theme options"
+msgstr "테마 옵션 편집"
+
+#: includes/classes/editor.php:1616
+msgid "Promote users"
+msgstr "사용자 홍보"
+
+#: includes/classes/editor.php:1615
+msgid "Add users"
+msgstr "사용자 추가"
+
+#: includes/classes/editor.php:1614
+msgid "Remove users"
+msgstr "사용자 제거"
+
+#: includes/classes/editor.php:1613
+msgid "List users"
+msgstr "사용자 리스트"
+
+#: includes/classes/editor.php:1612
+msgid "Update core"
+msgstr "코어 업데이트"
+
+#: includes/classes/editor.php:1611
+msgid "Install themes"
+msgstr "테마 설치"
+
+#: includes/classes/editor.php:1610
+msgid "Update themes"
+msgstr "테마 업데이트"
+
+#: includes/classes/editor.php:1609
+msgid "Install plugins"
+msgstr "플러그인 설치"
+
+#: includes/classes/editor.php:1608
+msgid "Delete plugins"
+msgstr "플러그인 삭제"
+
+#: includes/classes/editor.php:1607
+msgid "Update plugins"
+msgstr "플러그인 업데이트"
+
+#: includes/classes/editor.php:1606
+msgid "Edit dashboard"
+msgstr "대시보드 편집"
+
+#: includes/classes/editor.php:1605
+msgid "Unfiltered upload"
+msgstr "필터링되지 않은 업로드"
+
+#: includes/classes/editor.php:1604
+msgid "Create users"
+msgstr "사용자 생성"
+
+#: includes/classes/editor.php:1603
+msgid "Delete users"
+msgstr "사용자 삭제"
+
+#: includes/classes/editor.php:1602
+msgid "Read private pages"
+msgstr "비공개 페이지 읽기"
+
+#: includes/classes/editor.php:1601
+msgid "Edit private pages"
+msgstr "비공개 페이지 편집"
+
+#: includes/classes/editor.php:1600
+msgid "Delete private pages"
+msgstr "비공개 페이지 삭제"
+
+#: includes/classes/editor.php:1599
+msgid "Read private posts"
+msgstr "비공개 게시물 읽기"
+
+#: includes/classes/editor.php:1598
+msgid "Edit private posts"
+msgstr "비공개 게시물 편집"
+
+#: includes/classes/editor.php:1597
+msgid "Delete private posts"
+msgstr "비공개 게시물 삭제"
+
+#: includes/classes/editor.php:1596
+msgid "Delete published posts"
+msgstr "게시된 게시물 삭제"
+
+#: includes/classes/editor.php:1595
+msgid "Delete others posts"
+msgstr "다른 사람의 게시물 삭제"
+
+#: includes/classes/editor.php:1594
+msgid "Delete posts"
+msgstr "게시물 삭제"
+
+#: includes/classes/editor.php:1593
+msgid "Delete published pages"
+msgstr "게시된 페이지 삭제"
+
+#: includes/classes/editor.php:1592
+msgid "Delete others pages"
+msgstr "다른 페이지 삭제"
+
+#: includes/classes/editor.php:1591
+msgid "Delete pages"
+msgstr "페이지 삭제"
+
+#: includes/classes/editor.php:1590
+msgid "Publish pages"
+msgstr "페이지 게시"
+
+#: includes/classes/editor.php:1589
+msgid "Edit published pages"
+msgstr "게시된 페이지 편집"
+
+#: includes/classes/editor.php:1588
+msgid "Edit others pages"
+msgstr "다른 페이지 편집"
+
+#: includes/classes/editor.php:1587
+msgid "Level 0"
+msgstr "레벨 0"
+
+#: includes/classes/editor.php:1586
+msgid "Level 1"
+msgstr "레벨 1"
+
+#: includes/classes/editor.php:1585
+msgid "Level 2"
+msgstr "레벨 2"
+
+#: includes/classes/editor.php:1584
+msgid "Level 3"
+msgstr "레벨 3"
+
+#: includes/classes/editor.php:1583
+msgid "Level 4"
+msgstr "레벨 4"
+
+#: includes/classes/editor.php:1582
+msgid "Level 5"
+msgstr "레벨 5"
+
+#: includes/classes/editor.php:1581
+msgid "Level 6"
+msgstr "레벨 6"
+
+#: includes/classes/editor.php:1580
+msgid "Level 7"
+msgstr "레벨 7"
+
+#: includes/classes/editor.php:1579
+msgid "Level 8"
+msgstr "레벨 8"
+
+#: includes/classes/editor.php:1578
+msgid "Level 9"
+msgstr "레벨 9"
+
+#: includes/classes/editor.php:1577
+msgid "Level 10"
+msgstr "레벨 10"
+
+#: includes/classes/editor.php:1576
+msgid "Read"
+msgstr "읽기"
+
+#: includes/classes/editor.php:1575
+msgid "Edit pages"
+msgstr "페이지 편집"
+
+#: includes/classes/editor.php:1574
+msgid "Publish posts"
+msgstr "게시물 게시"
+
+#: includes/classes/editor.php:1573
+msgid "Edit published posts"
+msgstr "게시된 게시물 편집"
+
+#: includes/classes/editor.php:1572
+msgid "Edit others posts"
+msgstr "다른 사람의 게시물 편집"
+
+#: includes/classes/editor.php:1571
+msgid "Edit posts"
+msgstr "게시물 편집"
+
+#: includes/classes/editor.php:1570
+msgid "Unfiltered html"
+msgstr "필터링되지 않은 HTML"
+
+#: includes/classes/editor.php:1569
+msgid "Import"
+msgstr "가져오기"
+
+#: includes/classes/editor.php:1568
+msgid "Upload files"
+msgstr "파일 올리기"
+
+#: includes/classes/editor.php:1567
+msgid "Manage links"
+msgstr "링크 관리"
+
+#: includes/classes/editor.php:1566
+msgid "Manage categories"
+msgstr "카테고리 관리"
+
+#: includes/classes/editor.php:1565
+msgid "Moderate comments"
+msgstr "댓글 검토"
+
+#: includes/classes/editor.php:1564
+msgid "Manage options"
+msgstr "옵션 관리"
+
+#: includes/classes/editor.php:1563
+msgid "Edit files"
+msgstr "파일 편집"
+
+#: includes/classes/editor.php:1562
+msgid "Edit users"
+msgstr "사용자 편집"
+
+#: includes/classes/editor.php:1561
+msgid "Edit plugins"
+msgstr "플러그인 편집"
+
+#: includes/classes/editor.php:1560
+msgid "Activate plugins"
+msgstr "플러그인 활성화"
+
+#: includes/classes/editor.php:1559
+msgid "Edit themes"
+msgstr "테마 편집"
+
+#: includes/classes/editor.php:1558
+msgid "Switch themes"
+msgstr "테마 전환"
+
+#: includes/classes/editor.php:1556
+msgid "Subscriber"
+msgstr "구독자"
+
+#: includes/classes/editor.php:1555
+msgid "Contributor"
+msgstr "기여자"
+
+#: includes/classes/editor.php:1554
+msgid "Author"
+msgstr "작성자"
+
+#: includes/classes/editor.php:1553
+msgid "Editor"
+msgstr "편집자"
+
+#: includes/classes/editor.php:1348
+msgid "This role does not exist - "
+msgstr "이 역할은 존재하지 않습니다 -"
+
+#: includes/classes/editor.php:1346
+msgid "Can not set Administrator role as a default one"
+msgstr "관리자 역할을 기본 역할로 설정할 수 없습니다."
+
+#: includes/classes/editor.php:1341
+msgid "Default role for new users is set to %s successfully"
+msgstr "새 사용자의 기본 역할이 %s(으)로 성공적으로 설정되었습니다."
+
+#: includes/classes/editor.php:1343
+msgid "Error encountered during default role change operation"
+msgstr "기본 역할 변경 작업 중 오류 발생"
+
+#: includes/classes/editor.php:1297
+msgid "Role %s is deleted successfully"
+msgstr "역할 %s이(가) 성공적으로 삭제되었습니다."
+
+#: includes/classes/editor.php:1295
+msgid "Unused roles are deleted successfully"
+msgstr "사용하지 않는 역할이 성공적으로 삭제되었습니다."
+
+#: includes/classes/editor.php:1163
+msgid "Role %s is renamed to %s successfully"
+msgstr "%s 역할의 이름이 %s(으)로 성공적으로 변경되었습니다."
+
+#: includes/classes/editor.php:1150
+msgid "Role %s does not exists"
+msgstr "역할 %s이(가) 존재하지 않습니다."
+
+#: includes/classes/editor.php:1143
+msgid "Error: Empty role display name is not allowed."
+msgstr "오류: 빈 역할 표시 이름은 허용되지 않습니다."
+
+#: includes/classes/editor.php:983
+msgid "Error: Role ID is empty!"
+msgstr "오류: 역할 ID가 비어 있습니다!"
+
+#: includes/classes/editor.php:1058
+msgid "Role %s is created successfully"
+msgstr "역할 %s이(가) 성공적으로 생성되었습니다."
+
+#: includes/classes/editor.php:1051
+msgid "Error is encountered during new role create operation"
+msgstr "새 역할 생성 작업 중 오류가 발생했습니다."
+
+#: includes/classes/editor.php:1032
+msgid "Role %s exists already"
+msgstr "역할 %s이(가) 이미 존재합니다."
+
+#: includes/classes/editor.php:998
+msgid "Error: WordPress does not support numeric Role name (ID). Add latin characters to it."
+msgstr "오류: WordPress는 숫자 역할 이름(ID)을 지원하지 않습니다. 여기에 라틴 문자를 추가하십시오."
+
+#: includes/classes/editor.php:992
+msgid "Error: Role ID must contain latin characters, digits, hyphens or underscore only!"
+msgstr "오류: 역할 ID에는 라틴 문자, 숫자, 하이픈 또는 밑줄만 포함해야 합니다!"
+
+#: includes/classes/capability.php:84 includes/classes/capability.php:204
+#: includes/classes/editor.php:950 includes/classes/editor.php:1019
+#: includes/classes/editor.php:1070 includes/classes/editor.php:1131
+#: includes/classes/editor.php:1277 includes/classes/editor.php:1319
+#: includes/classes/user-role-editor.php:671
+msgid "Insufficient permissions to work with User Role Editor"
+msgstr "사용자 역할 편집기로 작업할 수 있는 권한이 없습니다."
+
+#: includes/classes/editor.php:1393
+msgid "User Roles are restored to WordPress default values. "
+msgstr "사용자 역할은 WordPress 기본값으로 복원됩니다."
+
+#: includes/classes/editor.php:913
+msgid "Error occurred during user update"
+msgstr "사용자 업데이트 중 오류가 발생했습니다."
+
+#: includes/classes/editor.php:911
+msgid "User capabilities are updated successfully"
+msgstr "사용자 기능이 성공적으로 업데이트되었습니다."
+
+#: includes/classes/editor.php:907
+msgid "Error occurred during role(s) update"
+msgstr "역할 업데이트 중 오류가 발생했습니다."
+
+#: includes/classes/editor.php:904
+msgid "Roles are updated for all network"
+msgstr "모든 네트워크에 대한 역할이 업데이트됩니다."
+
+#: includes/classes/editor.php:902
+msgid "Role is updated successfully"
+msgstr "역할이 성공적으로 업데이트되었습니다."
+
+#: includes/classes/editor.php:237
+msgid "does not exist"
+msgstr "존재하지 않음"
+
+#: includes/classes/editor.php:236
+msgid "Role"
+msgstr "역할"
+
+#: includes/classes/editor.php:234 includes/classes/editor.php:236
+msgid "Error: "
+msgstr "오류:"
+
+#. Plugin Name of the plugin
+#: includes/classes/capabilities-groups-manager.php:84
+#: includes/classes/editor.php:1483 includes/classes/user-role-editor.php:592
+#: includes/classes/user-role-editor.php:593
+#: includes/classes/user-role-editor.php:605
+#: includes/classes/user-role-editor.php:606
+#: includes/classes/user-role-editor.php:621
+#: includes/classes/user-role-editor.php:622
+msgid "User Role Editor"
+msgstr "사용자 역할 편집자"
+
+#: includes/classes/role-view.php:241
+msgid "Capability name (ID): "
+msgstr "기능 이름(ID):"
+
+#: includes/classes/role-view.php:216
+msgid "Select Role:"
+msgstr "역할 선택:"
+
+#: includes/classes/role-view.php:200
+msgid "Make copy of: "
+msgstr "사본 만들기:"
+
+#: includes/classes/role-view.php:198 includes/classes/role-view.php:209
+msgid "Display Role Name: "
+msgstr "표시 역할 이름:"
+
+#: includes/classes/role-view.php:196 includes/classes/role-view.php:207
+msgid "Role name (ID): "
+msgstr "역할 이름(ID):"
+
+#: includes/classes/editor.php:1524
+msgid "Error: wrong request"
+msgstr "오류: 잘못된 요청"

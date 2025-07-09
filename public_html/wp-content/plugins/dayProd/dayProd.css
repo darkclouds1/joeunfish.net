@@ -1,0 +1,262 @@
+.form-container {
+    padding: 1px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+button, input[type=button], input[type=reset], input[type=submit] {
+    padding: 0;
+}
+
+/* button */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 3px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #FFFF54;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin: 5px 0;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+.button-container:hover {
+  border-color: #4a90e2; /* 테두리 색상 변경 */
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #f0f7ff; /* 배경색 살짝 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}
+
+.form-menu {
+     color: white;
+     padding: 5px 5px;
+     text-align: center;
+     font-size: 17px;
+     background-color: #2c80cf;
+     border-radius: 8px;
+     box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+     margin-bottom: 10px;
+     font-weight: 600;
+     letter-spacing: 0.5px;
+     text-transform: uppercase;
+}
+
+.search-btn:hover {
+    background-color: #dc3545 !important;  /* 붉은색 */
+    color: white !important;               /* 글자색을 흰색으로 */
+    cursor: pointer;                       /* 마우스 커서를 포인터로 */
+    transition: background-color 0.3s;     /* 부드러운 색상 전환 효과 */
+}
+
+.button-container button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.button-container button:hover {
+    background-color: #0056b3;
+}
+
+/* dayProd.css의 save-btn 클래스 수정 */
+.save-btn {
+    padding: 1px 1px;         /* 패딩 축소 */
+    height: 30px;             /* 높이 명시적 지정 */
+    width: 70px;
+    line-height: 16px;        /* 텍스트 세로 중앙 정렬을 위한 라인 높이 */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 2px;       /* 모서리 라운드 축소 */
+    cursor: pointer;
+    font-size: 13px;          /* 글자 크기 축소 */
+    display: block;          /* 버튼을 block 요소로 변경 */
+    margin: 0 auto;         /* 좌우 마진을 auto로 설정하여 중앙 정렬 */
+}
+
+.save-btn:hover {
+    background-color: #0056b3;
+}
+
+.table-container {
+    position: relative;
+    max-height: calc(100vh - 200px); /* 화면 높이에서 상단 여백 제외 */
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+/* 테이블 스타일 수정 */
+table.type10 {
+    border-collapse: separate;  /* collapse에서 separate로 변경 */
+    border-spacing: 0;
+    width: 100%;
+
+
+}
+
+/* 헤더 고정 스타일 */
+table.type10 thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #000 !important;  /* 검은색 배경 */
+    color: #fff !important;  /* 흰색 글자 */
+}
+
+table.type10 th {
+    background: #000;  /* th 배경도 검은색으로 */
+    color: #fff;      /* th 글자도 흰색으로 */
+    padding: 6px 4px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    font-size: 13px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    height: 30px;
+}
+/* 나머지 스타일은 유지 */
+table.type10 td {
+    padding: 3px 4px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    line-height: 20px !important;
+    background-color: #fff;  /* td 배경색 지정 */
+}
+
+table.type10 input {
+    border: 1px solid #ddd;
+    padding: 1px 2px !important; 
+    width: 100%;
+    box-sizing: border-box;
+    height: 24px;
+    font-size: 13px;
+}
+
+/* dayProd.css에 추가 */
+table.type10 tr {
+    cursor: pointer;  /* 마우스 커서를 포인터로 변경 */
+    transition: background-color 0.2s;  /* 배경색 변경 애니메이션 */
+}
+
+table.type10 tr:hover {
+    background-color: #BBF731;  /* 마우스 오버 시 배경색 */
+}
+
+table.type10 tr.selected {
+    background-color: #BBF731 !important;  /* 선택된 row 배경색 */
+}
+
+table.type10 tr.selected td {
+    background-color: #BBF731 !important;  /* td의 배경색도 함께 변경 */
+}
+
+table.type10 td[rowspan] {
+    background-color: #f9f9f9;
+    vertical-align: middle;
+}
+
+table.type10 input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 3px rgba(0,123,255,0.3);
+}
+
+/* notification -by jsj 22-04-13 */
+.notification-container {
+  background: #2e83fb;
+  border-radius: 13px;
+  padding: 5px 5px;
+  /* position: absolute; */
+  top: 300px;
+  left: 300px;
+  /* bottom: 250px; */
+  display: none;
+  color: white;
+  max-height: 55px;
+  vertical-align: middle;
+  /* overflow-y: auto; */
+}
+
+.notification-container.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeOut {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+.alternate-color-1 td {
+    background-color: #F2F2F2 !important; /* 회색 */
+}
+
+.alternate-color-2 td {
+    background-color: #ffffff !important; /* 흰색 */
+}
+
+.salmon-row {
+    background-color: #FFFF00 !important;
+}
+
+/* td 셀에도 적용 */
+.salmon-row td {
+    background-color: #FFFF00 !important;
+}
+
+/* 선택된 상태일 때도 노란색 유지 */
+.salmon-row.selected,
+.salmon-row.selected td {
+    background-color: #FFFF00 !important;
+}
+
+.prod-button {
+    width: 130px !important;
+    height: 40px !important;
+    font-size: 16px !important;
+    margin-right: 5px !important;
+    background-color: #000 !important;
+    color: white !important;
+}
+
+.prod-button:hover {
+    background-color: red !important;
+    color: white !important;
+}
+
+/* CSS 파일에 추가 */
+.selected {
+    background-color: #BBF731 !important; /* 선택된 행의 배경색 */
+}
+
+/* 입고lot명 선택 박스 패딩 추가 */
+select {
+    padding: 3px;
+    font-size: 13px;
+}
+
+/* 제품마스터 테이블 행 선택 시 노란색 유지 */
+.selected-row {
+    background-color: #BBF731 !important;
+    transition: background-color 0.2s;
+}
+.tMst-row:hover {
+    background-color: #BBF731 !important;
+    cursor: pointer;
+}
+.tMatMst-row:hover {
+    background-color: #BBF731 !important;
+    cursor: pointer;
+}

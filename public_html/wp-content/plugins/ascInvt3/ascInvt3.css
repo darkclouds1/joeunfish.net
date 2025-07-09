@@ -1,0 +1,247 @@
+.form-container {
+  margin: 5px;
+}
+
+/* 모든 필드에 기본적으로 적용될 스타일 */
+.form-field {
+  /* height: 60px; */
+  box-sizing: border-box;
+  padding: 3px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  flex: 1;
+  background-color: white;
+  text-align: center;
+  /* font-size: 25px; */
+}
+
+/* 모든 입력 필드에 중앙 정렬 적용 */
+.form-field select {
+  text-align: center;
+}
+
+/* readonly 색깔 바꾸기 */
+input[readonly],
+#productionDate,
+#category,
+#expiDate {
+  background-color: #f0f0f0;
+  /* 회색 톤으로 배경색 변경 */
+  color: #686868;
+  /* 글자 색상도 어둡게 변경 */
+}
+
+/* notification -by jsj 22-04-13 */
+.notification-container {
+  background: #2e83fb;
+  border-radius: 13px;
+  padding: 5px 5px;
+  /* position: absolute; */
+  top: 300px;
+  left: 300px;
+  /* bottom: 250px; */
+  display: none;
+  color: white;
+  max-height: 55px;
+  /* overflow-y: auto; */
+}
+
+.notification-container.show {
+  display: block;
+}
+
+#listContainer li a.a1 {
+  line-height: 10px;
+  font-weight: bold;
+}
+
+#listContainer li a.a1 {
+  line-height: 10px;
+  font-weight: bold;
+}
+
+/* <li> 요소에 대한 기본 스타일 */
+.li-normal {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* <li> 요소가 선택됐을 때의 스타일 */
+.li-selected {
+  background-color: #f0f0f0;
+  /* 선택 시 변경될 배경 색상 */
+}
+
+/* <a> 태그에 대한 스타일을 기본 상태로 유지 */
+.a-normal {
+  text-decoration: none;
+  /* 밑줄 제거 */
+  color: black;
+  /* 글자 색상 */
+}
+
+/* ------------------------------ */
+/* 모바일영역 */
+/* ------------------------------ */
+@media (max-width: 768px) {
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    /* width: 20%; */
+  }
+}
+
+/* ============================= */
+/* mobile - End -  */
+/* ============================= */
+
+/* 목록 표시 */
+li {
+  list-style: none;
+  font-size: 17px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+  /* 줄긋기 스타일 설정 */
+}
+
+li .item {
+  color: rgb(56, 54, 54);
+}
+
+.list-item {
+  list-style-type: none;
+  /* 기본 리스트 스타일 제거 */
+}
+
+.full-link {
+  display: block;
+  /* a 태그가 li의 전체 영역을 차지하도록 함 */
+  text-decoration: none;
+  /* 밑줄 제거 */
+  color: inherit;
+  /* 상위 요소의 글자색 상속 */
+}
+
+.content .item-no {
+  color: red;
+  font-size: 1em;
+  /* 적절한 크기로 조절 */
+}
+
+.item-details {
+  margin-left: 5px;
+  margin-right: 5px;
+  /* 세부사항에 대한 여백 조절 */
+}
+
+.del-btn {
+  /* 삭제 버튼 스타일링 */
+  margin-top: 10px;
+  height: 40px;
+  padding: 1px 10px;
+  width: 70px;
+  line-height: normal;
+}
+
+/* table */
+table.type10 {
+  width: 100%;
+  /* 테이블 선 -by jsj 20210317 */
+  border: 1px solid #d8d7d7;
+  border-collapse: collapse;
+  text-align: left;
+  line-height: 1.5;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin: 0px 0px;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+table.type10 td {
+  padding: 3px;
+  vertical-align: top;
+  border: 1px solid #f3f3f3;
+}
+
+/* g2b 통합검색용 */
+table.type10.type11 th {
+  /* 헤드고정 -by jsj 20210313 head-frozen */
+  position: sticky;
+  top: 0px;
+
+  padding: 5px;
+  /* font-weight: bold; */
+  vertical-align: top;
+  text-align: center;
+  /* color: #363636; */
+  color: #ffffff;
+
+  /* 테이블헤드 -by jsj 20210312 */
+  background: #5c636a;
+  /* background: #f7f15b; */
+  /* background: #2E83FB; */
+  margin: 2px 2px;
+}
+
+table.type10 td a {
+  color: #ce6767;
+  /* color: #00f; */
+  cursor: pointer;
+  text-decoration: none;
+}
+
+table.type10 th a {
+  color: #ffffff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+table.type10 tr:nth-child(even) {
+  background: #dddddd;
+}
+
+table.type10 tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+/* button */
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  /* 가로 방향으로 중앙 정렬 */
+  align-items: center;
+  /* 세로 방향으로 중앙 정렬 (컨테이너의 높이 설정 필요시) */
+  width: 100%;
+  /* 컨테이너 너비를 명시적으로 지정 */
+}
+
+button {
+    flex: 1 1 130px;
+    min-width: 130px;
+    height: 40px;
+    padding: 5px;
+    box-sizing: border-box;
+    margin: 5px;
+}
+
+button:hover {
+  background-color: #007bff;
+  /* White background on hover */
+  color: #ffffff;
+  /* Black text on hover */
+}
+
+.item-details {
+  margin-top: 5px; /* 원하는 간격으로 조정 */
+  margin-bottom: 5px; /* 원하는 간격으로 조정 */
+}
+
+.item-spacing {
+  margin-top: 0px; /* 원하는 간격으로 조정 */
+  margin-bottom: 0px; /* 원하는 간격으로 조정 */
+}

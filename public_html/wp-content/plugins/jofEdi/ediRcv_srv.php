@@ -1,0 +1,236 @@
+    <?php
+
+    date_default_timezone_set('Asia/Seoul');
+    ob_start();
+
+    $logFilePath = __DIR__ . "/logfile.log";
+
+    $documentRoot = '/home/joeunfish.net/public_html';
+    require_once($documentRoot . '/wp-load.php');
+    require_once($documentRoot . '/classphp/dbConn_fish.php');
+    require_once($documentRoot . '/classphp/ediRcv_class.php');
+
+    $dbConn   = new dbconnClassFish;
+    $platForm = $dbConn->MobileCheck();
+    $conn     = $dbConn->conn();
+    mysqli_set_charset($conn, 'utf8');
+    mysqli_query($conn, "SET time_zone = '+09:00'");
+
+    $folderPath = $documentRoot . '/ecommerce_java/recv';
+    
+    $files = glob($folderPath . '/*');
+    $latestFile = '';
+    $latestTime = 0;
+
+    foreach ($files as $file) {
+        $fileTime = filemtime($file);
+        if ($fileTime > $latestTime) {
+            $latestTime = $fileTime;
+            $latestFile = $file;
+        }
+    }
+
+    // 최근 파일이 1시간 이전 것인지 확인
+    // 1시간이 지난 경우, 쉘 스크립트를 실행하여 파일 다운로드
+    $currentTime = time();
+    if ($latestTime < ($currentTime - 3600)) {
+        exec($documentRoot . '/ecommerce_java/ecommerce.sh');
+
+        // 쉘 스크립트 실행 후 다시 최신 파일 검색
+        $files = glob($folderPath . '/*');
+        $latestFile = '';
+        $latestTime = 0;
+        foreach ($files as $file) {
+            $fileTime = filemtime($file);
+            if ($fileTime > $latestTime) {
+                $latestTime = $fileTime;
+                $latestFile = $file;
+            }
+        }
+    }
+
+    // 오늘 날짜 외 파일 삭제
+    $today = date('Y-m-d');
+    foreach ($files as $file) {
+        if (date('Y-m-d', filemtime($file)) != $today) {
+            unlink($file); // 오늘 날짜가 아닌 파일은 삭제
+        }
+    }
+
+    $fileContents = file_get_contents($latestFile, false, stream_context_create([
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+        ],
+        'http' => [
+            'header' => "User-Agent: euc-kr\r\n",
+        ],
+    ]));
+
+    $fileContents = mb_convert_encoding($fileContents, 'UTF-8', 'EUC-KR');
+    $fileContents = preg_replace('/[\x00-\x1F\x7F]/', '', $fileContents);
+
+    preg_match_all('/<<WEB-EDI>>(.*?)\.ENDMSG/s', $fileContents, $matches);
+
+    // 클래스 파싱
+    $parser   = new OrderParserClass($matches[1], $logFilePath);
+
+    $user_id = get_current_user_id();
+    if ($user_id != 0) {
+        $user_info = get_userdata($user_id);
+        $user_name = $user_info->user_login; // 로그인 이름
+        $display_name = $user_info->display_name; // 표시 이름
+    } else {
+        $user_name = 'joeunfish';
+    }
+
+    global $wpdb;
+    $tableOrders = 'torders';
+    $tableOrderProducts = 'torderproducts';
+
+    // 필터링을 위한 배열 선언
+    $filteredOrders = array();
+
+    // 원본 배열을 순서대로 처리 (뒤의 주문이 앞의 주문을 덮어쓰도록)
+    foreach ($parser->getOrders() as $order) {
+        // orderDate2 비교
+        if (!isset($filteredOrders[$order['msgId']])) {
+            // 처음 들어오는 주문
+            $filteredOrders[$order['msgId']] = $order;
+        } else {
+            // 이미 존재하는 주문인 경우
+            $existingDate = strtotime($filteredOrders[$order['msgId']]['orderDate2']);
+            $newDate = strtotime($order['orderDate2']);
+
+            if ($newDate > $existingDate) {
+                // 새 주문의 날짜가 더 최신인 경우
+                $filteredOrders[$order['msgId']] = $order;
+            } else if ($newDate == $existingDate) {
+                // 날짜가 같은 경우 나중에 나온 주문(현재 처리중인 주문)으로 업데이트
+                $filteredOrders[$order['msgId']] = $order;
+            }
+            // 새 주문의 날짜가 더 과거인 경우는 무시
+        }
+    }
+
+    foreach ($filteredOrders as $order) {
+
+        $orderData = [
+            'msgtype' => $order['msgType'],
+            'msgfrom' => $order['msgFrom'],
+            'doc_no' => $order['msgId'],
+            'order_dt' => $order['orderDate'],
+            'supply_dt' => $order['deliveryDate'],
+            'dest_code' => $order['deliveryCode'],
+            'dest_name' => $order['deliveryName'],
+            'region' => $order['regionName'],
+            'product_count' => $order['orderProductCount'],
+            'create_id' => $user_name,
+            'modify_id' => $user_name,
+        ];
+
+        // if ($order['msgId'] == '20248563472646') {
+        //     error_log("order: " . print_r($orderData, true), 3, $logFilePath);
+        // }
+        
+        // $parser의 기존 데이터 삭제 (중복 삭제)
+        $parser->orders = []; // 기존 주문 데이터 삭제
+        $parser->setOrders(array_values($filteredOrders)); // 필터링된 주문 데이터로 업데이트
+
+        // 기존 주문번호 존재하면 삭제하고 새로 추가 (단, msgtype이 ORDCHG인 경우는 삭제하지 않음)
+        // 주문번호 5번째 자리부터 끝까지 비교 (앞4자리 년도는 비교에서 제외 함.)
+        $orderExists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tableOrders WHERE SUBSTRING(doc_no, 5) = %s", substr($order['msgId'], 4)));
+        if ($orderExists > 0) {
+            // 기존 주문의 msgtype을 확인
+            $existingMsgType = $wpdb->get_var($wpdb->prepare("SELECT msgtype FROM $tableOrders WHERE SUBSTRING(doc_no, 5) = %s", substr($order['msgId'], 4)));
+
+            // 기존 msgtype이 'ORDCHG'이고 새 msgtype이 'ORDERS'인 경우 스킵
+            if ($existingMsgType == 'ORDCHG' && $order['msgType'] == 'ORDERS') {
+                continue; // 다음 주문으로 넘어감
+            }
+
+            $wpdb->query($wpdb->prepare("DELETE FROM $tableOrders WHERE SUBSTRING(doc_no, 5) = %s", substr($order['msgId'], 4)));
+            $wpdb->insert($tableOrders, $orderData);
+            if ($wpdb->last_error) {
+                error_log(print_r("dberror:" . $wpdb->last_error, true), 3, $logFilePath);
+            }
+        } else {
+            $wpdb->insert($tableOrders, $orderData);
+            if ($wpdb->last_error) {
+                error_log(print_r("dberror:" . $wpdb->last_error, true), 3, $logFilePath);
+            }
+        }
+        // error_log(print_r($orderData, true), 3, $logFilePath);
+
+        // ------------------------------------------------------------
+        // der['orderedProducts']에 없는 제품 코드는 데이터베이스에 삭제
+        // ------------------------------------------------------------
+        $currentProductCodes = array_map(function ($product) {
+            return $product->productCode;
+        }, $order['orderedProducts']);
+
+        // DB에서 현재 주문에 대한 모든 제품 코드 가져오기
+        $existingProductCodes = $wpdb->get_col($wpdb->prepare(
+            "SELECT product_code FROM $tableOrderProducts WHERE doc_no = %s",
+            $order['msgId']
+        ));
+
+        // DB에 있지만 현재 주문에 없는 제품 코드 삭제
+        foreach ($existingProductCodes as $existingCode) {
+            if (!in_array($existingCode, $currentProductCodes)) {
+                // 데이터베이스에서 해당 제품 코드 삭제
+                $wpdb->delete($tableOrderProducts, [
+                    'doc_no' => $order['msgId'],
+                    'product_code' => $existingCode
+                ]);
+            }
+        }
+
+        foreach ($order['orderedProducts'] as $product) {
+
+            $productData = [
+                'doc_no' => $order['msgId'],
+                'product_name' => $product->productName,
+                'product_code' => $product->productCode,
+                'quantity' => $product->quantity,
+                'unit_price' => $product->orderPrice,
+                'total_price' => $product->orderAmount,
+                'create_id' => $user_name,
+                'modify_id' => $user_name,
+            ];
+
+            // error_log(print_r($productData, true), 3, $logFilePath);
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tableOrderProducts WHERE doc_no = %s AND product_code = %s", $order['msgId'], $product->productCode));
+
+            // 이미 주문번호가 있으면 quantity_new, weights 값을 가져온 후 삭제하고 새로 추가할 때 사용
+            if ($exists > 0) {
+                $existingWeights = $wpdb->get_results($wpdb->prepare("SELECT expi_date, quantity_new, weights FROM $tableOrderProducts WHERE doc_no = %s AND product_code = %s", $order['msgId'], $product->productCode), ARRAY_A);
+                if (!empty($existingWeights) && isset($existingWeights[0]['expi_date'])) {
+                    $productData['expi_date'] = $existingWeights[0]['expi_date'];
+                }
+                if (!empty($existingWeights) && isset($existingWeights[0]['quantity_new'])) {
+                    $productData['quantity_new'] = $existingWeights[0]['quantity_new'];
+                }
+                if (!empty($existingWeights) && isset($existingWeights[0]['weights'])) {
+                    $productData['weights'] = $existingWeights[0]['weights'];
+                }
+            }
+
+            // 삭제하고 INSERT
+            $wpdb->query($wpdb->prepare("DELETE FROM $tableOrderProducts WHERE doc_no = %s AND product_code = %s", $order['msgId'], $product->productCode));
+            $wpdb->insert($tableOrderProducts, $productData);
+            if ($wpdb->last_error) {
+                error_log(print_r($wpdb->last_error, true), 3, $logFilePath);
+            }
+        }
+    }
+
+    // 로그 파일 경로 확인 로그
+    date_default_timezone_set('Asia/Seoul');
+    $currentDateTime = date('Y-m-d H:i:s');
+    error_log("Latest file: " . $latestFile . "\n", 3, $logFilePath);
+
+    // echo json_encode($parser);  // JSON으로 변환하여 출력
+    ob_end_flush(); // 버퍼의 내용을 출력하고 버퍼를 삭제
+
+    ?>

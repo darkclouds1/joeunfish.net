@@ -1,0 +1,960 @@
+[2025-06-15 07:00:05] INFO  - worker : common ,jobtype : RD
+[2025-06-15 07:00:06] INFO  - login code : 000
+[2025-06-15 07:00:06] INFO  - get reciving file info : 000
+[2025-06-15 07:00:06] INFO  - start receiving file
+[2025-06-15 07:00:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615070006.dat,filesize : 285574
+[2025-06-15 07:00:08] INFO  - confirm ok!
+[2025-06-15 07:00:16] INFO  - logout code : 000
+[2025-06-15 07:00:16] INFO  - result : 000
+[2025-06-15 07:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 07:15:02] INFO  - login code : 000
+[2025-06-15 07:15:03] INFO  - get reciving file info : 000
+[2025-06-15 07:15:03] INFO  - start receiving file
+[2025-06-15 07:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615071503.dat,filesize : 285574
+[2025-06-15 07:15:04] INFO  - confirm ok!
+[2025-06-15 07:15:05] INFO  - logout code : 000
+[2025-06-15 07:15:05] INFO  - result : 000
+[2025-06-15 07:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 07:30:02] INFO  - login code : 000
+[2025-06-15 07:30:02] INFO  - get reciving file info : 000
+[2025-06-15 07:30:02] INFO  - start receiving file
+[2025-06-15 07:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615073002.dat,filesize : 285574
+[2025-06-15 07:30:04] INFO  - confirm ok!
+[2025-06-15 07:30:04] INFO  - logout code : 000
+[2025-06-15 07:30:04] INFO  - result : 000
+[2025-06-15 07:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 07:45:01] INFO  - login code : 000
+[2025-06-15 07:45:02] INFO  - get reciving file info : 000
+[2025-06-15 07:45:02] INFO  - start receiving file
+[2025-06-15 07:45:03] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615074502.dat,filesize : 285574
+[2025-06-15 07:45:03] INFO  - confirm ok!
+[2025-06-15 07:45:04] INFO  - logout code : 000
+[2025-06-15 07:45:04] INFO  - result : 000
+[2025-06-15 08:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 08:00:04] INFO  - login code : 000
+[2025-06-15 08:00:04] INFO  - get reciving file info : 000
+[2025-06-15 08:00:04] INFO  - start receiving file
+[2025-06-15 08:00:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615080004.dat,filesize : 285574
+[2025-06-15 08:00:06] INFO  - confirm ok!
+[2025-06-15 08:00:06] INFO  - logout code : 000
+[2025-06-15 08:00:06] INFO  - result : 000
+[2025-06-15 08:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 08:15:02] INFO  - login code : 000
+[2025-06-15 08:15:03] INFO  - get reciving file info : 000
+[2025-06-15 08:15:03] INFO  - start receiving file
+[2025-06-15 08:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615081503.dat,filesize : 410545
+[2025-06-15 08:15:05] INFO  - confirm ok!
+[2025-06-15 08:15:08] INFO  - logout code : 000
+[2025-06-15 08:15:08] INFO  - result : 000
+[2025-06-15 08:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 08:30:03] INFO  - login code : 000
+[2025-06-15 08:30:03] INFO  - get reciving file info : 000
+[2025-06-15 08:30:03] INFO  - start receiving file
+[2025-06-15 08:30:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615083003.dat,filesize : 410545
+[2025-06-15 08:30:05] INFO  - confirm ok!
+[2025-06-15 08:30:06] INFO  - logout code : 000
+[2025-06-15 08:30:06] INFO  - result : 000
+[2025-06-15 08:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 08:45:02] INFO  - login code : 000
+[2025-06-15 08:45:03] INFO  - get reciving file info : 000
+[2025-06-15 08:45:03] INFO  - start receiving file
+[2025-06-15 08:45:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615084503.dat,filesize : 410545
+[2025-06-15 08:45:05] INFO  - confirm ok!
+[2025-06-15 08:45:05] INFO  - logout code : 000
+[2025-06-15 08:45:05] INFO  - result : 000
+[2025-06-15 09:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 09:00:04] INFO  - login code : 000
+[2025-06-15 09:00:04] INFO  - get reciving file info : 000
+[2025-06-15 09:00:04] INFO  - start receiving file
+[2025-06-15 09:00:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615090004.dat,filesize : 410545
+[2025-06-15 09:00:06] INFO  - confirm ok!
+[2025-06-15 09:00:07] INFO  - logout code : 000
+[2025-06-15 09:00:07] INFO  - result : 000
+[2025-06-15 09:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 09:15:02] INFO  - login code : 000
+[2025-06-15 09:15:02] INFO  - get reciving file info : 000
+[2025-06-15 09:15:02] INFO  - start receiving file
+[2025-06-15 09:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615091502.dat,filesize : 410545
+[2025-06-15 09:15:04] INFO  - confirm ok!
+[2025-06-15 09:15:05] INFO  - logout code : 000
+[2025-06-15 09:15:05] INFO  - result : 000
+[2025-06-15 09:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 09:30:02] INFO  - login code : 000
+[2025-06-15 09:30:02] INFO  - get reciving file info : 000
+[2025-06-15 09:30:02] INFO  - start receiving file
+[2025-06-15 09:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615093002.dat,filesize : 410545
+[2025-06-15 09:30:04] INFO  - confirm ok!
+[2025-06-15 09:30:05] INFO  - logout code : 000
+[2025-06-15 09:30:05] INFO  - result : 000
+[2025-06-15 09:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 09:45:02] INFO  - login code : 000
+[2025-06-15 09:45:02] INFO  - get reciving file info : 000
+[2025-06-15 09:45:02] INFO  - start receiving file
+[2025-06-15 09:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615094502.dat,filesize : 410545
+[2025-06-15 09:45:04] INFO  - confirm ok!
+[2025-06-15 09:45:05] INFO  - logout code : 000
+[2025-06-15 09:45:05] INFO  - result : 000
+[2025-06-15 10:00:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 10:00:03] INFO  - login code : 000
+[2025-06-15 10:00:03] INFO  - get reciving file info : 000
+[2025-06-15 10:00:03] INFO  - start receiving file
+[2025-06-15 10:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615100003.dat,filesize : 410545
+[2025-06-15 10:00:05] INFO  - confirm ok!
+[2025-06-15 10:00:06] INFO  - logout code : 000
+[2025-06-15 10:00:06] INFO  - result : 000
+[2025-06-15 10:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 10:15:02] INFO  - login code : 000
+[2025-06-15 10:15:02] INFO  - get reciving file info : 000
+[2025-06-15 10:15:02] INFO  - start receiving file
+[2025-06-15 10:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615101502.dat,filesize : 410545
+[2025-06-15 10:15:04] INFO  - confirm ok!
+[2025-06-15 10:15:05] INFO  - logout code : 000
+[2025-06-15 10:15:05] INFO  - result : 000
+[2025-06-15 10:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 10:30:03] INFO  - login code : 000
+[2025-06-15 10:30:03] INFO  - get reciving file info : 000
+[2025-06-15 10:30:03] INFO  - start receiving file
+[2025-06-15 10:30:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615103003.dat,filesize : 410545
+[2025-06-15 10:30:05] INFO  - confirm ok!
+[2025-06-15 10:30:06] INFO  - logout code : 000
+[2025-06-15 10:30:06] INFO  - result : 000
+[2025-06-15 10:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 10:45:02] INFO  - login code : 000
+[2025-06-15 10:45:02] INFO  - get reciving file info : 000
+[2025-06-15 10:45:02] INFO  - start receiving file
+[2025-06-15 10:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615104502.dat,filesize : 410545
+[2025-06-15 10:45:04] INFO  - confirm ok!
+[2025-06-15 10:45:04] INFO  - logout code : 000
+[2025-06-15 10:45:04] INFO  - result : 000
+[2025-06-15 11:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 11:00:03] INFO  - login code : 000
+[2025-06-15 11:00:03] INFO  - get reciving file info : 000
+[2025-06-15 11:00:03] INFO  - start receiving file
+[2025-06-15 11:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615110003.dat,filesize : 410545
+[2025-06-15 11:00:05] INFO  - confirm ok!
+[2025-06-15 11:00:06] INFO  - logout code : 000
+[2025-06-15 11:00:06] INFO  - result : 000
+[2025-06-15 11:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 11:15:02] INFO  - login code : 000
+[2025-06-15 11:15:03] INFO  - get reciving file info : 000
+[2025-06-15 11:15:03] INFO  - start receiving file
+[2025-06-15 11:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615111503.dat,filesize : 385658
+[2025-06-15 11:15:05] INFO  - confirm ok!
+[2025-06-15 11:15:05] INFO  - logout code : 000
+[2025-06-15 11:15:05] INFO  - result : 000
+[2025-06-15 11:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 11:30:02] INFO  - login code : 000
+[2025-06-15 11:30:03] INFO  - get reciving file info : 000
+[2025-06-15 11:30:03] INFO  - start receiving file
+[2025-06-15 11:30:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615113003.dat,filesize : 385658
+[2025-06-15 11:30:05] INFO  - confirm ok!
+[2025-06-15 11:30:05] INFO  - logout code : 000
+[2025-06-15 11:30:05] INFO  - result : 000
+[2025-06-15 11:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 11:45:02] INFO  - login code : 000
+[2025-06-15 11:45:02] INFO  - get reciving file info : 000
+[2025-06-15 11:45:02] INFO  - start receiving file
+[2025-06-15 11:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615114502.dat,filesize : 385658
+[2025-06-15 11:45:04] INFO  - confirm ok!
+[2025-06-15 11:45:04] INFO  - logout code : 000
+[2025-06-15 11:45:04] INFO  - result : 000
+[2025-06-15 12:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 12:00:03] INFO  - login code : 000
+[2025-06-15 12:00:04] INFO  - get reciving file info : 000
+[2025-06-15 12:00:04] INFO  - start receiving file
+[2025-06-15 12:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615120004.dat,filesize : 385658
+[2025-06-15 12:00:05] INFO  - confirm ok!
+[2025-06-15 12:00:06] INFO  - logout code : 000
+[2025-06-15 12:00:06] INFO  - result : 000
+[2025-06-15 12:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 12:15:03] INFO  - login code : 000
+[2025-06-15 12:15:03] INFO  - get reciving file info : 000
+[2025-06-15 12:15:03] INFO  - start receiving file
+[2025-06-15 12:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615121503.dat,filesize : 385658
+[2025-06-15 12:15:05] INFO  - confirm ok!
+[2025-06-15 12:15:05] INFO  - logout code : 000
+[2025-06-15 12:15:05] INFO  - result : 000
+[2025-06-15 12:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 12:30:03] INFO  - login code : 000
+[2025-06-15 12:30:03] INFO  - get reciving file info : 000
+[2025-06-15 12:30:03] INFO  - start receiving file
+[2025-06-15 12:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615123003.dat,filesize : 385658
+[2025-06-15 12:30:04] INFO  - confirm ok!
+[2025-06-15 12:30:05] INFO  - logout code : 000
+[2025-06-15 12:30:05] INFO  - result : 000
+[2025-06-15 12:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 12:45:02] INFO  - login code : 000
+[2025-06-15 12:45:02] INFO  - get reciving file info : 000
+[2025-06-15 12:45:02] INFO  - start receiving file
+[2025-06-15 12:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615124502.dat,filesize : 385658
+[2025-06-15 12:45:04] INFO  - confirm ok!
+[2025-06-15 12:45:05] INFO  - logout code : 000
+[2025-06-15 12:45:05] INFO  - result : 000
+[2025-06-15 13:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 13:00:04] INFO  - login code : 000
+[2025-06-15 13:00:04] INFO  - get reciving file info : 000
+[2025-06-15 13:00:04] INFO  - start receiving file
+[2025-06-15 13:00:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615130004.dat,filesize : 385658
+[2025-06-15 13:00:06] INFO  - confirm ok!
+[2025-06-15 13:00:06] INFO  - logout code : 000
+[2025-06-15 13:00:06] INFO  - result : 000
+[2025-06-15 13:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 13:15:03] INFO  - login code : 000
+[2025-06-15 13:15:03] INFO  - get reciving file info : 000
+[2025-06-15 13:15:03] INFO  - start receiving file
+[2025-06-15 13:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615131503.dat,filesize : 379674
+[2025-06-15 13:15:05] INFO  - confirm ok!
+[2025-06-15 13:15:06] INFO  - logout code : 000
+[2025-06-15 13:15:06] INFO  - result : 000
+[2025-06-15 13:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 13:30:02] INFO  - login code : 000
+[2025-06-15 13:30:02] INFO  - get reciving file info : 000
+[2025-06-15 13:30:02] INFO  - start receiving file
+[2025-06-15 13:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615133002.dat,filesize : 379674
+[2025-06-15 13:30:04] INFO  - confirm ok!
+[2025-06-15 13:30:04] INFO  - logout code : 000
+[2025-06-15 13:30:04] INFO  - result : 000
+[2025-06-15 13:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 13:45:01] INFO  - login code : 000
+[2025-06-15 13:45:02] INFO  - get reciving file info : 000
+[2025-06-15 13:45:02] INFO  - start receiving file
+[2025-06-15 13:45:03] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615134502.dat,filesize : 379674
+[2025-06-15 13:45:03] INFO  - confirm ok!
+[2025-06-15 13:45:04] INFO  - logout code : 000
+[2025-06-15 13:45:04] INFO  - result : 000
+[2025-06-15 14:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 14:00:03] INFO  - login code : 000
+[2025-06-15 14:00:03] INFO  - get reciving file info : 000
+[2025-06-15 14:00:03] INFO  - start receiving file
+[2025-06-15 14:00:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615140003.dat,filesize : 379674
+[2025-06-15 14:00:06] INFO  - confirm ok!
+[2025-06-15 14:00:06] INFO  - logout code : 000
+[2025-06-15 14:00:06] INFO  - result : 000
+[2025-06-15 14:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 14:15:03] INFO  - login code : 000
+[2025-06-15 14:15:03] INFO  - get reciving file info : 000
+[2025-06-15 14:15:03] INFO  - start receiving file
+[2025-06-15 14:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615141503.dat,filesize : 379674
+[2025-06-15 14:15:05] INFO  - confirm ok!
+[2025-06-15 14:15:05] INFO  - logout code : 000
+[2025-06-15 14:15:05] INFO  - result : 000
+[2025-06-15 14:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 14:30:02] INFO  - login code : 000
+[2025-06-15 14:30:02] INFO  - get reciving file info : 000
+[2025-06-15 14:30:02] INFO  - start receiving file
+[2025-06-15 14:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615143002.dat,filesize : 379674
+[2025-06-15 14:30:04] INFO  - confirm ok!
+[2025-06-15 14:30:05] INFO  - logout code : 000
+[2025-06-15 14:30:05] INFO  - result : 000
+[2025-06-15 14:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 14:45:02] INFO  - login code : 000
+[2025-06-15 14:45:02] INFO  - get reciving file info : 000
+[2025-06-15 14:45:02] INFO  - start receiving file
+[2025-06-15 14:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615144502.dat,filesize : 379674
+[2025-06-15 14:45:04] INFO  - confirm ok!
+[2025-06-15 14:45:05] INFO  - logout code : 000
+[2025-06-15 14:45:05] INFO  - result : 000
+[2025-06-15 15:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 15:00:04] INFO  - login code : 000
+[2025-06-15 15:00:04] INFO  - get reciving file info : 000
+[2025-06-15 15:00:04] INFO  - start receiving file
+[2025-06-15 15:00:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615150004.dat,filesize : 379674
+[2025-06-15 15:00:06] INFO  - confirm ok!
+[2025-06-15 15:00:07] INFO  - logout code : 000
+[2025-06-15 15:00:07] INFO  - result : 000
+[2025-06-15 15:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 15:15:03] INFO  - login code : 000
+[2025-06-15 15:15:03] INFO  - get reciving file info : 000
+[2025-06-15 15:15:03] INFO  - start receiving file
+[2025-06-15 15:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615151503.dat,filesize : 379674
+[2025-06-15 15:15:05] INFO  - confirm ok!
+[2025-06-15 15:15:05] INFO  - logout code : 000
+[2025-06-15 15:15:05] INFO  - result : 000
+[2025-06-15 15:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 15:30:03] INFO  - login code : 000
+[2025-06-15 15:30:03] INFO  - get reciving file info : 000
+[2025-06-15 15:30:03] INFO  - start receiving file
+[2025-06-15 15:30:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615153003.dat,filesize : 379674
+[2025-06-15 15:30:05] INFO  - confirm ok!
+[2025-06-15 15:30:05] INFO  - logout code : 000
+[2025-06-15 15:30:05] INFO  - result : 000
+[2025-06-15 15:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 15:45:02] INFO  - login code : 000
+[2025-06-15 15:45:02] INFO  - get reciving file info : 000
+[2025-06-15 15:45:02] INFO  - start receiving file
+[2025-06-15 15:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615154502.dat,filesize : 379674
+[2025-06-15 15:45:04] INFO  - confirm ok!
+[2025-06-15 15:45:04] INFO  - logout code : 000
+[2025-06-15 15:45:04] INFO  - result : 000
+[2025-06-15 16:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 16:00:04] INFO  - login code : 000
+[2025-06-15 16:00:04] INFO  - get reciving file info : 000
+[2025-06-15 16:00:04] INFO  - start receiving file
+[2025-06-15 16:00:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615160004.dat,filesize : 379674
+[2025-06-15 16:00:06] INFO  - confirm ok!
+[2025-06-15 16:00:06] INFO  - logout code : 000
+[2025-06-15 16:00:06] INFO  - result : 000
+[2025-06-15 16:15:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 16:15:02] INFO  - login code : 000
+[2025-06-15 16:15:02] INFO  - get reciving file info : 000
+[2025-06-15 16:15:02] INFO  - start receiving file
+[2025-06-15 16:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615161502.dat,filesize : 379674
+[2025-06-15 16:15:04] INFO  - confirm ok!
+[2025-06-15 16:15:05] INFO  - logout code : 000
+[2025-06-15 16:15:05] INFO  - result : 000
+[2025-06-15 16:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 16:30:02] INFO  - login code : 000
+[2025-06-15 16:30:02] INFO  - get reciving file info : 000
+[2025-06-15 16:30:02] INFO  - start receiving file
+[2025-06-15 16:30:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615163002.dat,filesize : 1382598
+[2025-06-15 16:30:06] INFO  - confirm ok!
+[2025-06-15 16:30:48] INFO  - logout code : 000
+[2025-06-15 16:30:48] INFO  - result : 000
+[2025-06-15 16:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 16:45:02] INFO  - login code : 000
+[2025-06-15 16:45:02] INFO  - get reciving file info : 000
+[2025-06-15 16:45:02] INFO  - start receiving file
+[2025-06-15 16:45:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615164502.dat,filesize : 1916331
+[2025-06-15 16:45:07] INFO  - confirm ok!
+[2025-06-15 16:45:28] INFO  - logout code : 000
+[2025-06-15 16:45:28] INFO  - result : 000
+[2025-06-15 17:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 17:00:04] INFO  - login code : 000
+[2025-06-15 17:00:05] INFO  - get reciving file info : 000
+[2025-06-15 17:00:05] INFO  - start receiving file
+[2025-06-15 17:00:09] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615170005.dat,filesize : 1916331
+[2025-06-15 17:00:09] INFO  - confirm ok!
+[2025-06-15 17:00:11] INFO  - logout code : 000
+[2025-06-15 17:00:11] INFO  - result : 000
+[2025-06-15 17:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 17:15:03] INFO  - login code : 000
+[2025-06-15 17:15:03] INFO  - get reciving file info : 000
+[2025-06-15 17:15:03] INFO  - start receiving file
+[2025-06-15 17:15:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615171503.dat,filesize : 1916331
+[2025-06-15 17:15:08] INFO  - confirm ok!
+[2025-06-15 17:15:10] INFO  - logout code : 000
+[2025-06-15 17:15:10] INFO  - result : 000
+[2025-06-15 17:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 17:30:03] INFO  - login code : 000
+[2025-06-15 17:30:03] INFO  - get reciving file info : 000
+[2025-06-15 17:30:03] INFO  - start receiving file
+[2025-06-15 17:30:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615173003.dat,filesize : 1916331
+[2025-06-15 17:30:08] INFO  - confirm ok!
+[2025-06-15 17:30:10] INFO  - logout code : 000
+[2025-06-15 17:30:10] INFO  - result : 000
+[2025-06-15 17:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 17:45:02] INFO  - login code : 000
+[2025-06-15 17:45:03] INFO  - get reciving file info : 000
+[2025-06-15 17:45:03] INFO  - start receiving file
+[2025-06-15 17:45:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615174503.dat,filesize : 1916331
+[2025-06-15 17:45:07] INFO  - confirm ok!
+[2025-06-15 17:45:09] INFO  - logout code : 000
+[2025-06-15 17:45:09] INFO  - result : 000
+[2025-06-15 18:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 18:00:04] INFO  - login code : 000
+[2025-06-15 18:00:04] INFO  - get reciving file info : 000
+[2025-06-15 18:00:04] INFO  - start receiving file
+[2025-06-15 18:00:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615180004.dat,filesize : 1916331
+[2025-06-15 18:00:08] INFO  - confirm ok!
+[2025-06-15 18:00:10] INFO  - logout code : 000
+[2025-06-15 18:00:10] INFO  - result : 000
+[2025-06-15 18:15:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 18:15:02] INFO  - login code : 000
+[2025-06-15 18:15:03] INFO  - get reciving file info : 000
+[2025-06-15 18:15:03] INFO  - start receiving file
+[2025-06-15 18:15:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615181503.dat,filesize : 1916331
+[2025-06-15 18:15:07] INFO  - confirm ok!
+[2025-06-15 18:15:09] INFO  - logout code : 000
+[2025-06-15 18:15:09] INFO  - result : 000
+[2025-06-15 18:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 18:30:02] INFO  - login code : 000
+[2025-06-15 18:30:02] INFO  - get reciving file info : 000
+[2025-06-15 18:30:02] INFO  - start receiving file
+[2025-06-15 18:30:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615183002.dat,filesize : 1916331
+[2025-06-15 18:30:06] INFO  - confirm ok!
+[2025-06-15 18:30:08] INFO  - logout code : 000
+[2025-06-15 18:30:08] INFO  - result : 000
+[2025-06-15 18:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 18:45:02] INFO  - login code : 000
+[2025-06-15 18:45:02] INFO  - get reciving file info : 000
+[2025-06-15 18:45:02] INFO  - start receiving file
+[2025-06-15 18:45:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615184502.dat,filesize : 1916331
+[2025-06-15 18:45:08] INFO  - confirm ok!
+[2025-06-15 18:45:10] INFO  - logout code : 000
+[2025-06-15 18:45:10] INFO  - result : 000
+[2025-06-15 19:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 19:00:04] INFO  - login code : 000
+[2025-06-15 19:00:04] INFO  - get reciving file info : 000
+[2025-06-15 19:00:04] INFO  - start receiving file
+[2025-06-15 19:00:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615190004.dat,filesize : 1916331
+[2025-06-15 19:00:08] INFO  - confirm ok!
+[2025-06-15 19:00:10] INFO  - logout code : 000
+[2025-06-15 19:00:10] INFO  - result : 000
+[2025-06-15 19:15:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 19:15:02] INFO  - login code : 000
+[2025-06-15 19:15:03] INFO  - get reciving file info : 000
+[2025-06-15 19:15:03] INFO  - start receiving file
+[2025-06-15 19:15:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615191503.dat,filesize : 1916331
+[2025-06-15 19:15:07] INFO  - confirm ok!
+[2025-06-15 19:15:09] INFO  - logout code : 000
+[2025-06-15 19:15:09] INFO  - result : 000
+[2025-06-15 19:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 19:30:03] INFO  - login code : 000
+[2025-06-15 19:30:03] INFO  - get reciving file info : 000
+[2025-06-15 19:30:03] INFO  - start receiving file
+[2025-06-15 19:30:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615193003.dat,filesize : 1916331
+[2025-06-15 19:30:07] INFO  - confirm ok!
+[2025-06-15 19:30:09] INFO  - logout code : 000
+[2025-06-15 19:30:09] INFO  - result : 000
+[2025-06-15 19:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 19:45:03] INFO  - login code : 000
+[2025-06-15 19:45:03] INFO  - get reciving file info : 000
+[2025-06-15 19:45:03] INFO  - start receiving file
+[2025-06-15 19:45:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615194503.dat,filesize : 1916331
+[2025-06-15 19:45:07] INFO  - confirm ok!
+[2025-06-15 19:45:09] INFO  - logout code : 000
+[2025-06-15 19:45:09] INFO  - result : 000
+[2025-06-15 20:00:04] INFO  - worker : common ,jobtype : RD
+[2025-06-15 20:00:05] INFO  - login code : 000
+[2025-06-15 20:00:05] INFO  - get reciving file info : 000
+[2025-06-15 20:00:05] INFO  - start receiving file
+[2025-06-15 20:00:09] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615200005.dat,filesize : 1916331
+[2025-06-15 20:00:09] INFO  - confirm ok!
+[2025-06-15 20:00:11] INFO  - logout code : 000
+[2025-06-15 20:00:11] INFO  - result : 000
+[2025-06-15 20:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 20:15:03] INFO  - login code : 000
+[2025-06-15 20:15:03] INFO  - get reciving file info : 000
+[2025-06-15 20:15:03] INFO  - start receiving file
+[2025-06-15 20:15:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615201503.dat,filesize : 1916331
+[2025-06-15 20:15:07] INFO  - confirm ok!
+[2025-06-15 20:15:09] INFO  - logout code : 000
+[2025-06-15 20:15:09] INFO  - result : 000
+[2025-06-15 20:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 20:30:03] INFO  - login code : 000
+[2025-06-15 20:30:03] INFO  - get reciving file info : 000
+[2025-06-15 20:30:03] INFO  - start receiving file
+[2025-06-15 20:30:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615203003.dat,filesize : 1916331
+[2025-06-15 20:30:08] INFO  - confirm ok!
+[2025-06-15 20:30:10] INFO  - logout code : 000
+[2025-06-15 20:30:10] INFO  - result : 000
+[2025-06-15 20:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 20:45:02] INFO  - login code : 000
+[2025-06-15 20:45:03] INFO  - get reciving file info : 000
+[2025-06-15 20:45:03] INFO  - start receiving file
+[2025-06-15 20:45:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615204503.dat,filesize : 1916331
+[2025-06-15 20:45:07] INFO  - confirm ok!
+[2025-06-15 20:45:09] INFO  - logout code : 000
+[2025-06-15 20:45:09] INFO  - result : 000
+[2025-06-15 21:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-15 21:00:04] INFO  - login code : 000
+[2025-06-15 21:00:04] INFO  - get reciving file info : 000
+[2025-06-15 21:00:04] INFO  - start receiving file
+[2025-06-15 21:00:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615210004.dat,filesize : 1916331
+[2025-06-15 21:00:07] INFO  - confirm ok!
+[2025-06-15 21:00:10] INFO  - logout code : 000
+[2025-06-15 21:00:10] INFO  - result : 000
+[2025-06-15 21:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 21:15:03] INFO  - login code : 000
+[2025-06-15 21:15:03] INFO  - get reciving file info : 000
+[2025-06-15 21:15:03] INFO  - start receiving file
+[2025-06-15 21:15:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615211503.dat,filesize : 1916331
+[2025-06-15 21:15:08] INFO  - confirm ok!
+[2025-06-15 21:15:10] INFO  - logout code : 000
+[2025-06-15 21:15:10] INFO  - result : 000
+[2025-06-15 21:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-15 21:30:02] INFO  - login code : 000
+[2025-06-15 21:30:03] INFO  - get reciving file info : 000
+[2025-06-15 21:30:03] INFO  - start receiving file
+[2025-06-15 21:30:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615213003.dat,filesize : 1916331
+[2025-06-15 21:30:06] INFO  - confirm ok!
+[2025-06-15 21:30:08] INFO  - logout code : 000
+[2025-06-15 21:30:08] INFO  - result : 000
+[2025-06-15 21:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-15 21:45:03] INFO  - login code : 000
+[2025-06-15 21:45:03] INFO  - get reciving file info : 000
+[2025-06-15 21:45:03] INFO  - start receiving file
+[2025-06-15 21:45:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250615214503.dat,filesize : 1916331
+[2025-06-15 21:45:08] INFO  - confirm ok!
+[2025-06-15 21:45:10] INFO  - logout code : 000
+[2025-06-15 21:45:10] INFO  - result : 000
+[2025-06-22 07:00:05] INFO  - worker : common ,jobtype : RD
+[2025-06-22 07:00:06] INFO  - login code : 000
+[2025-06-22 07:00:06] INFO  - get reciving file info : 000
+[2025-06-22 07:00:06] INFO  - start receiving file
+[2025-06-22 07:00:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622070006.dat,filesize : 252298
+[2025-06-22 07:00:08] INFO  - confirm ok!
+[2025-06-22 07:00:16] INFO  - logout code : 000
+[2025-06-22 07:00:16] INFO  - result : 000
+[2025-06-22 07:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 07:15:02] INFO  - login code : 000
+[2025-06-22 07:15:03] INFO  - get reciving file info : 000
+[2025-06-22 07:15:03] INFO  - start receiving file
+[2025-06-22 07:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622071503.dat,filesize : 252298
+[2025-06-22 07:15:04] INFO  - confirm ok!
+[2025-06-22 07:15:05] INFO  - logout code : 000
+[2025-06-22 07:15:05] INFO  - result : 000
+[2025-06-22 07:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 07:30:02] INFO  - login code : 000
+[2025-06-22 07:30:03] INFO  - get reciving file info : 000
+[2025-06-22 07:30:03] INFO  - start receiving file
+[2025-06-22 07:30:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622073003.dat,filesize : 249889
+[2025-06-22 07:30:05] INFO  - confirm ok!
+[2025-06-22 07:30:05] INFO  - logout code : 000
+[2025-06-22 07:30:05] INFO  - result : 000
+[2025-06-22 07:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 07:45:02] INFO  - login code : 000
+[2025-06-22 07:45:02] INFO  - get reciving file info : 000
+[2025-06-22 07:45:02] INFO  - start receiving file
+[2025-06-22 07:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622074502.dat,filesize : 249889
+[2025-06-22 07:45:04] INFO  - confirm ok!
+[2025-06-22 07:45:04] INFO  - logout code : 000
+[2025-06-22 07:45:04] INFO  - result : 000
+[2025-06-22 08:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 08:00:03] INFO  - login code : 000
+[2025-06-22 08:00:04] INFO  - get reciving file info : 000
+[2025-06-22 08:00:04] INFO  - start receiving file
+[2025-06-22 08:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622080004.dat,filesize : 249889
+[2025-06-22 08:00:05] INFO  - confirm ok!
+[2025-06-22 08:00:06] INFO  - logout code : 000
+[2025-06-22 08:00:06] INFO  - result : 000
+[2025-06-22 08:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 08:15:02] INFO  - login code : 000
+[2025-06-22 08:15:02] INFO  - get reciving file info : 000
+[2025-06-22 08:15:02] INFO  - start receiving file
+[2025-06-22 08:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622081502.dat,filesize : 367286
+[2025-06-22 08:15:04] INFO  - confirm ok!
+[2025-06-22 08:15:08] INFO  - logout code : 000
+[2025-06-22 08:15:08] INFO  - result : 000
+[2025-06-22 08:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 08:30:02] INFO  - login code : 000
+[2025-06-22 08:30:03] INFO  - get reciving file info : 000
+[2025-06-22 08:30:03] INFO  - start receiving file
+[2025-06-22 08:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622083003.dat,filesize : 367286
+[2025-06-22 08:30:04] INFO  - confirm ok!
+[2025-06-22 08:30:05] INFO  - logout code : 000
+[2025-06-22 08:30:05] INFO  - result : 000
+[2025-06-22 08:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 08:45:02] INFO  - login code : 000
+[2025-06-22 08:45:03] INFO  - get reciving file info : 000
+[2025-06-22 08:45:03] INFO  - start receiving file
+[2025-06-22 08:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622084503.dat,filesize : 367286
+[2025-06-22 08:45:04] INFO  - confirm ok!
+[2025-06-22 08:45:05] INFO  - logout code : 000
+[2025-06-22 08:45:05] INFO  - result : 000
+[2025-06-22 09:00:04] INFO  - worker : common ,jobtype : RD
+[2025-06-22 09:00:05] INFO  - login code : 000
+[2025-06-22 09:00:05] INFO  - get reciving file info : 000
+[2025-06-22 09:00:05] INFO  - start receiving file
+[2025-06-22 09:00:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622090005.dat,filesize : 367286
+[2025-06-22 09:00:07] INFO  - confirm ok!
+[2025-06-22 09:00:07] INFO  - logout code : 000
+[2025-06-22 09:00:07] INFO  - result : 000
+[2025-06-22 09:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 09:15:02] INFO  - login code : 000
+[2025-06-22 09:15:03] INFO  - get reciving file info : 000
+[2025-06-22 09:15:03] INFO  - start receiving file
+[2025-06-22 09:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622091503.dat,filesize : 367286
+[2025-06-22 09:15:04] INFO  - confirm ok!
+[2025-06-22 09:15:05] INFO  - logout code : 000
+[2025-06-22 09:15:05] INFO  - result : 000
+[2025-06-22 09:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 09:30:02] INFO  - login code : 000
+[2025-06-22 09:30:02] INFO  - get reciving file info : 000
+[2025-06-22 09:30:02] INFO  - start receiving file
+[2025-06-22 09:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622093002.dat,filesize : 367286
+[2025-06-22 09:30:04] INFO  - confirm ok!
+[2025-06-22 09:30:04] INFO  - logout code : 000
+[2025-06-22 09:30:04] INFO  - result : 000
+[2025-06-22 09:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 09:45:02] INFO  - login code : 000
+[2025-06-22 09:45:02] INFO  - get reciving file info : 000
+[2025-06-22 09:45:02] INFO  - start receiving file
+[2025-06-22 09:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622094502.dat,filesize : 367286
+[2025-06-22 09:45:04] INFO  - confirm ok!
+[2025-06-22 09:45:04] INFO  - logout code : 000
+[2025-06-22 09:45:04] INFO  - result : 000
+[2025-06-22 10:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 10:00:04] INFO  - login code : 000
+[2025-06-22 10:00:04] INFO  - get reciving file info : 000
+[2025-06-22 10:00:04] INFO  - start receiving file
+[2025-06-22 10:00:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622100004.dat,filesize : 367286
+[2025-06-22 10:00:06] INFO  - confirm ok!
+[2025-06-22 10:00:06] INFO  - logout code : 000
+[2025-06-22 10:00:06] INFO  - result : 000
+[2025-06-22 10:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 10:15:02] INFO  - login code : 000
+[2025-06-22 10:15:03] INFO  - get reciving file info : 000
+[2025-06-22 10:15:03] INFO  - start receiving file
+[2025-06-22 10:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622101503.dat,filesize : 367286
+[2025-06-22 10:15:04] INFO  - confirm ok!
+[2025-06-22 10:15:05] INFO  - logout code : 000
+[2025-06-22 10:15:05] INFO  - result : 000
+[2025-06-22 10:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 10:30:02] INFO  - login code : 000
+[2025-06-22 10:30:02] INFO  - get reciving file info : 000
+[2025-06-22 10:30:02] INFO  - start receiving file
+[2025-06-22 10:30:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622103002.dat,filesize : 367286
+[2025-06-22 10:30:05] INFO  - confirm ok!
+[2025-06-22 10:30:05] INFO  - logout code : 000
+[2025-06-22 10:30:05] INFO  - result : 000
+[2025-06-22 10:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 10:45:02] INFO  - login code : 000
+[2025-06-22 10:45:02] INFO  - get reciving file info : 000
+[2025-06-22 10:45:02] INFO  - start receiving file
+[2025-06-22 10:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622104502.dat,filesize : 367286
+[2025-06-22 10:45:04] INFO  - confirm ok!
+[2025-06-22 10:45:05] INFO  - logout code : 000
+[2025-06-22 10:45:05] INFO  - result : 000
+[2025-06-22 11:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 11:00:03] INFO  - login code : 000
+[2025-06-22 11:00:04] INFO  - get reciving file info : 000
+[2025-06-22 11:00:04] INFO  - start receiving file
+[2025-06-22 11:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622110004.dat,filesize : 367286
+[2025-06-22 11:00:05] INFO  - confirm ok!
+[2025-06-22 11:00:06] INFO  - logout code : 000
+[2025-06-22 11:00:06] INFO  - result : 000
+[2025-06-22 11:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 11:15:02] INFO  - login code : 000
+[2025-06-22 11:15:03] INFO  - get reciving file info : 000
+[2025-06-22 11:15:03] INFO  - start receiving file
+[2025-06-22 11:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622111503.dat,filesize : 367286
+[2025-06-22 11:15:05] INFO  - confirm ok!
+[2025-06-22 11:15:05] INFO  - logout code : 000
+[2025-06-22 11:15:05] INFO  - result : 000
+[2025-06-22 11:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 11:30:02] INFO  - login code : 000
+[2025-06-22 11:30:02] INFO  - get reciving file info : 000
+[2025-06-22 11:30:02] INFO  - start receiving file
+[2025-06-22 11:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622113002.dat,filesize : 367286
+[2025-06-22 11:30:04] INFO  - confirm ok!
+[2025-06-22 11:30:04] INFO  - logout code : 000
+[2025-06-22 11:30:04] INFO  - result : 000
+[2025-06-22 11:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 11:45:02] INFO  - login code : 000
+[2025-06-22 11:45:02] INFO  - get reciving file info : 000
+[2025-06-22 11:45:02] INFO  - start receiving file
+[2025-06-22 11:45:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622114502.dat,filesize : 367286
+[2025-06-22 11:45:05] INFO  - confirm ok!
+[2025-06-22 11:45:05] INFO  - logout code : 000
+[2025-06-22 11:45:05] INFO  - result : 000
+[2025-06-22 12:00:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 12:00:03] INFO  - login code : 000
+[2025-06-22 12:00:03] INFO  - get reciving file info : 000
+[2025-06-22 12:00:03] INFO  - start receiving file
+[2025-06-22 12:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622120003.dat,filesize : 367286
+[2025-06-22 12:00:05] INFO  - confirm ok!
+[2025-06-22 12:00:06] INFO  - logout code : 000
+[2025-06-22 12:00:06] INFO  - result : 000
+[2025-06-22 12:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 12:15:03] INFO  - login code : 000
+[2025-06-22 12:15:03] INFO  - get reciving file info : 000
+[2025-06-22 12:15:03] INFO  - start receiving file
+[2025-06-22 12:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622121503.dat,filesize : 367286
+[2025-06-22 12:15:05] INFO  - confirm ok!
+[2025-06-22 12:15:05] INFO  - logout code : 000
+[2025-06-22 12:15:05] INFO  - result : 000
+[2025-06-22 12:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 12:30:02] INFO  - login code : 000
+[2025-06-22 12:30:02] INFO  - get reciving file info : 000
+[2025-06-22 12:30:02] INFO  - start receiving file
+[2025-06-22 12:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622123002.dat,filesize : 367286
+[2025-06-22 12:30:04] INFO  - confirm ok!
+[2025-06-22 12:30:04] INFO  - logout code : 000
+[2025-06-22 12:30:04] INFO  - result : 000
+[2025-06-22 12:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 12:45:01] INFO  - login code : 000
+[2025-06-22 12:45:02] INFO  - get reciving file info : 000
+[2025-06-22 12:45:02] INFO  - start receiving file
+[2025-06-22 12:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622124502.dat,filesize : 367286
+[2025-06-22 12:45:04] INFO  - confirm ok!
+[2025-06-22 12:45:04] INFO  - logout code : 000
+[2025-06-22 12:45:04] INFO  - result : 000
+[2025-06-22 13:00:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 13:00:02] INFO  - login code : 000
+[2025-06-22 13:00:03] INFO  - get reciving file info : 000
+[2025-06-22 13:00:03] INFO  - start receiving file
+[2025-06-22 13:00:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622130003.dat,filesize : 367286
+[2025-06-22 13:00:04] INFO  - confirm ok!
+[2025-06-22 13:00:05] INFO  - logout code : 000
+[2025-06-22 13:00:05] INFO  - result : 000
+[2025-06-22 13:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 13:15:03] INFO  - login code : 000
+[2025-06-22 13:15:03] INFO  - get reciving file info : 000
+[2025-06-22 13:15:03] INFO  - start receiving file
+[2025-06-22 13:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622131503.dat,filesize : 367286
+[2025-06-22 13:15:05] INFO  - confirm ok!
+[2025-06-22 13:15:05] INFO  - logout code : 000
+[2025-06-22 13:15:05] INFO  - result : 000
+[2025-06-22 13:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 13:30:02] INFO  - login code : 000
+[2025-06-22 13:30:02] INFO  - get reciving file info : 000
+[2025-06-22 13:30:02] INFO  - start receiving file
+[2025-06-22 13:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622133002.dat,filesize : 367286
+[2025-06-22 13:30:04] INFO  - confirm ok!
+[2025-06-22 13:30:05] INFO  - logout code : 000
+[2025-06-22 13:30:05] INFO  - result : 000
+[2025-06-22 13:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 13:45:02] INFO  - login code : 000
+[2025-06-22 13:45:02] INFO  - get reciving file info : 000
+[2025-06-22 13:45:02] INFO  - start receiving file
+[2025-06-22 13:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622134502.dat,filesize : 367286
+[2025-06-22 13:45:04] INFO  - confirm ok!
+[2025-06-22 13:45:05] INFO  - logout code : 000
+[2025-06-22 13:45:05] INFO  - result : 000
+[2025-06-22 14:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 14:00:03] INFO  - login code : 000
+[2025-06-22 14:00:03] INFO  - get reciving file info : 000
+[2025-06-22 14:00:03] INFO  - start receiving file
+[2025-06-22 14:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622140003.dat,filesize : 367286
+[2025-06-22 14:00:05] INFO  - confirm ok!
+[2025-06-22 14:00:06] INFO  - logout code : 000
+[2025-06-22 14:00:06] INFO  - result : 000
+[2025-06-22 14:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 14:15:03] INFO  - login code : 000
+[2025-06-22 14:15:03] INFO  - get reciving file info : 000
+[2025-06-22 14:15:03] INFO  - start receiving file
+[2025-06-22 14:15:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622141503.dat,filesize : 367286
+[2025-06-22 14:15:05] INFO  - confirm ok!
+[2025-06-22 14:15:05] INFO  - logout code : 000
+[2025-06-22 14:15:05] INFO  - result : 000
+[2025-06-22 14:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 14:30:02] INFO  - login code : 000
+[2025-06-22 14:30:02] INFO  - get reciving file info : 000
+[2025-06-22 14:30:02] INFO  - start receiving file
+[2025-06-22 14:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622143002.dat,filesize : 367286
+[2025-06-22 14:30:04] INFO  - confirm ok!
+[2025-06-22 14:30:05] INFO  - logout code : 000
+[2025-06-22 14:30:05] INFO  - result : 000
+[2025-06-22 14:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 14:45:03] INFO  - login code : 000
+[2025-06-22 14:45:03] INFO  - get reciving file info : 000
+[2025-06-22 14:45:03] INFO  - start receiving file
+[2025-06-22 14:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622144503.dat,filesize : 367286
+[2025-06-22 14:45:04] INFO  - confirm ok!
+[2025-06-22 14:45:05] INFO  - logout code : 000
+[2025-06-22 14:45:05] INFO  - result : 000
+[2025-06-22 15:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 15:00:03] INFO  - login code : 000
+[2025-06-22 15:00:04] INFO  - get reciving file info : 000
+[2025-06-22 15:00:04] INFO  - start receiving file
+[2025-06-22 15:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622150004.dat,filesize : 367286
+[2025-06-22 15:00:05] INFO  - confirm ok!
+[2025-06-22 15:00:06] INFO  - logout code : 000
+[2025-06-22 15:00:06] INFO  - result : 000
+[2025-06-22 15:15:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 15:15:02] INFO  - login code : 000
+[2025-06-22 15:15:02] INFO  - get reciving file info : 000
+[2025-06-22 15:15:02] INFO  - start receiving file
+[2025-06-22 15:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622151502.dat,filesize : 367286
+[2025-06-22 15:15:04] INFO  - confirm ok!
+[2025-06-22 15:15:05] INFO  - logout code : 000
+[2025-06-22 15:15:05] INFO  - result : 000
+[2025-06-22 15:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 15:30:02] INFO  - login code : 000
+[2025-06-22 15:30:03] INFO  - get reciving file info : 000
+[2025-06-22 15:30:03] INFO  - start receiving file
+[2025-06-22 15:30:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622153003.dat,filesize : 367286
+[2025-06-22 15:30:04] INFO  - confirm ok!
+[2025-06-22 15:30:05] INFO  - logout code : 000
+[2025-06-22 15:30:05] INFO  - result : 000
+[2025-06-22 15:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 15:45:02] INFO  - login code : 000
+[2025-06-22 15:45:02] INFO  - get reciving file info : 000
+[2025-06-22 15:45:02] INFO  - start receiving file
+[2025-06-22 15:45:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622154502.dat,filesize : 367286
+[2025-06-22 15:45:04] INFO  - confirm ok!
+[2025-06-22 15:45:05] INFO  - logout code : 000
+[2025-06-22 15:45:05] INFO  - result : 000
+[2025-06-22 16:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 16:00:03] INFO  - login code : 000
+[2025-06-22 16:00:03] INFO  - get reciving file info : 000
+[2025-06-22 16:00:03] INFO  - start receiving file
+[2025-06-22 16:00:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622160003.dat,filesize : 367286
+[2025-06-22 16:00:05] INFO  - confirm ok!
+[2025-06-22 16:00:06] INFO  - logout code : 000
+[2025-06-22 16:00:06] INFO  - result : 000
+[2025-06-22 16:15:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 16:15:02] INFO  - login code : 000
+[2025-06-22 16:15:02] INFO  - get reciving file info : 000
+[2025-06-22 16:15:02] INFO  - start receiving file
+[2025-06-22 16:15:04] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622161502.dat,filesize : 367286
+[2025-06-22 16:15:04] INFO  - confirm ok!
+[2025-06-22 16:15:05] INFO  - logout code : 000
+[2025-06-22 16:15:05] INFO  - result : 000
+[2025-06-22 16:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 16:30:03] INFO  - login code : 000
+[2025-06-22 16:30:03] INFO  - get reciving file info : 000
+[2025-06-22 16:30:03] INFO  - start receiving file
+[2025-06-22 16:30:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622163003.dat,filesize : 1622684
+[2025-06-22 16:30:07] INFO  - confirm ok!
+[2025-06-22 16:30:48] INFO  - logout code : 000
+[2025-06-22 16:30:48] INFO  - result : 000
+[2025-06-22 16:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 16:45:02] INFO  - login code : 000
+[2025-06-22 16:45:02] INFO  - get reciving file info : 000
+[2025-06-22 16:45:02] INFO  - start receiving file
+[2025-06-22 16:45:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622164502.dat,filesize : 1622684
+[2025-06-22 16:45:05] INFO  - confirm ok!
+[2025-06-22 16:45:07] INFO  - logout code : 000
+[2025-06-22 16:45:07] INFO  - result : 000
+[2025-06-22 17:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 17:00:04] INFO  - login code : 000
+[2025-06-22 17:00:05] INFO  - get reciving file info : 000
+[2025-06-22 17:00:05] INFO  - start receiving file
+[2025-06-22 17:00:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622170005.dat,filesize : 1622684
+[2025-06-22 17:00:08] INFO  - confirm ok!
+[2025-06-22 17:00:10] INFO  - logout code : 000
+[2025-06-22 17:00:10] INFO  - result : 000
+[2025-06-22 17:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 17:15:03] INFO  - login code : 000
+[2025-06-22 17:15:03] INFO  - get reciving file info : 000
+[2025-06-22 17:15:03] INFO  - start receiving file
+[2025-06-22 17:15:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622171503.dat,filesize : 1622684
+[2025-06-22 17:15:07] INFO  - confirm ok!
+[2025-06-22 17:15:09] INFO  - logout code : 000
+[2025-06-22 17:15:09] INFO  - result : 000
+[2025-06-22 17:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 17:30:02] INFO  - login code : 000
+[2025-06-22 17:30:02] INFO  - get reciving file info : 000
+[2025-06-22 17:30:02] INFO  - start receiving file
+[2025-06-22 17:30:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622173002.dat,filesize : 1622684
+[2025-06-22 17:30:06] INFO  - confirm ok!
+[2025-06-22 17:30:08] INFO  - logout code : 000
+[2025-06-22 17:30:08] INFO  - result : 000
+[2025-06-22 17:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 17:45:03] INFO  - login code : 000
+[2025-06-22 17:45:03] INFO  - get reciving file info : 000
+[2025-06-22 17:45:03] INFO  - start receiving file
+[2025-06-22 17:45:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622174503.dat,filesize : 1622684
+[2025-06-22 17:45:07] INFO  - confirm ok!
+[2025-06-22 17:45:08] INFO  - logout code : 000
+[2025-06-22 17:45:08] INFO  - result : 000
+[2025-06-22 18:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 18:00:04] INFO  - login code : 000
+[2025-06-22 18:00:04] INFO  - get reciving file info : 000
+[2025-06-22 18:00:04] INFO  - start receiving file
+[2025-06-22 18:00:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622180004.dat,filesize : 1622684
+[2025-06-22 18:00:07] INFO  - confirm ok!
+[2025-06-22 18:00:09] INFO  - logout code : 000
+[2025-06-22 18:00:09] INFO  - result : 000
+[2025-06-22 18:15:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 18:15:02] INFO  - login code : 000
+[2025-06-22 18:15:03] INFO  - get reciving file info : 000
+[2025-06-22 18:15:03] INFO  - start receiving file
+[2025-06-22 18:15:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622181503.dat,filesize : 1622684
+[2025-06-22 18:15:07] INFO  - confirm ok!
+[2025-06-22 18:15:08] INFO  - logout code : 000
+[2025-06-22 18:15:08] INFO  - result : 000
+[2025-06-22 18:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 18:30:02] INFO  - login code : 000
+[2025-06-22 18:30:02] INFO  - get reciving file info : 000
+[2025-06-22 18:30:02] INFO  - start receiving file
+[2025-06-22 18:30:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622183002.dat,filesize : 1622684
+[2025-06-22 18:30:06] INFO  - confirm ok!
+[2025-06-22 18:30:08] INFO  - logout code : 000
+[2025-06-22 18:30:08] INFO  - result : 000
+[2025-06-22 18:45:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 18:45:03] INFO  - login code : 000
+[2025-06-22 18:45:03] INFO  - get reciving file info : 000
+[2025-06-22 18:45:03] INFO  - start receiving file
+[2025-06-22 18:45:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622184503.dat,filesize : 1622684
+[2025-06-22 18:45:06] INFO  - confirm ok!
+[2025-06-22 18:45:08] INFO  - logout code : 000
+[2025-06-22 18:45:08] INFO  - result : 000
+[2025-06-22 19:00:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 19:00:03] INFO  - login code : 000
+[2025-06-22 19:00:03] INFO  - get reciving file info : 000
+[2025-06-22 19:00:03] INFO  - start receiving file
+[2025-06-22 19:00:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622190003.dat,filesize : 1622684
+[2025-06-22 19:00:07] INFO  - confirm ok!
+[2025-06-22 19:00:09] INFO  - logout code : 000
+[2025-06-22 19:00:09] INFO  - result : 000
+[2025-06-22 19:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 19:15:03] INFO  - login code : 000
+[2025-06-22 19:15:03] INFO  - get reciving file info : 000
+[2025-06-22 19:15:03] INFO  - start receiving file
+[2025-06-22 19:15:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622191503.dat,filesize : 1622684
+[2025-06-22 19:15:06] INFO  - confirm ok!
+[2025-06-22 19:15:08] INFO  - logout code : 000
+[2025-06-22 19:15:08] INFO  - result : 000
+[2025-06-22 19:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 19:30:02] INFO  - login code : 000
+[2025-06-22 19:30:02] INFO  - get reciving file info : 000
+[2025-06-22 19:30:02] INFO  - start receiving file
+[2025-06-22 19:30:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622193002.dat,filesize : 1622684
+[2025-06-22 19:30:05] INFO  - confirm ok!
+[2025-06-22 19:30:07] INFO  - logout code : 000
+[2025-06-22 19:30:07] INFO  - result : 000
+[2025-06-22 19:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 19:45:02] INFO  - login code : 000
+[2025-06-22 19:45:02] INFO  - get reciving file info : 000
+[2025-06-22 19:45:02] INFO  - start receiving file
+[2025-06-22 19:45:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622194502.dat,filesize : 1622684
+[2025-06-22 19:45:05] INFO  - confirm ok!
+[2025-06-22 19:45:07] INFO  - logout code : 000
+[2025-06-22 19:45:07] INFO  - result : 000
+[2025-06-22 20:00:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 20:00:03] INFO  - login code : 000
+[2025-06-22 20:00:03] INFO  - get reciving file info : 000
+[2025-06-22 20:00:03] INFO  - start receiving file
+[2025-06-22 20:00:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622200003.dat,filesize : 1622684
+[2025-06-22 20:00:08] INFO  - confirm ok!
+[2025-06-22 20:00:09] INFO  - logout code : 000
+[2025-06-22 20:00:09] INFO  - result : 000
+[2025-06-22 20:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 20:15:03] INFO  - login code : 000
+[2025-06-22 20:15:03] INFO  - get reciving file info : 000
+[2025-06-22 20:15:03] INFO  - start receiving file
+[2025-06-22 20:15:08] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622201503.dat,filesize : 1622684
+[2025-06-22 20:15:08] INFO  - confirm ok!
+[2025-06-22 20:15:10] INFO  - logout code : 000
+[2025-06-22 20:15:10] INFO  - result : 000
+[2025-06-22 20:30:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 20:30:03] INFO  - login code : 000
+[2025-06-22 20:30:03] INFO  - get reciving file info : 000
+[2025-06-22 20:30:03] INFO  - start receiving file
+[2025-06-22 20:30:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622203003.dat,filesize : 1622684
+[2025-06-22 20:30:07] INFO  - confirm ok!
+[2025-06-22 20:30:09] INFO  - logout code : 000
+[2025-06-22 20:30:09] INFO  - result : 000
+[2025-06-22 20:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 20:45:02] INFO  - login code : 000
+[2025-06-22 20:45:02] INFO  - get reciving file info : 000
+[2025-06-22 20:45:02] INFO  - start receiving file
+[2025-06-22 20:45:05] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622204502.dat,filesize : 1622684
+[2025-06-22 20:45:05] INFO  - confirm ok!
+[2025-06-22 20:45:07] INFO  - logout code : 000
+[2025-06-22 20:45:07] INFO  - result : 000
+[2025-06-22 21:00:03] INFO  - worker : common ,jobtype : RD
+[2025-06-22 21:00:04] INFO  - login code : 000
+[2025-06-22 21:00:04] INFO  - get reciving file info : 000
+[2025-06-22 21:00:04] INFO  - start receiving file
+[2025-06-22 21:00:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622210004.dat,filesize : 1622684
+[2025-06-22 21:00:07] INFO  - confirm ok!
+[2025-06-22 21:00:09] INFO  - logout code : 000
+[2025-06-22 21:00:09] INFO  - result : 000
+[2025-06-22 21:15:02] INFO  - worker : common ,jobtype : RD
+[2025-06-22 21:15:03] INFO  - login code : 000
+[2025-06-22 21:15:03] INFO  - get reciving file info : 000
+[2025-06-22 21:15:03] INFO  - start receiving file
+[2025-06-22 21:15:07] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622211503.dat,filesize : 1622684
+[2025-06-22 21:15:07] INFO  - confirm ok!
+[2025-06-22 21:15:08] INFO  - logout code : 000
+[2025-06-22 21:15:08] INFO  - result : 000
+[2025-06-22 21:30:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 21:30:02] INFO  - login code : 000
+[2025-06-22 21:30:03] INFO  - get reciving file info : 000
+[2025-06-22 21:30:03] INFO  - start receiving file
+[2025-06-22 21:30:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622213003.dat,filesize : 1622684
+[2025-06-22 21:30:06] INFO  - confirm ok!
+[2025-06-22 21:30:08] INFO  - logout code : 000
+[2025-06-22 21:30:08] INFO  - result : 000
+[2025-06-22 21:45:01] INFO  - worker : common ,jobtype : RD
+[2025-06-22 21:45:02] INFO  - login code : 000
+[2025-06-22 21:45:02] INFO  - get reciving file info : 000
+[2025-06-22 21:45:02] INFO  - start receiving file
+[2025-06-22 21:45:06] INFO  - compeleted receiving file : /home/joeunfish.in/public_html/ecommerce_java/recv/edi_20250622214502.dat,filesize : 1622684
+[2025-06-22 21:45:06] INFO  - confirm ok!
+[2025-06-22 21:45:07] INFO  - logout code : 000
+[2025-06-22 21:45:07] INFO  - result : 000

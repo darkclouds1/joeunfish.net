@@ -1,0 +1,320 @@
+.form-menu {
+     color: white;
+     padding: 5px 5px;
+     text-align: center;
+     font-size: 17px;
+     background-color: #2c80cf;
+     border-radius: 8px;
+     box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+     margin-top: 5px;
+     margin-bottom: 5px;
+     font-weight: 600;
+     letter-spacing: 0.5px;
+     text-transform: uppercase;
+}
+
+button, input, select, date {
+    height: 40px !important;
+}
+
+button {
+    width: 100px !important;
+    padding: 1px 1px;
+    transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
+}
+
+button:hover {
+    background-color: #2c80cf !important; /* 파란색으로 변경 */
+    color: white !important; /* 텍스트 색상을 흰색으로 */
+}
+
+.purchase-input-container button {
+    width: 100px !important;
+    padding: 1px 1px;
+}
+
+.search-row {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f0f7ff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin: 5px 0;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 추가 */
+  font-size: 15px;
+}
+
+.search-row:hover {
+  border-color: #4a90e2; /* 테두리 색상 변경 */
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #FFFF54; /* 배경색 살짝 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}
+
+.purchase-input-container.search-row button,
+.purchase-input-container.search-row date,
+.purchase-input-container.search-row label {
+    font-size: 15px !important;
+}
+
+.purchase-input-container.input-row input,
+.purchase-input-container.input-row select,
+.purchase-input-container.input-row button,
+.purchase-input-container.input-row date,
+.purchase-input-container.input-row label {
+    margin-bottom: 10px;
+    vertical-align: middle; /* 요소들의 수직 정렬 */
+    font-size: 15px;
+}
+
+/* 행사 기간 그룹 */
+.date-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 5px;
+    min-width: 450px;
+    flex-shrink: 0; /* 크기 축소 방지 */
+    vertical-align: middle; /* 요소들의 수직 정렬 */
+}
+
+.purchase-input-container #weight-imp,
+.purchase-input-container #remarks-imp {
+    min-width: 70px;
+    flex-grow: 2; /* 비고 필드가 가능한 한 많은 공간을 차지하도록 설정 */
+}
+
+.purchase-input-container #event-desc {
+    width: 35%;
+    flex-grow: 999; /* 가능한 한 많은 공간을 차지하도록 설정 */
+}
+
+.purchase-input-container #remarks {
+    flex-grow: 999;
+}
+
+.purchase-input-container button {
+    white-space: nowrap;
+    cursor: pointer;
+    width: 130px;
+}
+
+.actions {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center; /* 버튼을 가운데 정렬 */
+    gap: 10px; /* 버튼 사이의 간격 */
+}
+
+.action-button {
+    padding: 5px 5px;
+    cursor: pointer;
+    border: none; /* 기본 테두리 제거 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    color: white; /* 글자 색상 */
+    transition: background-color 0.3s; /* 배경색 변화에 애니메이션 추가 */
+    width: 100px;
+}
+
+/* 수정 버튼 스타일 */
+.edit-button {
+    background-color: #4CAF50; /* 초록색 */
+}
+
+.edit-button:hover {
+    background-color: #45a049; /* 어두운 초록색 */
+}
+
+/* 삭제 버튼 스타일 */
+.delete-button {
+    background-color: #f44336; /* 빨간색 */
+}
+
+.delete-button:hover {
+    background-color: #e53935; /* 어두운 빨간색 */
+}
+
+.table-container {
+    font-size: 15px;
+    border-collapse: separate;
+}
+
+.table-container thead th {
+    height: 40px;
+    border-right: 1px solid #fff;
+    padding: 0px 0px 0px 0px;
+    background-color: #000;
+    color: #fff;
+}
+
+/* 테이블 기본 설정 */
+.table-container table {
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+}
+
+/* 테이블 셀 높이 강제 설정 */
+.table-container tbody tr,
+.table-container tbody td {
+    height: 40px !important;
+    max-height: 40px !important;
+    min-height: 40px !important;
+    padding: 3px !important;
+    box-sizing: border-box !important;
+    font-size: 14px !important;
+}
+
+/* 셀 내부 컨텐츠 제어 */
+.table-container tbody td {
+    overflow: visible !important;  /* hidden에서 visible로 변경 */
+    white-space: normal !important;  /* nowrap에서 normal로 변경 */
+    word-wrap: break-word !important;  /* 긴 텍스트 줄바꿈 허용 */
+    line-height: 1.2 !important;  /* 줄간격 약간 늘림 */
+}
+
+/* input 요소 높이 조절 */
+.table-container input[type="checkbox"] {
+    height: 20px !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+}
+
+/* 테이블 내부의 모든 요소들의 마진과 패딩 초기화 */
+.table-container tbody td * {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.alternate-color-1 td {
+    background-color: #F2F2F2; /* 회색 */
+}
+
+.alternate-color-2 td {
+    background-color: #ffffff; /* 흰색 */
+}
+
+.selected-row td{
+    background-color: #BBF731 !important; /* 원하는 색상으로 변경 가능 */
+}
+
+/* 테이블 행 호버 효과 */
+.table-container tbody tr:hover td {
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #FFFF54; /* 배경색 살짝 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}
+
+/* 테이블 헤더 고정 */
+#specData thead,
+#purchaseDataImp thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #000;
+}
+
+/* 태블릿 및 작은 데스크톱 화면 */
+@media (max-width: 1024px) {
+    .purchase-input-container.input-row input,
+    .purchase-input-container.input-row button {
+        flex-basis: calc(33.333% - 10px);
+    }
+    
+    .purchase-input-container #remarks {
+        flex-basis: 100%;
+    }
+
+    .actions {
+        justify-content: center; /* 화면이 작아지면 중앙 정렬 */
+    }
+}
+
+/* 모바일 화면 */
+@media (max-width: 768px) {
+
+    button {
+        height: 30px !important;
+        padding: 0px 0px !important;
+        font-size: 12px !important;
+    }
+
+    .form-menu {
+        font-size: 13px !important;
+    }
+
+    .purchase-input-container {
+        flex-direction: column;
+    }
+    
+    .purchase-input-container.search-row {
+        flex-direction: row;
+        flex-wrap: nowrap !important; /* 줄바꿈 방지 */
+        gap: 5px; /* 요소들 사이 간격 */
+    }
+
+    .purchase-input-container button {
+        width: 70px;
+    }
+            
+    .actions {
+        flex-direction: row; /* column에서 row로 변경 */
+        justify-content: center; /* 가운데 정렬 유지 */
+        gap: 5px; /* 버튼 사이 간격 조정 */
+    }
+
+    .purchase-input-container.input-row input,
+    .purchase-input-container.input-row select,
+    .purchase-input-container.input-row button,
+    .purchase-input-container.input-row date,
+    .purchase-input-container.input-row label {
+        height: 30px !important;
+        width: 110px !important;
+        font-size: 12px !important;
+        margin-bottom: 3px !important;
+        vertical-align: middle; /* 요소들의 수직 정렬 */
+    }
+
+    input, select, date {
+        height: 30px !important;
+        width: 110px !important;
+        font-size: 12px !important;
+        margin-bottom: 0px 0px 3px 0px !important;
+    }
+
+    label {
+        font-size: 12px !important;
+    }
+
+    /* 행사명 행사설명 */
+    .purchase-input-container #event-name,
+    .purchase-input-container #event-desc {
+        width: 49% !important;
+    }
+
+    /* 셀 내부 컨텐츠 제어 */
+    .table-container tbody td {
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        line-height: 1 !important;
+        transition: all 0.3s ease; /* 부드러운 전환 효과 */
+    }
+
+    /* 선택된 행의 모든 셀 스타일 */
+    .table-container tbody tr.selected-row td {
+        overflow: visible !important;
+        white-space: normal !important;
+        position: relative;
+        z-index: 1;
+        min-height: auto !important;
+        height: auto !important;
+        background-color: #BBF731 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+}

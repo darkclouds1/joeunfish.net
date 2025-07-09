@@ -1,0 +1,449 @@
+.form-container {
+  margin: 1px;
+}
+
+.form-row {
+  display: flex !important;
+  margin-bottom: 1px !important;
+  flex-wrap: wrap;
+}
+
+/* 모든 필드에 기본적으로 적용될 스타일 */
+.form-field {
+  flex: 1 !important;
+  height: 40px;
+  min-width: 100px;
+  font-size: 15px;
+  box-sizing: border-box;
+  padding: 5px;
+  margin-right: 1px !important;
+  margin-bottom: 1px !important;
+  border: 1px solid #000;
+  border-radius: 4px;
+  background-color: white;
+  padding: 1px 1px 1px 1px !important;
+  border-radius: 4px !important;
+}
+
+#barcodeOutput,
+#barcodeInput1,
+#barcodeInput2 {
+  text-align: center;
+}
+
+/* readonly 색깔 바꾸기 */
+input[readonly],
+#productionDate,
+#category,
+#expiDate {
+  background-color: #f0f0f0;
+  color: #686868;
+  border-radius: 4px !important;
+}
+
+/* notification -by jsj 22-04-13 */
+.notification-container {
+  background: #2E83FB;
+  border-radius: 13px;
+  padding: 15px 20px;
+  /* position: absolute; */
+  top: 300px;
+  left: 300px;
+  /* bottom: 250px; */
+  display: none;
+  color: white;
+  max-height: 50px;
+  /* overflow-y: auto; */
+}
+
+.notification-container.show {
+  display: block;
+}
+
+/* <li> 요소에 대한 기본 스타일 */
+.liBtn {
+  height: 40px;
+  padding: 1px 10px;
+  width: 70px;
+  line-height: normal;
+}
+
+#listContainer li a.a1 {
+  line-height: 15px;
+  font-weight: bold;
+}
+
+.li-normal {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* <li> 요소가 선택됐을 때의 스타일 */
+.li-selected {
+  background-color: #f0f0f0;
+  /* 선택 시 변경될 배경 색상 */
+}
+
+/* <a> 태그에 대한 스타일을 기본 상태로 유지 */
+.a-normal {
+  text-decoration: none;
+  /* 밑줄 제거 */
+  color: black;
+  /* 글자 색상 */
+}
+
+/* 목록 표시 */
+li {
+  list-style: none;
+  font-size: 15px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+li .item {
+  color: red;
+}
+
+.list-item {
+  list-style-type: none;
+}
+
+.full-link {
+  display: block;
+  /* a 태그가 li의 전체 영역을 차지하도록 함 */
+  text-decoration: none;
+  /* 밑줄 제거 */
+  color: inherit;
+  /* 상위 요소의 글자색 상속 */
+}
+
+.content .item-no {
+  color: red;
+  font-size: 13px;
+}
+
+.item-details {
+  margin-left: 20px;
+  /* 세부사항에 대한 여백 조절 */
+}
+
+.del-btn {
+  /* 삭제 버튼 스타일링 */
+  margin-top: 10px;
+  height: 40px;
+  padding: 1px 10px;
+  width: 70px;
+  line-height: normal;
+}
+
+#loading {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#loading img {
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* table */
+table.type10 {
+  width: 100%;
+  /* 테이블 선 -by jsj 20210317 */
+  border: 1px solid #d8d7d7;
+  border-collapse: collapse;
+  text-align: left;
+  line-height: 1.5;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin: 0px 0px;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+table.type10 td {
+  padding: 3px;
+  vertical-align: top;
+  border: 1px solid #f3f3f3;
+}
+
+/* g2b 통합검색용 */
+table.type10.type11 th {
+  /* 헤드고정 -by jsj 20210313 head-frozen */
+  position: sticky;
+  top: 0px;
+  padding: 5px;
+  vertical-align: top;
+  text-align: center;
+  color: #ffffff;
+  background: #5C636A;
+  margin: 2px 2px;
+}
+
+table.type10 td a {
+  color: #ce6767;
+  /* color: #00f; */
+  cursor: pointer;
+  text-decoration: none;
+}
+
+table.type10 th a {
+  color: #ffffff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+table.type10 tr:nth-child(even) {
+  background: #dddddd;
+}
+
+table.type10 tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+/* button */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 3px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f0f7ff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin: 5px 0;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+.button-container:hover {
+  border-color: #4a90e2; /* 테두리 색상 변경 */
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #FFFF54; /* 배경색 살짝 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}
+
+button {
+  /* 기본 테마 스타일을 유지하면서 필요한 속성만 추가 */
+  min-width: 100px;
+  height: 40px;
+  margin: 0;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  transform: scale(1.05); /* 호버 시 버튼 크기 5% 증가 */
+  background-color: #4a90e2; /* 호버 시 배경색 변경 */
+  color: white; /* 호버 시 텍스트 색상 변경 */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 호버 시 그림자 효과 */
+}
+
+/* 닫기 버튼 */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.selected-row {
+    background-color: #90EE90 !important; /* 연한 초록색 */
+}
+
+.type10 tbody tr:hover {
+    cursor: pointer;
+    background-color: #90EE90 !important; /* 연한 녹색 */
+    transition: background-color 0.3s ease;
+}
+
+.selected-row {
+    background-color: #90EE90 !important; /* 연한 초록색 */
+}
+
+.type10 tbody tr:hover {
+    cursor: pointer;
+}
+
+/* ------------------------------ */
+/* 모바일영역 */
+/* ------------------------------ */
+@media (max-width: 480px) {
+
+  .form-field {
+    height: 30px;
+    font-size: 17px;
+    text-align: center;
+  }
+
+  .form-row #createDate {
+    max-width: 33%;
+    font-size: 15px;
+  }
+
+  .form-row #code_exp {
+    max-width: 33%;
+    font-size: 11px;
+  }
+
+  .form-row #joeun_cnt {
+    flex: 0 0 100%;
+    font-size: 11px;
+    text-align: center;
+  }
+
+
+  .form-row:first-child {
+    /* flex-grow:남은공간확장,flex-shrink(축소),flex-basis(시작크기) */
+    flex: 0 0 100%;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+
+    /* 처음 3개 요소는 전체 너비 사용 */
+    .form-field:not(.count):not(.total-weight) {
+      flex: 0 0 100%;
+      width: 100%;
+    }
+
+    /* 갯수와 중량은 한 줄에 함께 표시 */
+    .form-field.count,
+    .form-field.total-weight {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      display: inline-flex;
+      width: 50%;
+    }
+  }
+
+  /* barcode 최대 너비 */
+  .form-row:nth-child(2) {
+    flex: 0 0 100%;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap; /* 줄바꿈 허용 */
+    gap: 1px;
+  }
+
+  /* 앞의 두 요소 스타일 */
+ .form-row:nth-child(2) .form-field:not(.barcodeOutput) {
+    flex: 1; /* 첫 줄의 두 요소가 공간을 균등하게 나눔 */
+    width: calc(50% - 1px); /* 50%에서 gap 고려하여 조정 */
+    margin-bottom: 1px;
+  }
+
+  /* 바코드 입력란 스타일 */
+  .form-row:nth-child(2) .form-field.barcodeOutput {
+    flex: 0 0 100%; /* 전체 너비 사용 */
+    width: 100%;
+  }
+
+  /* 제조, 기한, 중량 */
+  .form-row:nth-child(3) {
+    height: 30px !important;
+    display: flex;
+    justify-content: space-between;
+    .form-field {
+      flex: 1;
+      text-align: center;
+      margin: 0 1px; /* 좌우 간격 1px 추가 */
+    }
+  }
+
+  /* 세 필드의 공통 스타일 */
+  #productionDate,
+  #expiDate,
+  #weightInput {
+    flex: 0 0 33.33%; /* 정확히 3등분 */
+    padding: 2px;
+    text-align: center;
+    min-width: 0;
+  }
+
+  .button-container button {
+    height: 35px !important;
+    margin-right: 3px;
+    width: 25%;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* 목록 표시 */
+  li {
+    list-style: none;
+    font-size: 13px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .item-details {
+    margin: 1px 1px 1px 3px;
+  }
+
+  /* 바코드는 폰트 작게 */
+  .form-field.barcode-scan {
+    font-size: 11px;
+    text-align: center;
+  }
+}
+
+/* 모달 배경 */
+.modal {
+    display: block; /* 항상 보이게 */
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4); /* 반투명 검정 */
+}
+
+/* 모달 내용 */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 중앙 정렬 */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* 모달 너비 */
+}
+
+.modal-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #bfc9d9;
+  padding-bottom: 8px;
+  /* 기존 스타일과 충돌하지 않도록 색상, 배경 등은 최소화 */
+}

@@ -1,0 +1,2576 @@
+# Translation of Plugins - WP-Members Membership Plugin - Stable (latest release) in Korean
+# This file is distributed under the same license as the Plugins - WP-Members Membership Plugin - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2025-02-12 23:45:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: ko_KR\n"
+"Project-Id-Version: Plugins - WP-Members Membership Plugin - Stable (latest release)\n"
+
+#: includes/admin/partials/onboarding_notice.php:32
+msgid "Go to WordPress plugins page"
+msgstr "워드프레스 플러그인 페이지로 이동"
+
+#: includes/cli/class-wp-members-cli-db-tools.php:275
+msgid "List of meta keys contained in %s %s"
+msgstr "%s 에 포함된 메타 키 목록 %s"
+
+#: includes/cli/class-wp-members-cli-db-tools.php:260
+msgid "There are no views in %s"
+msgstr "%s 에 조회수가 없습니다."
+
+#: includes/cli/class-wp-members-cli-db-tools.php:256
+msgid "List of views contained in %s"
+msgstr "%s에 포함된 뷰 목록"
+
+#: includes/cli/class-wp-members-cli-db-tools.php:239
+msgid "An unknown error occurred. The following views were not dropped: %s"
+msgstr "알 수 없는 오류가 발생했습니다. 다음 보기가 삭제되지 않았습니다: %s"
+
+#: includes/cli/class-wp-members-cli-db-tools.php:233
+msgid "Dropped user view: "
+msgstr "사용자 보기가 삭제되었습니다: "
+
+#: includes/cli/class-wp-members-cli-db-tools.php:217
+msgid "An unknown error occurred. View was not added."
+msgstr "알 수 없는 오류가 발생했습니다. 보기가 추가되지 않았습니다."
+
+#: includes/cli/class-wp-members-cli-db-tools.php:215
+msgid "New view added: "
+msgstr "새 보기가 추가되었습니다: "
+
+#: includes/cli/class-wp-members-cli-db-tools.php:199
+msgid "A \"where_value\" value is required when including a comparison"
+msgstr "비교를 포함할 때 \"where_value\" 값은 필수입니다."
+
+#: includes/cli/class-wp-members-cli-db-tools.php:138
+msgid "%s is not a valid meta key in %s."
+msgstr "%s의 메타 키가 %s에 올바르지 않습니다."
+
+#: includes/cli/class-wp-members-cli-db-tools.php:118
+msgid "Fields for %s fields contains a field that is not a valid %s field."
+msgstr "필드에 %s 필드에 유효한 %s 필드가 아닌 필드가 포함되어 있습니다."
+
+#: includes/cli/class-wp-members-cli-db-tools.php:71
+msgid "View already exists. Try another name or edit existing view."
+msgstr "보기가 이미 있습니다. 다른 이름을 사용하거나 기존 보기를 편집하세요."
+
+#: includes/class-wp-members-dialogs.php:229
+msgid "There was an unspecified error"
+msgstr "지정되지 않은 오류가 발생했습니다."
+
+#: includes/class-wp-members-dialogs.php:228
+msgid "User field cannot be empty"
+msgstr "사용자 필드는 비워 둘 수 없습니다."
+
+#: includes/class-wp-members-dialogs.php:208
+msgid "%sERROR%s: User has not been activated."
+msgstr "%s오류%s: 사용자가 활성화되지 않았습니다."
+
+#: includes/class-wp-members-dialogs.php:176
+msgid "Congratulations! Your registration was successful. You may now log in using the password that was emailed to you."
+msgstr "축하합니다! 등록이 완료되었습니다. 이제 이메일로 전송된 비밀번호를 사용하여 로그인할 수 있습니다."
+
+#: includes/class-wp-members-dialogs.php:147
+msgid "%sERROR%s: Account not confirmed. %sRequest a new confirmation link%s."
+msgstr "%s오류%s: 계정을 확인하지 못했습니다. %s새 확인 링크 요청%s."
+
+#: includes/class-wp-members-dialogs.php:108
+msgid "A new confirmation link has been sent. Be sure to check your spam folder."
+msgstr "새 확인 링크가 전송되었습니다. 스팸 폴더를 확인하세요."
+
+#: includes/class-wp-members-dialogs.php:107
+msgid "Resend confirmation"
+msgstr "확인 다시 보내기"
+
+#: includes/class-wp-members-dialogs.php:106
+msgid "Resend confirmation email"
+msgstr "확인 이메일 재전송"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:145
+msgid "Apply"
+msgstr "적용"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:141
+msgid "Bulk actions"
+msgstr "일괄 작업"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:92
+msgid "WC Update"
+msgstr "WC 업데이트"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:88
+msgid "WC My Acct"
+msgstr "WC 내 계정"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:84
+msgid "WC Chkout"
+msgstr "WC Chkout"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:77
+msgid "Profile"
+msgstr "프로필"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:140
+msgid "WP-Members shorcode settings were updated"
+msgstr "WP-Members 쇼트코드 설정이 업데이트되었습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:281
+msgid "The plugin has a standard stylesheet. To use it, leave the following option empty. To use a custom stylesheet, enter its URL below."
+msgstr "플러그인에는 표준 스타일시트가 있습니다. 이를 사용하려면 다음 옵션을 비워 두세요. 사용자 정의 스타일시트를 사용하려면 아래에 해당 URL을 입력하세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:184
+msgid "Add WP-Members fields to WooCommerce My Account user profile update"
+msgstr "우커머스 내 계정 사용자 프로필 업데이트에 WP-Members 필드 추가하기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:184
+msgid "WooCommerce Update"
+msgstr "우커머스 업데이트"
+
+#: includes/admin/partials/onboarding_notice.php:27
+msgid "Want more features? Or need help?"
+msgstr "더 많은 기능을 원하시나요? 도움이 필요하신가요?"
+
+#: includes/admin/partials/onboarding_notice.php:13
+msgid "WP-Members installation complete"
+msgstr "WP-Members 설치 완료"
+
+#: includes/admin/partials/onboarding_notice.php:13
+msgid "WP-Members update complete"
+msgstr "WP-Members 업데이트 완료"
+
+#: includes/admin/class-wp-members-user-utilities.php:139
+msgid "Submit"
+msgstr "전송"
+
+#: includes/admin/class-wp-members-user-utilities.php:136
+msgid "Confirm all users?"
+msgstr "모든 사용자를 확인하시겠습니까?"
+
+#: includes/admin/class-wp-members-user-utilities.php:135
+msgid "This process will mark all existing user accounts as confirmed in WP-Members."
+msgstr "이 프로세스는 모든 기존 사용자 계정을 WP-Members에서 확인된 것으로 표시합니다."
+
+#: includes/admin/class-wp-members-user-utilities.php:134
+msgid "User Confirmation"
+msgstr "사용자 확인"
+
+#: includes/admin/class-wp-members-user-utilities.php:130
+msgid "Activate all users?"
+msgstr "모든 사용자를 활성화하시겠습니까?"
+
+#: includes/admin/class-wp-members-user-utilities.php:129
+msgid "It will not change any passwords or send any emails to users."
+msgstr "비밀번호를 변경하거나 사용자에게 이메일을 보내지 않습니다."
+
+#: includes/admin/class-wp-members-user-utilities.php:128
+msgid "This process will mark all existing user accounts as activated in WP-Members."
+msgstr "이 프로세스는 기존 모든 사용자 계정을 WP-Members에서 활성화된 것으로 표시합니다."
+
+#: includes/admin/class-wp-members-user-utilities.php:127
+msgid "Moderated Registration"
+msgstr "중재 등록"
+
+#: includes/admin/class-wp-members-user-utilities.php:121
+msgid "WP-Members User Utilities"
+msgstr "WP-Members 사용자 유틸리티"
+
+#: includes/admin/class-wp-members-user-utilities.php:114
+msgid "%s users were marked as confirmed"
+msgstr "%s 사용자가 확인됨으로 표시됨"
+
+#: includes/admin/class-wp-members-user-utilities.php:108
+msgid "%s users were marked as activated"
+msgstr "%s 사용자가 활성화됨으로 표시됨"
+
+#: includes/admin/class-wp-members-user-utilities.php:102
+msgid "Submission was invalid. No action taken."
+msgstr "제출이 유효하지 않습니다. 취한 조치가 없습니다."
+
+#: includes/admin/class-wp-members-admin-users.php:270
+msgid "Resent welcome message to %s"
+msgstr "환영 메시지를 %s에게 다시 보내기"
+
+#: includes/admin/class-wp-members-admin-users.php:183
+msgid "Resent welcome to %s users"
+msgstr "사용자 %s에게 환영 답장 보내기"
+
+#: includes/admin/class-wp-members-admin-users.php:180
+msgid "%s users unconfirmed"
+msgstr "%s 사용자 미확인"
+
+#: includes/admin/class-wp-members-admin-users.php:177
+msgid "%s users confirmed"
+msgstr "%s 사용자가 확인됨"
+
+#: includes/admin/class-wp-members-admin-users.php:28
+#: includes/admin/class-wp-members-admin-users.php:39
+#: includes/admin/class-wp-members-admin-users.php:81
+msgid "Resend welcome email"
+msgstr "환영 이메일 다시 보내기"
+
+#: includes/admin/class-wp-members-admin-api.php:391
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:74
+msgid "Shortcodes"
+msgstr "쇼트코드"
+
+#: includes/class-wp-members-dialogs.php:225
+msgid "Invalid user."
+msgstr "잘못된 사용자."
+
+#: includes/class-wp-members-dialogs.php:224
+msgid "Invalid key."
+msgstr "잘못된 키입니다."
+
+#: includes/class-wp-members-dialogs.php:192
+msgid "You have not completed account validation. Check your inbox for the valdation email."
+msgstr "계정 유효성 검사를 완료하지 않았습니다. 받은 편지함에서 유효성 검사 이메일을 확인하세요."
+
+#: includes/class-wp-members-dialogs.php:191
+msgid "Your account request is still pending approval."
+msgstr "계정 요청이 아직 승인 대기 중입니다."
+
+#: includes/class-wp-members-dialogs.php:199
+msgid "Captcha code was empty. You must complete the captcha code."
+msgstr "캡차 코드가 비어 있습니다. 캡차 코드를 입력해야 합니다."
+
+#: includes/class-wp-members-dialogs.php:198
+msgid "Error with the captcha code configuration. Please notify the site administrator"
+msgstr "보안 문자 코드 구성에 오류가 발생했습니다. 사이트 관리자에게 알려주세요."
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:97
+msgid "Search"
+msgstr "검색"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:96
+msgid "Users"
+msgstr "사용자"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:75
+msgid "Registration"
+msgstr "등록"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:71
+#: includes/admin/tabs/class-wp-members-fields-table.php:75
+#: includes/admin/tabs/class-wp-members-fields-table.php:76
+#: includes/admin/tabs/class-wp-members-fields-table.php:77
+#: includes/admin/tabs/class-wp-members-fields-table.php:84
+#: includes/admin/tabs/class-wp-members-fields-table.php:88
+#: includes/admin/tabs/class-wp-members-fields-table.php:92
+#: includes/admin/tabs/class-wp-members-fields-table.php:96
+#: includes/admin/tabs/class-wp-members-fields-table.php:97
+msgid "Click to check all"
+msgstr "클릭하여 모두 확인"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:58
+msgid "Edit this field"
+msgstr "이 필드 편집"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:185
+msgid "If a WooCommerce product is restricted, it will not be purchasable"
+msgstr "WooCommerce 제품이 제한되어 있으면 구매할 수 없습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:185
+msgid "Restrict Product Purchase"
+msgstr "제품 구매 제한"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:180
+msgid "WooCommerce Settings"
+msgstr "WooCommerce 설정"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:90
+msgid "%sSee docs for security implications%s."
+msgstr "%s보안에 미치는 영향은 문서를 참조하세요%s."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:89
+msgid "Fully enabled"
+msgstr "완전히 활성화됨"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:85
+msgid "Enables the shortcode to display only if the user has \"list_users\" capability."
+msgstr "사용자에게 \"list_users\" 기능이 있는 경우에만 단축 코드를 표시할 수 있도록 설정합니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:84
+msgid "Partially enabled"
+msgstr "부분적으로 활성화됨"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:80
+msgid "Fully disables the &#91;wpmem_field&#93; shortcode."
+msgstr "Wpmem_field&#93; 쇼트코드를 완전히 비활성화합니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:79
+msgid "Fully disabled"
+msgstr "완전히 비활성화됨"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:75
+msgid "&#91;wpmem_field&#93; shortcode settings:"
+msgstr "&#91;wpmem_field&#93; 단축 코드 설정:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:94
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:177
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:180
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:201
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:247
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:278
+msgid "Click the icon for documentation"
+msgstr "문서 아이콘을 클릭합니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:878
+msgid "User lacks required capability to make this change."
+msgstr "사용자에게 이 변경을 수행하는 데 필요한 기능이 없습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:872
+msgid "The link has expired. Please reload the page, or make sure your request originates from the WP-Members Fields tab."
+msgstr "링크가 만료되었습니다. 페이지를 새로고침하거나 WP-회원 필드 탭에서 요청이 시작되었는지 확인하세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:263
+msgid "PHP Date Format"
+msgstr "PHP 날짜 형식"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:189
+msgid "timestamp"
+msgstr "타임스탬프"
+
+#: includes/admin/dialogs.php:126
+msgid "Full text feeds allow your protected content in an RSS reader."
+msgstr "전체 텍스트 피드를 통해 RSS 리더에서 보호된 콘텐츠를 볼 수 있습니다."
+
+#: includes/admin/dialogs.php:120
+msgid "If you do not want non-registered users to comment, change this setting."
+msgstr "등록하지 않은 사용자가 댓글을 달지 못하게 하려면 이 설정을 변경하세요."
+
+#: includes/admin/dialogs.php:114
+msgid "If you do not want users to register through wp-login.php, uncheck this option."
+msgstr "사용자가 wp-login.php를 통해 등록하지 못하도록 하려면 이 옵션을 선택 취소하세요."
+
+#: includes/admin/dialogs.php:83
+msgid "WP-Members Options"
+msgstr "WP-Members 옵션"
+
+#: includes/admin/class-wp-members-bulk-edit-users.php:112
+msgid "WP-Members Bulk User Update"
+msgstr "WP-Members 대량 사용자 업데이트"
+
+#: includes/class-wp-members-dialogs.php:227
+msgid "Request a new reset key."
+msgstr "새 재설정 키를 요청하세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:218
+msgid "Opt in to security and updates notifications and non-sensitive diagnostics tracking"
+msgstr "보안 및 업데이트 알림과 민감하지 않은 진단 추적에 동의하세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:218
+msgid "Notifications & Diagnostics"
+msgstr "알림 및 진단"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:164
+msgid "Allows for a trial period before PayPal payment is required"
+msgstr "PayPal 결제가 필요하기 전에 체험 기간 허용"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:163
+msgid "Requires payment through PayPal following registration"
+msgstr "등록 후 PayPal을 통해 결제해야 합니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:163
+msgid "Enable PayPal"
+msgstr "PayPal 사용"
+
+#: includes/admin/partials/onboarding_notice.php:33
+msgid "Go to WordPress updates page"
+msgstr "워드프레스 업데이트 페이지로 이동"
+
+#: includes/admin/partials/onboarding_notice.php:31
+msgid "Go to WP-Members settings"
+msgstr "WP-회원 설정으로 이동"
+
+#: includes/admin/partials/onboarding_notice.php:25
+msgid "WP-Members documentation"
+msgstr "WP-Members 문서"
+
+#: includes/admin/partials/onboarding_notice.php:24
+msgid "WP-Members version %s release notes"
+msgstr "WP-Members 버전 %s 릴리스 정보"
+
+#: includes/class-wp-members-user-export.php:296
+msgid "Confirmed?"
+msgstr "확인하셨나요?"
+
+#: includes/install.php:650
+msgid "Complete the update"
+msgstr "업데이트 완료"
+
+#: includes/admin/partials/onboarding_notice.php:44
+msgid "Read the release notes"
+msgstr "릴리스 노트 읽기"
+
+#: includes/install.php:649
+msgid "Thank you for updating WP-Members, the original WordPress membership plugin."
+msgstr "오리지널 워드프레스 멤버십 플러그인인 WP-Members를 업데이트해 주셔서 감사합니다."
+
+#: includes/install.php:644
+msgid "Complete plugin setup"
+msgstr "플러그인 설정 완료"
+
+#: includes/admin/partials/onboarding_notice.php:53
+msgid "We do not track any personal information, and no data is ever shared with third parties!"
+msgstr "저희는 어떠한 개인 정보도 추적하지 않으며, 어떠한 데이터도 제3자와 공유하지 않습니다!"
+
+#: includes/admin/partials/onboarding_notice.php:52
+msgid "This is only so we know how the plugin is being used so we can make it better and more secure."
+msgstr "이는 플러그인이 어떻게 사용되고 있는지 파악하여 더 좋고 안전한 플러그인을 만들기 위한 것입니다."
+
+#: includes/admin/partials/onboarding_notice.php:49
+msgid "Opt-in to our security and feature updates notifications and non-sensitive diagnostic tracking."
+msgstr "보안 및 기능 업데이트 알림과 민감하지 않은 진단 추적에 동의합니다."
+
+#: includes/admin/partials/onboarding_notice.php:47
+msgid "Never miss an important update!"
+msgstr "중요한 업데이트를 놓치지 마세요!"
+
+#: includes/install.php:643
+msgid "Thank you for installing WP-Members, the original WordPress membership plugin."
+msgstr "오리지널 워드프레스 멤버십 플러그인인 WP-Members를 설치해 주셔서 감사합니다."
+
+#: includes/class-wp-members-products.php:400
+msgid "Membership Attributes"
+msgstr "멤버십 속성"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:211
+msgid "Enable memberships"
+msgstr "멤버십 사용"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:109
+msgid "Do not restrict"
+msgstr "제한 안 함"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:105
+msgid "Content Restriction"
+msgstr "콘텐츠 제한"
+
+#: includes/admin/class-wp-members-products-admin.php:519
+msgid "Restrict access by membership:"
+msgstr "멤버십별로 액세스를 제한합니다:"
+
+#: includes/admin/class-wp-members-products-admin.php:171
+msgid "Access by child membership"
+msgstr "하위 멤버십으로 액세스"
+
+#: includes/admin/class-wp-members-admin-posts.php:196
+#: includes/admin/class-wp-members-admin-posts.php:339
+#: includes/admin/class-wp-members-admin-posts.php:347
+msgid "Restricted"
+msgstr "제한됨"
+
+#: includes/admin/class-wp-members-admin-posts.php:195
+#: includes/admin/class-wp-members-admin-posts.php:342
+#: includes/admin/class-wp-members-admin-posts.php:345
+msgid "Unrestricted"
+msgstr "무제한"
+
+#: includes/admin/class-wp-members-admin-posts.php:125
+msgid "%s unrestricted"
+msgstr "%s 제한 없음"
+
+#: includes/admin/class-wp-members-admin-posts.php:125
+msgid "%s restricted"
+msgstr "%s 제한됨"
+
+#: includes/admin/class-wp-members-admin-posts.php:31
+#: includes/admin/class-wp-members-admin-posts.php:34
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:110
+msgid "Restrict"
+msgstr "제한"
+
+#: includes/admin/class-wp-members-admin-posts.php:30
+#: includes/admin/class-wp-members-admin-posts.php:33
+msgid "Unrestrict"
+msgstr "Unrestrict"
+
+#: includes/cli/class-wp-members-cli-user.php:248
+msgid "User role: %s"
+msgstr "사용자 역할: %s"
+
+#: includes/class-wp-members-dialogs.php:189
+msgid "Reset request received. An email with instructions to complete the password reset has been sent."
+msgstr "재설정 요청이 접수되었습니다. 비밀번호 재설정을 완료하기 위한 지침이 포함된 이메일이 전송되었습니다."
+
+#: includes/class-wp-members-dialogs.php:187
+msgid "Invalid username or email address."
+msgstr "사용자 이름 또는 이메일 주소가 잘못되었습니다."
+
+#: includes/class-wp-members-dialogs.php:186
+msgid "Password successfully changed."
+msgstr "비밀번호가 성공적으로 변경되었습니다."
+
+#: includes/class-wp-members-dialogs.php:165
+msgid "Invalid username or password."
+msgstr "잘못된 사용자 아이디 또는 비밀번호입니다."
+
+#: includes/class-wp-members-dialogs.php:138
+#: includes/class-wp-members-dialogs.php:181
+msgid "Sorry, that email address already has an account. Please try another."
+msgstr "죄송합니다. 해당 이메일 주소에 이미 계정이 있습니다. 다른 아이디를 사용해 보세요."
+
+#: includes/class-wp-members-dialogs.php:137
+msgid "Sorry, that username is taken, Please try another."
+msgstr "이미 사용 중인 사용자 아이디입니다. 다른 아이디를 입력해 주세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:177
+msgid "New Feature Settings"
+msgstr "새로운 기능 설정"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:423
+msgid "Save Changes"
+msgstr "변경 사항 저장"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:316
+msgid "Selecting \"after\" will generally display the label to the right of the checkbox"
+msgstr "'이후'를 선택하면 일반적으로 확인란 오른쪽에 레이블이 표시됩니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:315
+msgid "After the input tag"
+msgstr "입력 태그 뒤에"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:314
+msgid "Before the input tag"
+msgstr "입력 태그 앞에"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:312
+msgid "HTML label position"
+msgstr "HTML 레이블 위치"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:77
+msgid "Send HTML email"
+msgstr "HTML 이메일 보내기"
+
+#: includes/class-wp-members-user-export.php:271
+msgid "You do not have the required user capabilities to export users."
+msgstr "사용자를 내보내는 데 필요한 사용자 기능이 없습니다."
+
+#: includes/admin/class-wp-members-products-admin.php:797
+msgid "No memberships have been created. %sCreate new memberships here%s"
+msgstr "멤버십이 만들어지지 않았습니다. 여기에서 %s새 멤버십을 만드세요%s"
+
+#: includes/admin/class-wp-members-products-admin.php:761
+msgid "Update"
+msgstr "업데이트"
+
+#: includes/admin/class-wp-members-products-admin.php:746
+msgid "Action"
+msgstr "액션"
+
+#: includes/admin/class-wp-members-products-admin.php:738
+msgid "Membership Access"
+msgstr "멤버십 액세스"
+
+#: includes/admin/class-wp-members-admin-users.php:412
+msgid "Not Confirmed"
+msgstr "확인되지 않음"
+
+#: includes/class-wp-members-dialogs.php:212
+msgid "Your account is now pending approval"
+msgstr "계정이 승인 대기 중입니다."
+
+#: includes/admin/class-wp-members-admin-api.php:415
+#: includes/admin/class-wp-members-admin-api.php:433
+msgid "User email validated"
+msgstr "사용자 이메일 유효성 검사 완료"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:182
+msgid "Add WP-Members fields to WooCommerce registration during checkout"
+msgstr "결제 시 WooCommerce 등록에 WP-Members 필드 추가"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:182
+msgid "WooCommerce Checkout"
+msgstr "WooCommerce 결제"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:183
+msgid "Add WP-Members fields to WooCommerce My Account registration"
+msgstr "WooCommerce 내 계정 등록에 WP-Members 필드 추가"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:183
+msgid "WooCommerce My Account"
+msgstr "WooCommerce 내 계정"
+
+#: includes/admin/class-wp-members-admin-users.php:411
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:561
+msgid "Confirmed"
+msgstr "확인됨"
+
+#: includes/admin/class-wp-members-admin-users.php:536
+msgid "Not confirmed"
+msgstr "확인되지 않음"
+
+#: includes/admin/class-wp-members-admin-users.php:249
+msgid "That user is already confirmed"
+msgstr "해당 사용자는 이미 확인되었습니다."
+
+#: includes/admin/class-wp-members-admin-users.php:245
+msgid "%s unconfirmed"
+msgstr "%s 확인되지 않음"
+
+#: includes/admin/class-wp-members-admin-users.php:240
+msgid "%s confirmed"
+msgstr "%s 확인됨"
+
+#: includes/admin/class-wp-members-admin-users.php:235
+msgid "You cannot confirm or unconfirm yourself"
+msgstr "자신을 확인하거나 확인 취소할 수 없습니다."
+
+#: includes/admin/class-wp-members-admin-users.php:30
+#: includes/admin/class-wp-members-admin-users.php:41
+#: includes/admin/class-wp-members-admin-users.php:74
+msgid "Unconfirm"
+msgstr "미확인"
+
+#: includes/admin/class-wp-members-admin-users.php:29
+#: includes/admin/class-wp-members-admin-users.php:40
+#: includes/admin/class-wp-members-admin-users.php:71
+msgid "Confirm"
+msgstr "확인"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:215
+msgid "Confirmation Link"
+msgstr "확인 링크"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:140
+msgid "hCaptcha requires an API key. You can sign up for %s an hCaptcha API key here %s"
+msgstr "hCaptcha에는 API 키가 필요합니다. 여기에서 %s hCaptcha API 키 %s를 등록할 수 있습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:106
+msgid "CAPTCHA type was changed. Please verify and update the settings below for the new CAPTCHA type."
+msgstr "캡차 유형이 변경되었습니다. 새 캡차 유형에 대한 아래 설정을 확인하고 업데이트하세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:91
+msgid "CAPTCHA Type"
+msgstr "캡차 유형"
+
+#: includes/cli/class-wp-members-cli-user.php:208
+msgid "User: %s"
+msgstr "사용자:\t%s"
+
+#: includes/cli/class-wp-members-cli-user.php:91
+msgid "No user id specified. Must specify user id as --id=123"
+msgstr "사용자 ID를 지정하지 않았습니다. 사용자 아이디를 --id=123으로 지정해야 합니다."
+
+#: includes/cli/class-wp-members-cli-user.php:88
+msgid "Invalid user ID. Please specify a valid user. Try `wp user list`."
+msgstr "잘못된 사용자 ID입니다. 유효한 사용자를 지정하세요. 'wp 사용자 목록'을 사용해 보세요."
+
+#: includes/cli/class-wp-members-cli-user.php:67
+msgid "User deactivated."
+msgstr "사용자가 비활성화되었습니다."
+
+#: includes/cli/class-wp-members-cli-user.php:40
+msgid "User is already activated."
+msgstr "사용자가 이미 활성화되었습니다."
+
+#: includes/cli/class-wp-members-cli-user.php:37
+msgid "Email notification sent to user."
+msgstr "사용자에게 이메일 알림을 보냅니다."
+
+#: includes/cli/class-wp-members-cli-user.php:35
+msgid "User activated."
+msgstr "사용자가 활성화되었습니다."
+
+#: includes/cli/class-wp-members-cli-user.php:24
+#: includes/cli/class-wp-members-cli-user.php:62
+msgid "Moderated registration is not enabled in WP-Members options."
+msgstr "WP-회원 옵션에서는 중재 등록을 사용할 수 없습니다."
+
+#: includes/class-wp-members-dialogs.php:226
+msgid "Sorry, the password reset key is expired."
+msgstr "죄송합니다. 비밀번호 재설정 키가 만료되었습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:142
+msgid "API Key"
+msgstr "API 키"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:137
+msgid "hCaptcha Keys"
+msgstr "hCaptcha 키"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:99
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:244
+msgid "hCaptcha"
+msgstr "hCaptcha"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:236
+msgid "Enable CAPTCHA for Registration"
+msgstr "등록 시 보안 문자 사용"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:215
+msgid "Send email confirmation link on new registration. %s(Requires additional configuration)%s"
+msgstr "새 등록 시 이메일 확인 링크를 보냅니다. %s(추가 구성 필요)%s"
+
+#: includes/class-wp-members-dialogs.php:211
+msgid "Validation key was expired or invalid"
+msgstr "유효성 검사 키가 만료되었거나 유효하지 않습니다."
+
+#: includes/class-wp-members-dialogs.php:210
+msgid "Thank you for validating your account."
+msgstr "계정을 인증해 주셔서 감사합니다."
+
+#: includes/class-wp-members-dialogs.php:209
+msgid "Click to validate your account: "
+msgstr "계정을 확인하려면 클릭합니다: "
+
+#: includes/class-wp-members-dialogs.php:195
+msgid "This content requires one of the following memberships: "
+msgstr "이 콘텐츠를 사용하려면 다음 멤버십 중 하나가 필요합니다: "
+
+#: includes/class-wp-members-dialogs.php:194
+msgid "This content requires the following membership: "
+msgstr "이 콘텐츠에는 다음 멤버십이 필요합니다: "
+
+#: includes/class-wp-members-dialogs.php:218
+msgid "%s is a required field."
+msgstr "%s는 필수 필드입니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:318
+msgid "Please keep in mind that Custom Post Types are \"custom\" and therefore, not all of them will function exactly the same way. WP-Members will certainly work with any post type that operate like a post or a page; but you will need to review any custom post type added to determine that it functions the way you expect."
+msgstr "사용자 정의 글 유형은 \"사용자 정의\"이므로 모든 글 유형이 정확히 동일한 방식으로 작동하는 것은 아닙니다. WP 회원은 글이나 페이지처럼 작동하는 모든 글 유형에서 확실히 작동하지만, 추가된 사용자 정의 글 유형이 예상한 대로 작동하는지 확인하려면 추가한 사용자 정의 글 유형을 검토해야 합니다."
+
+#: includes/admin/class-wp-members-products-admin.php:378
+msgid "Restricted Message (displays when a user does not have access to a membership)"
+msgstr "제한된 메시지(사용자가 멤버십에 액세스할 수 없는 경우 표시됨)"
+
+#: includes/admin/class-wp-members-products-admin.php:315
+msgid "Grace period is the point at which expiration date is for following time period. For example, if user who register August 1st would be part of the following year's Sept 1 - Aug 31 membership, set this at 1 Month. Leave blank for no grace period."
+msgstr "유예 기간은 만료일이 다음 기간에 적용되는 시점입니다. 예를 들어 8월 1일에 등록한 사용자가 다음 해 9월 1일 - 8월 31일 멤버십에 가입하는 경우 1개월로 설정합니다. 유예 기간을 설정하지 않으려면 비워 둡니다."
+
+#: includes/admin/class-wp-members-products-admin.php:306
+msgid "Fixed period grace period"
+msgstr "고정 기간 유예 기간"
+
+#: includes/admin/class-wp-members-products-admin.php:292
+#: includes/admin/class-wp-members-products-admin.php:293
+msgid "Period End (dd-mm)"
+msgstr "기간 종료(dd-mm)"
+
+#: includes/admin/class-wp-members-products-admin.php:290
+#: includes/admin/class-wp-members-products-admin.php:291
+msgid "Period Start (dd-mm)"
+msgstr "기간 시작(dd-mm)"
+
+#: includes/admin/class-wp-members-products-admin.php:273
+msgid "Use a fixed period (such as Jan 1 - Dec 31, or Sept 1 - Aug 31)"
+msgstr "고정 기간 사용(예: 1월 1일 - 12월 31일 또는 9월 1일 - 8월 31일)"
+
+#: includes/admin/class-wp-members-products-admin.php:155
+msgid "Membership Product Message (optional)"
+msgstr "멤버십 제품 메시지(선택 사항)"
+
+#: includes/class-wp-members-dialogs.php:201
+msgid "Choose membership"
+msgstr "멤버십 선택"
+
+#: includes/admin/class-wp-members-admin-users.php:205
+msgid "You cannot activate or deactivate yourself"
+msgstr "직접 활성화 또는 비활성화할 수 없습니다."
+
+#: includes/admin/class-wp-members-products-admin.php:247
+msgid "Optional Properties"
+msgstr "선택적 속성"
+
+#: includes/admin/class-wp-members-products-admin.php:241
+msgid "Pre-selected by default for new %s"
+msgstr "새 %s에 대해 기본적으로 미리 선택됨"
+
+#: includes/admin/class-wp-members-products-admin.php:230
+msgid "Optional Defaults"
+msgstr "선택적 기본값"
+
+#: includes/admin/class-wp-members-admin-users.php:407
+msgid "Pending Activation"
+msgstr "활성화 보류 중"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:97
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:242
+msgid "reCAPTCHA v3"
+msgstr "reCAPTCHA v3"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:96
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:241
+msgid "reCAPTCHA v2"
+msgstr "reCAPTCHA v2"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:76
+msgid "Required"
+msgstr "필수"
+
+#: includes/admin/class-wp-members-products-admin.php:766
+msgid "Expiration date (optional)"
+msgstr "만료일(선택 사항)"
+
+#: includes/admin/class-wp-members-products-admin.php:748
+msgid "Enabled?"
+msgstr "사용 중인가요?"
+
+#: includes/admin/class-wp-members-products-admin.php:269
+msgid "Use \"no gap\" renewal"
+msgstr "기간 없음 갱신 사용"
+
+#: includes/admin/class-wp-members-products-admin.php:259
+msgid "Expires (optional)"
+msgstr "만료(선택 사항)"
+
+#: includes/admin/class-wp-members-products-admin.php:250
+msgid "Role Required? (optional)"
+msgstr "역할 필수(선택 사항)"
+
+#: includes/admin/class-wp-members-products-admin.php:233
+msgid "Assign as default at registration? (optional)"
+msgstr "등록 시 기본값으로 지정하시겠습니까? (선택 사항)"
+
+#: includes/admin/class-wp-members-products-admin.php:99
+msgid "slug:"
+msgstr "슬러그"
+
+#: includes/admin/class-wp-members-products-admin.php:73
+msgid "Default"
+msgstr "기본값"
+
+#: includes/class-wp-members-dialogs.php:154
+msgid "Edit profile"
+msgstr "프로필 수정"
+
+#: includes/class-wp-members-dialogs.php:153
+msgid "Log out"
+msgstr "로그아웃"
+
+#: includes/class-wp-members.php:1558
+msgid "You have a linked page in the WP-Members page settings that corresponds to a post ID that no longer exists. Please %s review and update the %s page settings %s."
+msgstr "WP-회원 페이지 설정에 더 이상 존재하지 않는 글 ID에 해당하는 링크된 페이지가 있습니다. 페이지 설정 %s을(를) %s 검토하고  업데이트%s하세요."
+
+#: includes/class-wp-members-dialogs.php:215
+msgid "The page you are looking for does not exist"
+msgstr "찾고 있는 페이지가 존재하지 않습니다."
+
+#: includes/class-wp-members-dialogs.php:213
+#: includes/class-wp-members-dialogs.php:214
+msgid "You must be logged in to view this content."
+msgstr "이 콘텐츠를 보려면 로그인해야 합니다."
+
+#: includes/class-wp-members-menus.php:167
+msgid "Restrict menu item to a membership product"
+msgstr "메뉴 항목을 멤버십 제품으로 제한"
+
+#: includes/class-wp-members-menus.php:165
+msgid "%sAdd membership products%s to restrict menu to a membership"
+msgstr "멤버십으로 메뉴를 제한하려면 %s멤버십 제품 추가%s를 클릭합니다."
+
+#: includes/class-wp-members-menus.php:151
+msgid "All Users"
+msgstr "모든 사용자"
+
+#: includes/class-wp-members-menus.php:144
+msgid "Logged Out Users"
+msgstr "로그아웃한 사용자"
+
+#: includes/class-wp-members-menus.php:137
+msgid "Logged In Users"
+msgstr "로그인한 사용자"
+
+#: includes/class-wp-members-menus.php:129
+msgid "Display"
+msgstr "표시"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:223
+msgid "Remove"
+msgstr "제거"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:210
+msgid "Original: %s"
+msgstr "원본: %s"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:188
+msgid "The description will be displayed in the menu if the current theme supports it."
+msgstr "현재 테마에서 지원하는 경우 메뉴에 설명이 표시됩니다."
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:180
+msgid "Link Relationship (XFN)"
+msgstr "링크 관계(XFN)"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:174
+msgid "CSS Classes (optional)"
+msgstr "CSS 클래스(선택 사항)"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:169
+msgid "Open link in a new window/tab"
+msgstr "새 창/탭에서 링크 열기"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:162
+msgid "Title Attribute"
+msgstr "제목 속성"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:156
+msgid "Navigation Label"
+msgstr "탐색 레이블"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:149
+msgid "URL"
+msgstr "URL"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:138
+msgid "Edit Menu Item"
+msgstr "메뉴 항목 편집"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:136
+msgid "Move down"
+msgstr "아래로 이동"
+
+#: includes/walkers/class-wp-members-walker-nav-menu.php:123
+msgid "Move up"
+msgstr "위로 이동"
+
+#. translators: %s: title of menu item in draft status
+#: includes/walkers/class-wp-members-walker-nav-menu.php:96
+msgid "%s (Pending)"
+msgstr "%s (보류중)"
+
+#. translators: %s: title of menu item which is invalid
+#: includes/walkers/class-wp-members-walker-nav-menu.php:92
+msgid "%s (Invalid)"
+msgstr "%s (유효하지 않음)"
+
+#: includes/class-wp-members-dialogs.php:145
+msgid "Sorry, you can only upload the following file types for the %s field: %s."
+msgstr "죄송합니다. %s필드%s에는 다음 파일 형식만 업로드할 수 있습니다: ."
+
+#: includes/admin/class-wp-members-admin-posts.php:305
+msgid "Status"
+msgstr "상태"
+
+#: includes/admin/class-wp-members-admin-posts.php:219
+#: includes/walkers/class-wp-members-walker-nav-menu.php:224
+msgid "Cancel"
+msgstr "취소"
+
+#: includes/admin/class-wp-members-admin-posts.php:218
+msgid "Ok"
+msgstr "확인"
+
+#: includes/admin/class-wp-members-admin-posts.php:203
+msgid "Status:"
+msgstr "상태입니다:"
+
+#: includes/admin/class-wp-members-admin-posts.php:197
+#: includes/admin/class-wp-members-admin-posts.php:349
+msgid "Hidden"
+msgstr "숨김"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:903
+msgid "Form field order updated."
+msgstr "양식 필드 순서가 업데이트되었습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:847
+msgid "%s was updated"
+msgstr "%s 업데이트됨"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:834
+msgid "%s was added"
+msgstr "%s 추가됨"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:729
+msgid "Meta Key is required. Nothing was updated."
+msgstr "메타 키가 필요합니다. 업데이트된 항목이 없습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:728
+msgid "Field Label is required. Nothing was updated."
+msgstr "필드 레이블은 필수입니다. 업데이트된 항목이 없습니다."
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:142
+msgid "Delete Selected"
+msgstr "선택 항목 삭제"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:72
+msgid "Display Label"
+msgstr "레이블 표시"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:564
+msgid "Subscription Type"
+msgstr "구독 유형"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:553
+msgid "Drag and drop to reorder fields"
+msgstr "드래그 앤 드롭으로 필드 재정렬"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:425
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:848
+msgid "Return to Fields Table"
+msgstr "필드 테이블로 돌아가기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:288
+msgid "Columns"
+msgstr "컬럼"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:284
+msgid "Rows"
+msgstr "행"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:276
+msgid "Maximum Value"
+msgstr "최대 가치"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:272
+msgid "Minimum Value"
+msgstr "최소값"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:255
+msgid "Title"
+msgstr "제목"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:247
+msgid "Pattern"
+msgstr "패턴"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:239
+msgid "Placeholder"
+msgstr "플레이스홀더"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:211
+msgid "This field is always required"
+msgstr "이 필드는 항상 필수입니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:202
+msgid "This field is always displayed"
+msgstr "이 필드는 항상 표시됩니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:192
+msgid "membership"
+msgstr "멤버십"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:188
+msgid "date"
+msgstr "날짜"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:187
+msgid "number"
+msgstr "번호"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:116
+msgid "Field Manager Documentation"
+msgstr "필드 관리자 문서"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:102
+msgid "Fields deleted"
+msgstr "삭제된 필드"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:75
+msgid "Are you sure you want to delete the following fields?"
+msgstr "다음 필드를 삭제하시겠습니까?"
+
+#: includes/admin/dialogs.php:216
+msgid "If you like WP-Members please give it a %s&#9733;&#9733;&#9733;&#9733;&#9733;%s rating. Thanks!!"
+msgstr "WP-Members가 마음에 들면 %s &#9733 &#9733 &#9733 &#9733 &#9733 %s 등급을 부여하세요. 감사합니다!!"
+
+#: includes/admin/dialogs.php:215
+msgid "Like WP-Members?"
+msgstr "WP-회원이신가요?"
+
+#: includes/admin/tabs/class-wp-members-dropins-table.php:117
+#: includes/admin/tabs/class-wp-members-fields-table.php:143
+msgid "Save Settings"
+msgstr "설정 저장"
+
+#: includes/admin/tabs/class-wp-members-dropins-table.php:74
+#: includes/walkers/class-wp-members-walker-nav-menu.php:186
+msgid "Description"
+msgstr "설명"
+
+#: includes/admin/tabs/class-wp-members-dropins-table.php:73
+msgid "Version"
+msgstr "버전"
+
+#: includes/admin/tabs/class-wp-members-dropins-table.php:72
+msgid "File"
+msgstr "파일"
+
+#: includes/admin/tabs/class-wp-members-dropins-table.php:70
+msgid "Name"
+msgstr "이름"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dropins.php:218
+msgid "You can change location of the dropin folder using the <code>wpmem_dropin_folder</code> filter."
+msgstr "드롭인 폴더의 위치는 <code>wpmem_dropin_folder</code> 필터를 사용하여 변경할 수 있습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dropins.php:217
+msgid "Current dropin folder: "
+msgstr "현재 드롭인 폴더: "
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dropins.php:216
+msgid "Manage Dropins"
+msgstr "드롭인 관리"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dropins.php:88
+#: includes/admin/tabs/class-wp-members-dropins-table.php:180
+msgid "WP-Members Dropin settings were updated"
+msgstr "WP-Members 드롭인 설정이 업데이트되었습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:67
+msgid "See the %sUsers Guide on CAPTCHA%s."
+msgstr "캡차%s에 대한 %s사용자 가이드를 참조하세요."
+
+#: includes/admin/class-wp-members-admin-users.php:414
+msgid "Not Exported"
+msgstr "내보내지 않음"
+
+#: includes/admin/class-wp-members-admin-users.php:408
+msgid "Deactivated"
+msgstr "비활성화됨"
+
+#: includes/admin/class-wp-members-admin-users.php:406
+#: includes/admin/class-wp-members-admin-users.php:471
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:562
+msgid "Activated"
+msgstr "활성화됨"
+
+#: includes/admin/class-wp-members-admin-users.php:403
+msgid "Expired"
+msgstr "만료됨"
+
+#: includes/admin/class-wp-members-admin-users.php:401
+msgid "Trial"
+msgstr "평가판"
+
+#: includes/admin/class-wp-members-admin-users.php:400
+msgid "Pending"
+msgstr "보류 중"
+
+#: includes/admin/class-wp-members-admin-users.php:215
+msgid "%s deactivated"
+msgstr "%s 비활성화됨"
+
+#: includes/admin/class-wp-members-admin-users.php:175
+msgid "%s users deactivated"
+msgstr "%s 사용자가 비활성화됨"
+
+#: includes/admin/class-wp-members-admin-users.php:34
+#: includes/admin/class-wp-members-admin-users.php:45
+#: includes/admin/class-wp-members-admin-users.php:92
+msgid "Deactivate"
+msgstr "비활성화"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:364
+msgid "Click to Copy"
+msgstr "복사하려면 클릭"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:330
+msgid "The following is your WP-Members settings information if needed for support."
+msgstr "다음은 지원을 위해 필요한 경우 WP-Members 설정 정보입니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:328
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:329
+msgid "WP-Members Settings"
+msgstr "WP-Members 설정"
+
+#: includes/admin/class-wp-members-admin-api.php:599
+msgid "Close"
+msgstr "닫기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:212
+msgid "Enables logged in menus"
+msgstr "로그인 메뉴 사용"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:212
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:221
+msgid "Clone menus"
+msgstr "메뉴 복제"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:211
+msgid "Enables creation of different %s membership products %s"
+msgstr "다른 %s 멤버십 제품 %s을(를) 만들 수 있습니다."
+
+#: includes/admin/class-wp-members-products-admin.php:187
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:62
+msgid "Posts"
+msgstr "글"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:57
+msgid "See the %sUsers Guide on plugin options%s."
+msgstr "플러그인 옵션에 대한 %s사용자 가이드%s를 참조하세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:56
+msgid "%sChange%s or %sFilter%s this address"
+msgstr "이 주소를 %s변경%s 또는 %s필터%s로 변경합니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:566
+#: includes/class-wp-members-user-export.php:284
+msgid "User ID"
+msgstr "사용자 ID"
+
+#: includes/admin/class-wp-members-products-admin.php:644
+#: includes/admin/class-wp-members-products-admin.php:747
+#: includes/class-wp-members-products.php:380
+msgid "Membership"
+msgstr "멤버십"
+
+#: includes/admin/class-wp-members-products-admin.php:600
+msgid "Required Membership"
+msgstr "필수 멤버십"
+
+#: includes/admin/class-wp-members-products-admin.php:261
+#: includes/admin/class-wp-members-products-admin.php:263
+#: includes/admin/class-wp-members-products-admin.php:308
+#: includes/admin/class-wp-members-products-admin.php:310
+msgid "Number"
+msgstr "번호"
+
+#: includes/admin/class-wp-members-products-admin.php:253
+msgid "No Role"
+msgstr "역할 없음"
+
+#: includes/admin/class-wp-members-products-admin.php:228
+msgid "Name (slug)"
+msgstr "이름(슬러그)"
+
+#: includes/admin/class-wp-members-products-admin.php:215
+msgid "Year"
+msgstr "연도"
+
+#: includes/admin/class-wp-members-products-admin.php:215
+msgid "Month"
+msgstr "월"
+
+#: includes/admin/class-wp-members-products-admin.php:215
+msgid "Week"
+msgstr "주"
+
+#: includes/admin/class-wp-members-products-admin.php:215
+msgid "Day"
+msgstr "일"
+
+#: includes/admin/class-wp-members-products-admin.php:215
+#: includes/admin/class-wp-members-products-admin.php:264
+#: includes/admin/class-wp-members-products-admin.php:311
+msgid "Period"
+msgstr "기간"
+
+#: includes/admin/class-wp-members-products-admin.php:147
+msgid "Membership Product Details"
+msgstr "멤버십 제품 세부 정보"
+
+#: includes/admin/class-wp-members-products-admin.php:107
+#: includes/class-wp-members-dialogs.php:205
+msgid "Does not expire"
+msgstr "만료되지 않음"
+
+#: includes/admin/class-wp-members-products-admin.php:102
+msgid "No role required"
+msgstr "역할 필요 없음"
+
+#: includes/admin/class-wp-members-products-admin.php:75
+msgid "Last updated"
+msgstr "마지막 업데이트"
+
+#: includes/admin/class-wp-members-products-admin.php:70
+#: includes/class-wp-members-user-export.php:304
+msgid "Role"
+msgstr "역할"
+
+#: includes/admin/class-wp-members-products-admin.php:69
+msgid "Slug"
+msgstr "슬러그"
+
+#: includes/admin/tabs/class-wp-members-dropins-table.php:71
+msgid "Enabled"
+msgstr "활성화됨"
+
+#: includes/admin/class-wp-members-products-admin.php:679
+msgid "expires:"
+msgstr "만료됩니다:"
+
+#: includes/admin/class-wp-members-products-admin.php:760
+msgid "Disable"
+msgstr "비활성화"
+
+#: includes/admin/class-wp-members-products-admin.php:759
+msgid "Enable"
+msgstr "사용"
+
+#: includes/class-wp-members.php:1679
+msgid "Show form message dialog"
+msgstr "양식 메시지 대화 상자 표시"
+
+#: includes/class-wp-members.php:1670
+msgid "Show forms as logged out"
+msgstr "로그아웃한 상태로 양식 표시"
+
+#: includes/class-wp-members-dialogs.php:159
+msgid "Log Out"
+msgstr "로그아웃"
+
+#: includes/class-wp-members-dialogs.php:114
+#: includes/class-wp-members-forms.php:2297
+msgid "Please indicate that you agree to the %s Terms of Service %s"
+msgstr "서비스 %s이용 약관%s에 동의함을 표시해 주세요."
+
+#: includes/class-wp-members-dialogs.php:74
+#: includes/class-wp-members-dialogs.php:167
+msgid "Username or Email"
+msgstr "사용자 이름 또는 이메일"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:73
+#: includes/class-wp-members-dialogs.php:66
+msgid "No fields selected for deletion"
+msgstr "삭제를 위해 선택한 필드 없음"
+
+#: includes/class-wp-members-dialogs.php:206
+msgid "This is a generic message to display the form message dialog in the Customizer."
+msgstr "이것은 사용자 정의 관리자에서 양식 메시지 대화 상자를 표시하는 일반 메시지입니다."
+
+#: includes/class-wp-members-products.php:404
+msgid "WP-Members Membership Products"
+msgstr "WP-Members 멤버십 제품"
+
+#: includes/class-wp-members-products.php:403
+msgid "Membership Product"
+msgstr "멤버십 제품"
+
+#: includes/class-wp-members-products.php:399
+msgid "Save %s Details"
+msgstr "세부 정보 %s 저장"
+
+#: includes/class-wp-members-products.php:398
+msgid "Insert into item"
+msgstr "항목에 삽입"
+
+#: includes/class-wp-members-products.php:397
+msgid "Not found in Trash"
+msgstr "휴지통에서 찾을 수 없음"
+
+#: includes/class-wp-members-products.php:396
+msgid "Not found"
+msgstr "찾을 수 없음"
+
+#: includes/class-wp-members-products.php:395
+msgid "Search %s"
+msgstr "%s 검색"
+
+#: includes/class-wp-members-products.php:393
+#: includes/class-wp-members-products.php:394
+msgid "View %s"
+msgstr "%s 보기"
+
+#: includes/class-wp-members-products.php:392
+msgid "Update %s"
+msgstr "%s 업데이트"
+
+#: includes/class-wp-members-products.php:391
+msgid "Edit %s"
+msgstr "%s 편집"
+
+#: includes/class-wp-members-products.php:390
+msgid "New %s"
+msgstr "신규 %s"
+
+#: includes/class-wp-members-products.php:389
+msgid "Add New"
+msgstr "신규 추가"
+
+#: includes/class-wp-members-products.php:388
+msgid "Add New %s"
+msgstr "신규 %s 추가"
+
+#: includes/class-wp-members-products.php:387
+msgid "All %s"
+msgstr "%s 전체"
+
+#: includes/admin/class-wp-members-products-admin.php:707
+#: includes/class-wp-members-dialogs.php:204
+#: includes/class-wp-members-products.php:381
+#: includes/class-wp-members-products.php:386
+msgid "Memberships"
+msgstr "멤버십"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:98
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:243
+msgid "Really Simple CAPTCHA"
+msgstr "아주 단순한 캡챠"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:149
+msgid "Custom read more link (optional):"
+msgstr "사용자 지정 자세히 보기 링크(선택 사항):"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:404
+msgid "Value"
+msgstr "값"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:350
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:372
+msgid "Values (Displayed|Stored):"
+msgstr "값 (표시됨 | 저장됨):"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:159
+#: includes/admin/tabs/class-wp-members-fields-table.php:73
+msgid "Meta Key"
+msgstr "값 (표시|저장된):"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:823
+msgid "A value is required for hidden fields. Nothing was updated."
+msgstr "숨겨진 필드의 값은 필수적으로 입력되어야 합니다. 아무것도 업데이트 되지 않았습니다."
+
+#: includes/admin/class-wp-members-admin-api.php:309
+msgid "Your custom email message content."
+msgstr "사용자 지정 이메일 메시지 콘텐츠입니다."
+
+#: includes/admin/class-wp-members-admin-api.php:303
+msgid "Custom email"
+msgstr "사용자 지정 이메일"
+
+#: includes/class-wp-members-dialogs.php:217
+msgid "log out"
+msgstr "로그아웃"
+
+#: includes/class-wp-members-dialogs.php:188
+msgid "Password successfully reset! An email containing a new password has been sent to the email address on file for your account."
+msgstr "비밀번호가 성공적으로 재설정되었습니다! 계정에 등록된 이메일 주소로 새 비밀번호가 포함된 이메일이 전송되었습니다."
+
+#: includes/class-wp-members-dialogs.php:88
+msgid "Password successfully changed!"
+msgstr "비밀번호가 변경되었습니다."
+
+#: includes/class-wp-members-dialogs.php:146
+#: includes/class-wp-members-dialogs.php:182
+msgid "Your information was updated!"
+msgstr "회원 정보가 업데이트되었습니다."
+
+#: includes/class-wp-members-dialogs.php:175
+msgid "Congratulations! Your registration was successful.<br /><br />You may now log in using the password that was emailed to you."
+msgstr "축하합니다! 회원가입이 성공했습니다.<br /><br />이메일을 확인하여 비밀번호를 통해 로그인해주세요."
+
+#: includes/class-wp-members-dialogs.php:180
+msgid "Sorry, that email address already has an account.<br />Please try another."
+msgstr "죄송합니다, 해당 이메일 주소는 이미 사용 중입니다.<br /> 다른 이메일 주소를 입력해주세요."
+
+#: includes/class-wp-members-dialogs.php:179
+msgid "Sorry, that username is taken, please try another."
+msgstr "죄송합니다, 해당 아이디는 사용 중입니다. 다른 것으로 시도하시기 바랍니다."
+
+#: includes/class-wp-members-dialogs.php:174
+msgid "This content is restricted to site members.  If you are an existing user, please log in.  New users may register below."
+msgstr "이 내용은 회원 전용이므로 로그인해주시기 바랍니다. 회원이 아니시면 아래에서 회원가입해주세요."
+
+#: includes/class-wp-members-dialogs.php:124
+msgid "Update this file"
+msgstr "이 파일 업데이트"
+
+#: includes/class-wp-members-dialogs.php:98
+msgid "Click here"
+msgstr "여기를 클릭하세요"
+
+#: includes/class-wp-members-dialogs.php:97
+msgid "Forgot username?"
+msgstr "아이디를 분실하였습니까?"
+
+#: includes/class-wp-members-dialogs.php:56
+#: includes/class-wp-members-forms.php:2298
+msgid "TOS"
+msgstr "이용약관"
+
+#: includes/class-wp-members-dialogs.php:55
+msgid "Confirm Password"
+msgstr "비밀번호 확인"
+
+#: includes/class-wp-members-dialogs.php:53
+msgid "Biographical Info"
+msgstr "자기 소개"
+
+#: includes/class-wp-members-dialogs.php:52
+msgid "Website"
+msgstr "홈페이지"
+
+#: includes/class-wp-members-dialogs.php:51
+msgid "Confirm Email"
+msgstr "이메일 확인"
+
+#: includes/class-wp-members-dialogs.php:49
+msgid "Day Phone"
+msgstr "전화번호"
+
+#: includes/class-wp-members-dialogs.php:48
+msgid "Country"
+msgstr "국가"
+
+#: includes/class-wp-members-dialogs.php:47
+msgid "Zip"
+msgstr "우편번호"
+
+#: includes/class-wp-members-dialogs.php:46
+msgid "State"
+msgstr "주"
+
+#: includes/class-wp-members-dialogs.php:45
+msgid "City"
+msgstr "시"
+
+#: includes/class-wp-members-dialogs.php:44
+msgid "Address 2"
+msgstr "주소2"
+
+#: includes/class-wp-members-dialogs.php:43
+msgid "Address 1"
+msgstr "주소1"
+
+#: includes/class-wp-members-dialogs.php:42
+msgid "Last Name"
+msgstr "성"
+
+#: includes/class-wp-members-dialogs.php:41
+msgid "First Name"
+msgstr "이름"
+
+#: includes/admin/class-wp-members-admin-users.php:219
+msgid "That user is already active"
+msgstr "해당 회원은 이미 활성화되었습니다."
+
+#: includes/admin/class-wp-members-admin-users.php:210
+msgid "%s activated"
+msgstr "%s 활성화됨"
+
+#: includes/admin/class-wp-members-admin-users.php:187
+msgid "No users selected"
+msgstr "선택된 사용자가 없습니다."
+
+#: includes/admin/class-wp-members-admin-users.php:172
+msgid "%s users activated"
+msgstr "%s 회원 활성화됨"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:444
+msgid "Custom Post Type settings were updated"
+msgstr "사용자 정의 게시 유형이 업데이트되었습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:302
+msgid "Add to WP-Members Settings"
+msgstr "WP-Members 설정에 추가"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:296
+msgid "Custom Post Types"
+msgstr "사용자 정의 게시 유형"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:201
+msgid "Other Settings"
+msgstr "그 외 설정"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:166
+msgid "Subscription Settings"
+msgstr "구독 설정"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:94
+msgid "Content"
+msgstr "콘텐츠"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:340
+msgid "Stored values delimiter:"
+msgstr "저장된 값의 구분 기호:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:190
+msgid "hidden"
+msgstr "숨김"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:186
+msgid "url"
+msgstr "URL"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:184
+msgid "image"
+msgstr "이미지"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:182
+msgid "radio group"
+msgstr "라디오 그룹"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:181
+msgid "multiple select"
+msgstr "다중 선택"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:180
+msgid "select (dropdown)"
+msgstr "선택 (드롭다운)"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:179
+msgid "multiple checkbox"
+msgstr "다중 체크박스"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:176
+msgid "email"
+msgstr "이메일"
+
+#: includes/admin/class-wp-members-admin-api.php:392
+#: includes/admin/tabs/class-wp-members-admin-tab-about.php:57
+msgid "About WP-Members"
+msgstr "WP-Members에 대하여"
+
+#: includes/admin/class-wp-members-admin-posts.php:165
+msgid "%s Restriction"
+msgstr "%s 제한"
+
+#: includes/admin/dialogs.php:84
+msgid "If you will not be changing these settings, you can turn off this warning message by checking the \"Ignore warning messages\" in the settings below."
+msgstr "이러한 설정을 변경하지 않을 경우, 아래 설정에서 \"경고 메시지 무시\"를 체크하여 이 경고 메시지를 해제할 수 있습니다."
+
+#: includes/admin/dialogs.php:83
+msgid "You have active settings that are not recommended."
+msgstr "현재 활성화된 설정은 권장되지 않습니다."
+
+#: includes/class-wp-members-dialogs.php:101
+#: includes/class-wp-members-dialogs.php:103
+msgid "Retrieve username"
+msgstr "아이디 검색"
+
+#: includes/class-wp-members-dialogs.php:102
+msgid "Email Address"
+msgstr "이메일 주소"
+
+#: includes/class-wp-members-dialogs.php:132
+msgid "An email was sent to %s with your username."
+msgstr " %s 로 회원님의 아이디를 포함한 이메일이 발송되었습니다."
+
+#: includes/class-wp-members-dialogs.php:131
+msgid "Sorry, that email address was not found."
+msgstr "그 이메일 주소를 찾지 못했습니다."
+
+#: includes/admin/class-wp-members-admin-api.php:456
+msgid "Retrieve Username"
+msgstr "아이디 검색"
+
+#. Author URI of the plugin
+#: wp-members.php
+msgid "https://butlerblog.com/"
+msgstr "https://butlerblog.com/"
+
+#. Author of the plugin
+#: wp-members.php
+msgid "Chad Butler"
+msgstr "Chad Butler"
+
+#. Description of the plugin
+#: wp-members.php
+msgid "WP access restriction and user registration.  For more information on plugin features, refer to <a href=\"https://rocketgeek.com/plugins/wp-members/docs/\">the online Users Guide</a>. A <a href=\"https://rocketgeek.com/plugins/wp-members/quick-start-guide/\">Quick Start Guide</a> is also available. WP-Members(tm) is a trademark of butlerblog.com."
+msgstr "WP 액세스 제한 및 사용자 등록.  플러그인 기능에 대한 자세한 내용은 <a href=\"https://rocketgeek.com/plugins/wp-members/docs/\">온라인 사용자 가이드</a>를 참조하세요. <a href=\"https://rocketgeek.com/plugins/wp-members/quick-start-guide/\">빠른 시작 가이드</a>도 제공됩니다. WP-Members(tm)는 butlerblog.com의 상표입니다."
+
+#. Plugin URI of the plugin
+#: wp-members.php
+msgid "https://rocketgeek.com"
+msgstr "https://rocketgeek.com"
+
+#. Plugin Name of the plugin
+#: wp-members.php
+msgid "WP-Members"
+msgstr "WP-Members"
+
+#: includes/class-wp-members-dialogs.php:221
+msgid "%sprint%s"
+msgstr "%s인쇄%s"
+
+#: includes/class-wp-members-dialogs.php:220
+msgid "%sclose%s"
+msgstr "%s닫기%s"
+
+#: includes/class-wp-members-dialogs.php:57
+#: includes/class-wp-members-dialogs.php:219
+#: includes/class-wp-members-forms.php:2298
+msgid "Terms of Service"
+msgstr "이용약관"
+
+#: includes/class-wp-members.php:1756
+msgid "(more&hellip;)"
+msgstr "(더 보기&hellip;)"
+
+#: includes/class-wp-members-user-profile.php:68
+msgid "Additional Information"
+msgstr "추가 정보"
+
+#: includes/class-wp-members-dialogs.php:163
+msgid "click here to log out"
+msgstr "로그아웃 하려면 클릭"
+
+#: includes/class-wp-members-dialogs.php:170
+msgid "Forgot?"
+msgstr "비밀번호 분실"
+
+#: includes/class-wp-members-dialogs.php:169
+#: includes/class-wp-members-dialogs.php:216
+msgid "log in"
+msgstr "로그인"
+
+#: includes/class-wp-members-dialogs.php:67
+msgid "You are not logged in."
+msgstr "로그인하지 않았습니다."
+
+#: includes/class-wp-members-dialogs.php:164
+msgid "Login Failed!<br />You entered an invalid username or password."
+msgstr "로그인 실패!<br />유효하지 않은 아이디 또는 비밀번호를 입력했습니다."
+
+#: includes/class-wp-members-dialogs.php:207
+msgid "Click here to log out."
+msgstr "여기를 눌러 로그아웃"
+
+#: includes/class-wp-members-dialogs.php:200 includes/deprecated.php:400
+msgid "You have entered an incorrect code value. Please try again."
+msgstr "올바른 코드 값을 입력하지 않았습니다. 다시 시도해주세요."
+
+#: includes/deprecated.php:396
+msgid "The reCAPTCHA server was not reached.  Please try to resubmit."
+msgstr "reCAPTCHA 서버가 응답하지 않습니다. 다시 제출해주세요."
+
+#: includes/deprecated.php:392
+msgid "reCAPTCHA API keys are tied to a specific domain name for security reasons."
+msgstr "reCAPTCHA API 키가 보안을 이유로 특정 도메인 이름에 귀속되어 있습니다."
+
+#: includes/deprecated.php:388
+msgid "The parameters to verify were incorrect"
+msgstr "인증할 파라미터가 올바르지 않습니다"
+
+#: includes/deprecated.php:384
+msgid "The CAPTCHA solution was incorrect."
+msgstr "CAPTCHA 솔루션이 올바르지 않습니다."
+
+#: includes/deprecated.php:380
+msgid "The challenge parameter of the verify script was incorrect."
+msgstr "인증 스크립트 파라미터가 올바르지 않습니다."
+
+#: includes/deprecated.php:376
+msgid "We were unable to validate the private key."
+msgstr "Private 키를 인증할 수 없습니다."
+
+#: includes/deprecated.php:372
+msgid "We were unable to validate the public key."
+msgstr "Public 키를 인증할 수 없습니다."
+
+#: includes/class-wp-members-dialogs.php:142
+msgid "CAPTCHA was not valid."
+msgstr "CAPTCHA가 유효하지 않습니다."
+
+#: includes/class-wp-members-dialogs.php:141
+msgid "You must complete the CAPTCHA form."
+msgstr "CAPTCHA 폼을 완성해야 합니다."
+
+#: includes/class-wp-members-dialogs.php:140
+msgid "Emails did not match."
+msgstr "이메일이 일치하지 않습니다"
+
+#: includes/class-wp-members-dialogs.php:139
+#: includes/class-wp-members-dialogs.php:185
+msgid "Passwords did not match."
+msgstr "비밀번호가 일치하지 않습니다"
+
+#: includes/class-wp-members-dialogs.php:136
+msgid "Sorry, username is a required field"
+msgstr "죄송합니다, 아이디는 필수 입력란입니다"
+
+#: includes/class-wp-members-dialogs.php:135
+msgid "The username cannot include non-alphanumeric characters."
+msgstr "아이디에 영문자, 숫자가 아니면 포함될 수 없습니다."
+
+#: includes/class-wp-members-dialogs.php:134
+msgid "You must enter a valid email address."
+msgstr "유효한 이메일 주소를 입력해야 합니다."
+
+#: includes/class-wp-members-dialogs.php:143
+msgid "There was an error processing the form."
+msgstr "폼 처리 중 오류가 발생하였습니다."
+
+#: includes/class-wp-members-dialogs.php:113
+msgid "Input the code:"
+msgstr "코드 삽입:"
+
+#: includes/class-wp-members-dialogs.php:111
+msgid "New User Registration"
+msgstr "신규 회원 가입"
+
+#: includes/class-wp-members-dialogs.php:112
+msgid "Choose a Username"
+msgstr "아이디 선택"
+
+#: includes/class-wp-members-dialogs.php:123
+msgid "Update Profile"
+msgstr "프로필 업데이트"
+
+#: includes/class-wp-members-dialogs.php:115
+msgid "Reset Form"
+msgstr "폼 초기화"
+
+#: includes/class-wp-members-dialogs.php:118
+msgid "Required field"
+msgstr "필수 항목"
+
+#: includes/class-wp-members-dialogs.php:81
+msgid "Click here to register"
+msgstr "회원가입"
+
+#: includes/class-wp-members-dialogs.php:80
+msgid "New User?"
+msgstr "신규 가입"
+
+#: includes/class-wp-members-dialogs.php:79
+msgid "Click here to reset"
+msgstr "초기화"
+
+#: includes/class-wp-members-dialogs.php:78
+msgid "Forgot password?"
+msgstr "비밀번호 분실"
+
+#: includes/class-wp-members-dialogs.php:77
+msgid "Remember Me"
+msgstr "기억하기"
+
+#: includes/class-wp-members-dialogs.php:96
+msgid "Reset Password"
+msgstr "비밀번호 초기화"
+
+#: includes/class-wp-members-dialogs.php:91
+msgid "Reset Forgotten Password"
+msgstr "분실 비밀번호 초기화"
+
+#: includes/class-wp-members-dialogs.php:50
+#: includes/class-wp-members-forms.php:54
+msgid "Email"
+msgstr "이메일"
+
+#: includes/class-wp-members-dialogs.php:87
+msgid "Update Password"
+msgstr "비밀번호 업데이트"
+
+#: includes/class-wp-members-dialogs.php:86
+msgid "Confirm new password"
+msgstr "새 비밀번호 확이"
+
+#: includes/class-wp-members-dialogs.php:85
+msgid "New password"
+msgstr "새 비밀번호"
+
+#: includes/api/api.php:110 includes/class-wp-members-dialogs.php:76
+#: includes/class-wp-members-shortcodes.php:1108
+msgid "Log In"
+msgstr "로그인"
+
+#: includes/class-wp-members-dialogs.php:73
+msgid "Existing Users Log In"
+msgstr "기존 회원 로그인"
+
+#: includes/class-wp-members-dialogs.php:54
+#: includes/class-wp-members-dialogs.php:75
+#: includes/class-wp-members-dialogs.php:168
+msgid "Password"
+msgstr "비밀번호"
+
+#: includes/class-wp-members-dialogs.php:122
+#: includes/class-wp-members-user-export.php:291
+msgid "Username"
+msgstr "아이디"
+
+#: includes/class-wp-members-dialogs.php:121
+msgid "Edit Your Information"
+msgstr "정보 변경하기"
+
+#: includes/class-wp-members-dialogs.php:130
+msgid "Password fields cannot be empty"
+msgstr "비밀번호는 필수입니다."
+
+#: includes/class-wp-members-dialogs.php:158
+msgid "click to log out"
+msgstr "로그아웃 하려면 클릭"
+
+#: includes/class-wp-members-dialogs.php:156
+msgid "Click to log out"
+msgstr "로그아웃 하려면 클릭"
+
+#: includes/class-wp-members-dialogs.php:154
+msgid "Begin using the site."
+msgstr "사이트 사용하기"
+
+#: includes/class-wp-members-dialogs.php:152
+#: includes/class-wp-members-dialogs.php:155
+#: includes/class-wp-members-dialogs.php:157
+#: includes/class-wp-members-dialogs.php:162
+msgid "You are logged in as %s"
+msgstr "%s으로 로그인 됨"
+
+#: includes/class-wp-members-dialogs.php:84
+#: includes/class-wp-members-dialogs.php:151
+msgid "Change Password"
+msgstr "비밀번호 변경"
+
+#: includes/class-wp-members-dialogs.php:150
+msgid "Edit My Information"
+msgstr "내 정보 수정"
+
+#: includes/class-wp-members-dialogs.php:129
+msgid "Click here to continue."
+msgstr "계속하기"
+
+#: includes/class-wp-members-dialogs.php:128
+msgid "You entered an invalid username or password."
+msgstr "유효하지 않은 아이디 또는 비밀번호입니다."
+
+#: includes/class-wp-members-dialogs.php:127
+msgid "Login Failed!"
+msgstr "로그인 실패"
+
+#: includes/api/api.php:152 includes/class-wp-members-dialogs.php:116
+#: includes/class-wp-members-dialogs.php:171
+#: includes/class-wp-members-shortcodes.php:1105
+#: includes/class-wp-members-user.php:202
+msgid "Register"
+msgstr "회원가입"
+
+#: includes/class-wp-members-dialogs.php:133
+msgid "Sorry, %s is a required field."
+msgstr "%s는 필수 입력란입니다."
+
+#: includes/class-wp-members-dialogs.php:144
+msgid "There was an error with the CAPTCHA form."
+msgstr "CAPTCHA 폼에 오류가 발생하였습니다."
+
+#: includes/class-wp-members-widget.php:50
+msgid "Redirect to (optional):"
+msgstr "다음으로 리다이렉트 (선택적) :"
+
+#: includes/class-wp-members-widget.php:46
+msgid "Title:"
+msgstr "제목:"
+
+#: includes/class-wp-members-widget.php:39
+#: includes/class-wp-members-widget.php:82
+msgid "Login Status"
+msgstr "로그인 상태"
+
+#: includes/class-wp-members-widget.php:24
+msgid "Displays the WP-Members sidebar login."
+msgstr "WP-Members 사이드바 로그인 표시하기."
+
+#: includes/admin/class-wp-members-admin-users.php:37
+#: includes/admin/class-wp-members-admin-users.php:48
+msgid "Export All Users"
+msgstr "모든 사용자 내보내기"
+
+#: includes/admin/class-wp-members-admin-users.php:36
+#: includes/admin/class-wp-members-admin-users.php:47
+msgid "Export"
+msgstr "내보내기"
+
+#: includes/admin/class-wp-members-admin-users.php:33
+#: includes/admin/class-wp-members-admin-users.php:44
+#: includes/admin/class-wp-members-admin-users.php:89
+msgid "Activate"
+msgstr "활성화"
+
+#: includes/class-wp-members-user-profile.php:585
+msgid "IP @ registration"
+msgstr "IP @ registration"
+
+#: includes/class-wp-members-user-profile.php:530
+msgid "Deactivate this user?"
+msgstr "이 회원을 비활성화하겠습니까?"
+
+#: includes/class-wp-members-user-profile.php:525
+msgid "Reactivate this user?"
+msgstr "이 회원을 재활성화하겠습니까?"
+
+#: includes/class-wp-members-dialogs.php:203
+#: includes/class-wp-members-user-profile.php:535
+msgid "Activate this user?"
+msgstr "이 회원을 활성화하겠습니까?"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:144
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:319
+#: includes/class-wp-members-dialogs.php:202
+#: includes/class-wp-members-user-profile.php:194
+msgid "(required)"
+msgstr "(필수입력)"
+
+#: includes/class-wp-members-user-profile.php:68
+msgid "WP-Members Additional Fields"
+msgstr "WP-Members 추가 필드"
+
+#: includes/class-wp-members-user-export.php:206
+msgid "No"
+msgstr "아니오"
+
+#: includes/class-wp-members-user-export.php:303
+msgid "IP"
+msgstr "IP"
+
+#: includes/class-wp-members-user-export.php:302
+msgid "Registered"
+msgstr "등록됨"
+
+#: includes/admin/class-wp-members-products-admin.php:71
+#: includes/admin/class-wp-members-products-admin.php:742
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:565
+#: includes/class-wp-members-user-export.php:300
+msgid "Expires"
+msgstr "만료"
+
+#: includes/admin/class-wp-members-admin-users.php:402
+#: includes/class-wp-members-user-export.php:299
+msgid "Subscription"
+msgstr "구독"
+
+#: includes/class-wp-members-user-export.php:293
+msgid "Activated?"
+msgstr "활성화?"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:673
+msgid "Select a page"
+msgstr "페이지 선택"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:653
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:684
+msgid "USE CUSTOM URL BELOW"
+msgstr "아래에서 사용자 정의 URL 사용"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:565
+msgid "WP-Members settings were updated"
+msgstr "WP-Members 설정이 업데이트 됐습니다"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:288
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:315
+msgid "Update Settings"
+msgstr "설정 업데이트"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:283
+msgid "Custom Stylesheet:"
+msgstr "사용자 정의 스타일시트:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:278
+msgid "Stylesheet"
+msgstr "스타일시트"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:263
+msgid "For creating a forgot password link in the login form"
+msgstr "로그인 폼에 비밀번호 분실 링크를 생성하기 위함입니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:262
+msgid "User Profile Page:"
+msgstr "회원 프로필 페이지:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:258
+msgid "For creating a register link in the login form"
+msgstr "로그인 폼에 회원가입 링크를 생성하기 위함입니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:257
+msgid "Register Page:"
+msgstr "회원가입 페이지:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:253
+msgid "Specify a login page (optional)"
+msgstr "로그인 페이지를 지정 (선택적)"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:252
+msgid "Login Page:"
+msgstr "로그인 페이지:"
+
+#: includes/admin/class-wp-members-products-admin.php:188
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:63
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:247
+msgid "Pages"
+msgstr "페이지"
+
+#: includes/admin/class-wp-members-products-admin.php:504
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:237
+#: includes/class-wp-members-forms.php:1293
+#: includes/class-wp-members-user-profile.php:145
+msgid "None"
+msgstr "없음"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:148
+msgid "Number of words in excerpt:"
+msgstr "요약에서 단어 수:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:126
+msgid "Auto Excerpt:"
+msgstr "자동 요약:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:233
+msgid "Attribution is appreciated!  Display \"powered by\" link on register form?"
+msgstr "기여에 대해 감사드립니다! 회원가입 폼에 \"powered by\" 링크를 표시하시겠습니까?"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:231
+msgid "Attribution"
+msgstr "기여"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:216
+msgid "Ignores WP-Members warning messages in the admin panel"
+msgstr "관리자 화면에서 WP-Members 경고 메시지 무시하기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:216
+msgid "Ignore warning messages"
+msgstr "경고 메시지 무시하기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:214
+msgid "Holds new registrations for admin approval"
+msgstr "새 회원가입은 관리자 승인 필요"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:214
+msgid "Moderate registration"
+msgstr "회원가입 검토"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:213
+msgid "Notify %s for each new registration? %s"
+msgstr "새로운 회원가입을 %s에 알림? %s"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:213
+msgid "Notify admin"
+msgstr "관리자에게 알림"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:164
+msgid "Trial period"
+msgstr "시험 사용 기간"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:125
+msgid "Show Registration Form"
+msgstr "회원가입 폼 보이기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:124
+msgid "Show Login Form"
+msgstr "로그인 폼 보이기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:123
+msgid "Show Excerpts"
+msgstr "요약 보이기"
+
+#: includes/admin/class-wp-members-admin-posts.php:32
+#: includes/admin/class-wp-members-admin-posts.php:35
+msgid "Hide"
+msgstr "숨기기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:90
+msgid "Manage Options"
+msgstr "옵션 관리"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:563
+msgid "Registration IP"
+msgstr "회원가입 IP"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:560
+msgid "Registration Date"
+msgstr "회원가입 일자"
+
+#: includes/admin/tabs/class-wp-members-fields-table.php:43
+msgid "delete"
+msgstr "삭제"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:600
+msgid "Manage Fields"
+msgstr "필드 관리"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:423
+#: includes/admin/tabs/class-wp-members-fields-table.php:146
+msgid "Add Field"
+msgstr "필드 추가"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:397
+msgid "Visit plugin site for more information"
+msgstr "더 많은 정보는 플러그인 사이트를 방문하세요"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:393
+msgid "Options should be Option Name|option_value,"
+msgstr "옵션은 <strong>옵션 이름|옵션_ 값(영문 소문자)</strong>과 같아야 합니다,"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:319
+msgid "Stored value if checked:"
+msgstr "체크된 경우 저장 값:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:308
+msgid "Checked by default?"
+msgstr "기본적으로 체크된 상태"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:301
+msgid "Accepted file types should be set like this: jpg|jpeg|png|gif"
+msgstr "업로드 가능한 파일 유형은 이와 같이 설정하여 주세요: jpg|jpeg|png|gif"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:296
+msgid "Accepted file types:"
+msgstr "업로드 가능한 파일 유형:"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:207
+msgid "Required?"
+msgstr "필수?"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:198
+msgid "Display?"
+msgstr "표시?"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:185
+msgid "file"
+msgstr "파일"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:183
+msgid "password"
+msgstr "비밀번호"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:178
+msgid "checkbox"
+msgstr "체크박스"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:177
+msgid "textarea"
+msgstr "텍스트영역"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:175
+msgid "text"
+msgstr "텍스트"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:169
+#: includes/admin/tabs/class-wp-members-fields-table.php:74
+msgid "Field Type"
+msgstr "필드 타입"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:165
+msgid "The database meta value for the field. It must be unique and contain no spaces (underscores are ok)."
+msgstr "필드의 데이터베이스 메타 값. 독특해야 하며 스페이스가 없어야 합니다 (밑줄은 가능)"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:156
+msgid "The name of the field as it will be displayed to the user."
+msgstr "사용자에게 표시되는 필드 이름"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:154
+msgid "Field Label"
+msgstr "필드 레이블"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:149
+msgid "Add a Field"
+msgstr "필드 추가"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:149
+msgid "Edit Field"
+msgstr "필드 편집"
+
+#: includes/admin/class-wp-members-admin-posts.php:203
+#: includes/walkers/class-wp-members-walker-nav-menu.php:140
+msgid "Edit"
+msgstr "편집"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:784
+msgid "Checked value is required for checkboxes. Nothing was updated."
+msgstr "체크된 값은 체크박스에 필수입니다. 아무것도 업데이트 되지 않았습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:743
+msgid "Sorry, \"%s\" is a <a href=\"https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms\" target=\"_blank\">reserved term</a>. Field was not added."
+msgstr "\"%s\"(은)는 <a href=\"https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms\" target=\"_blank\">예약어</a>입니다. 필드가 추가되지 않았습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:738
+msgid "A field with that meta key already exists"
+msgstr "해당 옵션 이름의 필드는 이미 존재합니다"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:731
+msgid "Meta Key must contain only letters, numbers, and underscores"
+msgstr "옵션 이름은 문자 및 숫자, 밑줄기호(_)만 사용할 수 있습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:704
+msgid "WP-Members fields were updated"
+msgstr "WP-Members 필드가 업데이트 됐습니다"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:172
+msgid "WP-Members emails were updated"
+msgstr "WP-Members 이메일이 업데이트 됐습니다"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:101
+msgid "Update Emails"
+msgstr "이메일 업데이트"
+
+#: includes/admin/class-wp-members-admin-api.php:307
+msgid "Body"
+msgstr "바디"
+
+#: includes/admin/class-wp-members-admin-api.php:304
+#: includes/admin/class-wp-members-admin-api.php:306
+msgid "Subject"
+msgstr "제목"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:73
+msgid "Set a custom email name"
+msgstr "사용자 정의 이메일 이름 설정"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:70
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:74
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:93
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:143
+msgid "(optional)"
+msgstr "(선택적)"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:69
+msgid "Set a custom email address"
+msgstr "사용자 정의 이메일 주소 설정"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:62
+msgid "A list of shortcodes is available here."
+msgstr "쇼트코드 목록은 여기에서 사용 가능합니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:60
+msgid "You can customize the content of the emails sent by the plugin."
+msgstr "플러그인에 의해 보내지는 이메일 콘텐츠를 사용자 정의 할 수 있습니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:57
+msgid "Email Messages"
+msgstr "이메일 메세지"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:93
+msgid "Email Signature"
+msgstr "이메일 서명"
+
+#: includes/admin/class-wp-members-admin-api.php:464
+msgid "Admin Notification"
+msgstr "관리자 알림"
+
+#: includes/admin/class-wp-members-admin-api.php:449
+msgid "Password Reset"
+msgstr "비밀번호 초기화"
+
+#: includes/admin/class-wp-members-admin-api.php:441
+msgid "Registration is Moderated, User is Approved"
+msgstr "회원가입이 검토 후 승인되었습니다"
+
+#: includes/admin/class-wp-members-admin-api.php:425
+msgid "Registration is Moderated"
+msgstr "회원가입이 검토 중입니다."
+
+#: includes/admin/class-wp-members-admin-api.php:407
+msgid "New Registration"
+msgstr "신규 회원가입"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dialogs.php:124
+msgid "WP-Members dialogs were updated"
+msgstr "WP-Members 대화가 업데이트 됐습니다"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dialogs.php:87
+msgid "Update Dialogs"
+msgstr "대화 업데이트"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dialogs.php:80
+msgid "Terms of Service (TOS)"
+msgstr "이용약관"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dialogs.php:69
+msgid "You can customize the text for dialogs and error messages. Simple HTML is allowed %s etc."
+msgstr "대화 및 에러 메시지 텍스트를 사용자 정의 할 수 있습니다. 간단한 HTML은 허용 됩니다 %s 등."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-dialogs.php:67
+msgid "Dialogs and Error Messages"
+msgstr "대화 및 에러 메시지"
+
+#: includes/admin/class-wp-members-admin-api.php:497
+msgid "Password reset"
+msgstr "비밀번호 초기화"
+
+#: includes/admin/class-wp-members-admin-api.php:496
+msgid "Username or email do not exist when trying to reset forgotten password"
+msgstr "분실 비밀번호 초기화 시 아이디 또는 이메일이 존재하지 않습니다"
+
+#: includes/admin/class-wp-members-admin-api.php:495
+msgid "Password changes"
+msgstr "비밀번호 변경"
+
+#: includes/admin/class-wp-members-admin-api.php:494
+msgid "Passwords did not match"
+msgstr "비밀번호가 일치하지 않습니다"
+
+#: includes/admin/class-wp-members-admin-api.php:493
+msgid "User update"
+msgstr "회원 업데이트"
+
+#: includes/admin/class-wp-members-admin-api.php:492
+msgid "Registration completed"
+msgstr "회원가입 완료"
+
+#: includes/admin/class-wp-members-admin-api.php:491
+msgid "Email is registered"
+msgstr "이메일이 등록됐습니다"
+
+#: includes/admin/class-wp-members-admin-api.php:490
+msgid "Username is taken"
+msgstr "아이디가 사용 중입니다."
+
+#: includes/admin/class-wp-members-admin-api.php:489
+msgid "Restricted post (or page), displays above the login/registration form"
+msgstr "제한된 글 (또는 페이지), 로그인/회원가입 폼 위에 표시됨"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:323
+msgid "CAPTCHA was updated for WP-Members"
+msgstr "CAPTCHA가 WP-Members를 위해 업데이트 됐습니다"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:245
+msgid "Update CAPTCHA Settings"
+msgstr "CAPTCHA 설정 업데이트"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:217
+msgid "To use Really Simple CAPTCHA, you must have the Really Simple CAPTCHA plugin installed and activated."
+msgstr "Really Simple CAPTCHA를 사용하려면, Really Simple CAPTCHA 플러그인을 설치하고 활성화 해야 합니다."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:202
+msgid "Image type"
+msgstr "이미지 타입"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:198
+msgid "Width between characters"
+msgstr "글자 간 폭"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:194
+msgid "Font size"
+msgstr "폰트 크기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:190
+msgid "Background color of image"
+msgstr "이미지 배경 색상"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:186
+msgid "Font color of characters"
+msgstr "글자 폰트 색상"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:183
+msgid "Height"
+msgstr "높이"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:183
+msgid "Width"
+msgstr "너비"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:182
+msgid "Image dimensions"
+msgstr "이미지 크기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:178
+msgid "Number of characters"
+msgstr "글자 수"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:174
+msgid "Characters for image"
+msgstr "이미지에 대한 글자"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:127
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:143
+msgid "Secret Key"
+msgstr "Secret 키"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:126
+msgid "Site Key"
+msgstr "Site 키"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:124
+msgid "reCAPTCHA requires an API key, consisting of a \"site\" and a \"secret\" key. You can sign up for a %s free reCAPTCHA key%s"
+msgstr "reCAPTCHA는 \"site\" 및 \"secret\" 키로 구성된 API 키를 요구합니다. %s 무료 reCAPTCHA 키%s를 위해 가입하세요."
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:117
+msgid "reCAPTCHA Keys"
+msgstr "reCAPTCHA 키"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:85
+msgid "Manage CAPTCHA Options"
+msgstr "CAPTCHA 옵션 관리하기"
+
+#: includes/admin/tabs/class-wp-members-admin-tab-captcha.php:74
+#: includes/admin/tabs/class-wp-members-admin-tab-dialogs.php:57
+#: includes/admin/tabs/class-wp-members-admin-tab-emails.php:109
+#: includes/admin/tabs/class-wp-members-admin-tab-fields.php:114
+#: includes/admin/tabs/class-wp-members-admin-tab-options.php:78
+#: includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php:56
+msgid "Need help?"
+msgstr "도움이 필요하세요?"
+
+#: includes/admin/class-wp-members-products-admin.php:111
+#: includes/class-wp-members-user-export.php:206
+msgid "Yes"
+msgstr "네"
+
+#: includes/admin/dialogs.php:227 includes/admin/dialogs.php:240
+msgid "Latest from ButlerBlog"
+msgstr "최근 ButlerBlog"
+
+#: includes/admin/dialogs.php:194 includes/admin/dialogs.php:198
+msgid "Latest from RocketGeek"
+msgstr "최근 RocketGeek"
+
+#: includes/admin/dialogs.php:177
+msgid "Follow"
+msgstr "팔로우"
+
+#: includes/admin/dialogs.php:176
+msgid "A plugin developed by"
+msgstr "플러그인 개발자"
+
+#: includes/admin/dialogs.php:175
+msgid "Thank you for using WP-Members"
+msgstr "WP-Members를 사용해주셔서 감사합니다"
+
+#: includes/admin/dialogs.php:168
+msgid "FAQs"
+msgstr "FAQ"
+
+#: includes/admin/dialogs.php:167
+msgid "Online User Guide"
+msgstr "온라인 사용자 설명서"
+
+#: includes/admin/dialogs.php:166
+msgid "Quick Start Guide"
+msgstr "빠른 시작 설명서"
+
+#: includes/admin/dialogs.php:165
+msgid "Version:"
+msgstr "버전:"
+
+#: includes/admin/dialogs.php:136
+msgid "but you have not entered API keys.  You will need both a public and private key.  The CAPTCHA will not display unless a valid API key is included."
+msgstr "하지만 API 키를 입력하지 않았습니다. public 키와 private 키가 필요합니다. 유효한 API 키가 포함되지 않으면 CAPTCHA는 표시되지 않습니다."
+
+#: includes/admin/dialogs.php:135
+msgid "You have turned on reCAPTCHA"
+msgstr "reCAPTCHA를 작동시켰습니다."
+
+#: includes/admin/dialogs.php:131
+msgid "but you have not changed the default message for \"Registration Completed\" under \"WP-Members Dialogs and Error Messages.\"  You should change this message to let users know they are pending approval."
+msgstr "하지만 \"WP-Members 대화와 오류 메시지\"에서  \"회원가입 완료됨\"의 기본 메시지를 변경하지 않았습니다. 회원이 승인 대기 중이라는 것을 알 수 있도록 메시지를 변경해야 합니다."
+
+#: includes/admin/dialogs.php:130
+msgid "You have set WP-Members to hold registrations for approval"
+msgstr "회원가입을 위해 승인이 필요하도록 WP-Members 설정하였습니다."
+
+#: includes/admin/dialogs.php:125
+msgid "You can %s change this here %s by changing \"For each article in a feed, show\" to \"Summary.\""
+msgstr "설정을 \"피드에서 모든 글 보이기\"에서 \"요약\"으로 %s 여기에서 변경 %s할 수 있습니다."
+
+#: includes/admin/dialogs.php:124
+msgid "Your WP settings allow full text rss feeds - this is not the recommended setting."
+msgstr "워드프레스 설정이 전체 글 RSS 피드를 허용합니다 - 이 설정은 권장하지 않습니다."
+
+#: includes/admin/dialogs.php:119
+msgid "You can %s change this here %s by checking the box next to \"Users must be registered and logged in to comment.\""
+msgstr "설정을  \"가입하여 로그인한 사용자만 댓글을 남길 수 있습니다.\" 의 체크박스에 체크하여 %s여기에서 변경%s할 수 있습니다."
+
+#: includes/admin/dialogs.php:118
+msgid "Your WP settings allow anyone to comment - this is not the recommended setting."
+msgstr "워드프레스 설정이 누구나 댓글을 달 수 있도록 되어 있습니다 - 이 설정은 권장하지 않습니다."
+
+#: includes/admin/dialogs.php:113
+msgid "You can %s change this here %s making sure the box next to \"Anyone can register\" is unchecked."
+msgstr "%s 이것을 여기에서 변경 %s 할 수 있습니다. \"누구나 가입할 수 있습니다\"의 체크박스를 체크해제 하세요."
+
+#: includes/admin/dialogs.php:112
+msgid "Your WP settings allow anyone to register - this is not the recommended setting."
+msgstr "워드프레스 설정이 누구나 가입할 수 있도록 되어 있습니다. 해당 설정은 권장되지 않습니다."
+
+#: includes/admin/class-wp-members-admin-api.php:390
+msgid "Emails"
+msgstr "이메일"
+
+#: includes/admin/class-wp-members-admin-api.php:389
+msgid "Dialogs"
+msgstr "대화"
+
+#: includes/admin/class-wp-members-admin-api.php:388
+msgid "Fields"
+msgstr "필드"
+
+#: includes/admin/class-wp-members-admin-api.php:387
+msgid "Options"
+msgstr "옵션"
+
+#: includes/admin/class-wp-members-admin-api.php:650
+msgid "Settings"
+msgstr "설정"

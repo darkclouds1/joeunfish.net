@@ -1,0 +1,168 @@
+.button-group {
+  gap: 5px;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+#unit-price-grid table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  margin: 0 auto;
+}
+
+#unit-price-grid th,
+#unit-price-grid td,
+#material-grid td,
+#material-grid th {
+  border: 1px solid #ddd;
+  padding: 4px 6px;
+  line-height: 1.2;
+}
+
+#unit-price-grid th,
+#material-grid th {
+  background-color: #f2f2f2;
+  text-align: center;
+  font-weight: bold;
+}
+
+#check-unit-price {
+  margin-left: 0px;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#check-unit-price:hover,
+#check-material:hover {
+  background-color: #45a049;
+}
+
+#unit-price-grid,
+#material-grid {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+#unit-price-grid.hidden,
+#material-grid.hidden {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 768px) {
+  #unit-price-grid,
+  #material-grid {
+    display: flex;
+    justify-content: center;
+  }
+
+  #unit-price-grid table,
+  #material-grid table {
+    width: 100%; /* 테이블 너비를 50%로 줄임 */
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+
+  #unit-price-grid th,
+  #unit-price-grid td,
+  #material-grid th,
+  #material-grid td {
+    border: 1px solid #ddd;
+    padding: 4px 6px; /* 상하 패딩을 4px, 좌우 패딩을 6px로 줄임 */
+    font-size: 14px; /* 글자 크기를 줄임 */
+    line-height: 1.2; /* 줄 높이를 줄임 */
+  }
+
+  #unit-price-grid th,
+  #material-grid th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+
+  #unit-price-grid tr[style*="background-color"],
+  #material-grid tr[style*="background-color"] {
+    background-color: #e0e0e0; /* 또는 선택한 다른 배경색 */
+  }
+
+  #unit-price-grid td:nth-child(1),  /* 순번 열 */
+    #unit-price-grid td:nth-child(2),  /* 제품코드 열 */
+    #unit-price-grid td:nth-child(4),  /* 단가 열 */
+    #unit-price-grid td:nth-child(5) {
+    /* 생성일 열 */
+    white-space: nowrap; /* 이 열들의 내용을 한 줄로 유지 */
+  }
+
+  #unit-price-grid td:nth-child(3) {
+    /* 제품명 열 */
+    max-width: 200px; /* 제품명 열의 최대 너비 설정 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .mobile-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .product-box {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 5px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    margin-bottom: 2px;
+  }
+
+  .product-info {
+    margin-bottom: 3px;
+    font-size: 13px;
+    line-height: 1.1;
+  }
+
+  .product-info strong {
+    display: inline-block;
+    width: auto;
+    margin-right: 3px;
+    font-weight: bold;
+  }
+
+  .product-info span {
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .mobile-price {
+    color: red;
+    font-weight: bold;
+  }
+
+  .product-box[style*="background-color"] {
+    background-color: #e0e0e0;
+  }
+}
+
+/* 공통 스타일 */
+#check-unit-price {
+  margin-bottom: 0px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#check-unit-price:hover {
+  background-color: #45a049;
+}

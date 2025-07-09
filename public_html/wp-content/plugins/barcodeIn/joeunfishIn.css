@@ -1,0 +1,399 @@
+.form-container {
+  margin: 1px;
+}
+
+.form-row {
+  display: flex;
+  margin-bottom: 1px;
+  flex-wrap: wrap;
+}
+
+/* 모든 필드에 기본적으로 적용될 스타일 */
+.form-field {
+  box-sizing: border-box;
+  padding: 5px;
+  margin-right: 3px;
+  margin-bottom: 1px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  flex: 1;
+  background-color: white;
+  height: 40px;
+  font-size: 15px;
+}
+
+.form-field input,
+.form-field select {
+  padding: 1px 1px 1px 1px !important;
+}
+
+.form-row:first-child {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.createDate {
+  width: 100px;
+}
+
+/* barcode1,  */
+.form-row:nth-child(2) .form-field:first-child
+{
+  flex: 0 0 49%;
+}
+/* barcode, 2 */
+.form-row:nth-child(2) .form-field:last-child {
+  flex: 0 0 50%;
+}
+
+/* 중량 */
+.form-row:nth-child(3) .form-field:first-child
+{
+  flex: 1;
+  max-width: 49%;
+}
+
+/* 생산일 */
+.form-row:nth-child(3) .form-field:last-child {
+  flex: 1;
+  max-width: 50%;
+  /* 두 번째 필드의 최대 너비를 30%로 제한 */
+}
+
+/* 마지막 필드의 margin-right 제거 */
+.form-field:last-child {
+  margin-right: 0px;
+}
+
+/* 모든 입력 필드에 중앙 정렬 적용 */
+.form-field input:not(.barcode-scan),
+.form-field select {
+  text-align: center;
+
+}
+
+/* readonly 색깔 바꾸기 */
+input[readonly],
+#productionDate,
+#category {
+  background-color: #f0f0f0;
+  /* 회색 톤으로 배경색 변경 */
+  color: #686868;
+  /* 글자 색상도 어둡게 변경 */
+}
+
+/* 선택 */
+.form-row:first-child .form-field:nth-child(1) {
+  flex: 1;
+  max-width: 23%;
+}
+
+/* 일자 */
+.form-row:first-child .form-field:nth-child(2) {
+  flex: 1;
+  max-width: 43%;
+}
+
+/* LC# */
+.form-row:first-child .form-field:nth-child(3) {
+  flex: 1;
+  max-width: 31%;
+}
+
+/* 갯수 */
+.form-row:first-child .form-field:nth-child(4) {
+  flex: 1;
+  max-width: 49%;
+}
+
+/* 총중량 */
+.form-row:first-child .form-field:nth-child(5) {
+  flex: 1;
+  max-width: 49%;
+}
+
+/* notification -by jsj 22-04-13 */
+.notification-container {
+  background: #2E83FB;
+  border-radius: 13px;
+  padding: 10px 10px;
+  /* position: absolute; */
+  top: 300px;
+  left: 300px;
+  /* bottom: 250px; */
+  display: none;
+  color: white;
+  max-height: 50px;
+  /* overflow-y: auto; */
+}
+
+.notification-container.show {
+  display: block;
+}
+
+.liBtn {
+  height: 40px;
+  padding: 1px 10px;
+  width: 70px;
+  line-height: normal;
+}
+
+#listContainer li a.a1 {
+  line-height: 15px;
+  font-weight: bold;
+}
+
+#listContainer li a.a1 {
+  line-height: 15px;
+  font-weight: bold;
+}
+
+/* <li> 요소에 대한 기본 스타일 */
+.li-normal {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* <li> 요소가 선택됐을 때의 스타일 */
+.li-selected {
+  background-color: #f0f0f0;
+  /* 선택 시 변경될 배경 색상 */
+}
+
+/* <a> 태그에 대한 스타일을 기본 상태로 유지 */
+.a-normal {
+  text-decoration: none;
+  /* 밑줄 제거 */
+  color: black;
+  /* 글자 색상 */
+}
+
+/* 목록 표시 */
+li {
+  list-style: none;
+  font-size: 13px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+li .item {
+  color: red;
+}
+
+.list-item {
+  list-style-type: none;
+}
+
+.full-link {
+  display: block;
+  /* a 태그가 li의 전체 영역을 차지하도록 함 */
+  text-decoration: none;
+  /* 밑줄 제거 */
+  color: inherit;
+  /* 상위 요소의 글자색 상속 */
+}
+
+.content .item-no {
+  color: red;
+  font-size: 13px;
+}
+
+.item-details {
+  margin-left: 20px;
+  /* 세부사항에 대한 여백 조절 */
+}
+
+.del-btn {
+  /* 삭제 버튼 스타일링 */
+  margin-top: 10px;
+  height: 40px;
+  padding: 1px 10px;
+  width: 70px;
+  line-height: normal;
+}
+
+#loading {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  margin-top: -200px;
+  margin-left: -200px;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#loading img {
+  width: 100%;
+  height: auto;
+}
+
+/* table */
+table.type10 {
+  width: 100%;
+  /* 테이블 선 -by jsj 20210317 */
+  border: 1px solid #d8d7d7;
+  border-collapse: collapse;
+  text-align: left;
+  line-height: 1.5;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin: 0px 0px;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+table.type10 td {
+  padding: 3px;
+  vertical-align: top;
+  border: 1px solid #f3f3f3;
+}
+
+/* g2b 통합검색용 */
+table.type10.type11 th {
+  /* 헤드고정 -by jsj 20210313 head-frozen */
+  position: sticky;
+  top: 0px;
+  padding: 5px;
+  vertical-align: top;
+  text-align: center;
+  /* color: #363636; */
+  color: #ffffff;
+  background: #5C636A;
+  /* background: #f7f15b; */
+  /* background: #2E83FB; */
+  margin: 2px 2px;
+}
+
+table.type10 td a {
+  color: #ce6767;
+  /* color: #00f; */
+  cursor: pointer;
+  text-decoration: none;
+}
+
+table.type10 th a {
+  color: #ffffff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+table.type10 tr:nth-child(even) {
+  background: #dddddd;
+}
+
+table.type10 tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 3px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #FFFF54;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin: 5px 0;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+.button-container:hover {
+  border-color: #4a90e2; /* 테두리 색상 변경 */
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #f0f7ff; /* 배경색 살짝 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}
+
+button {
+  /* 기본 테마 스타일을 유지하면서 필요한 속성만 추가 */
+  min-width: 100px;
+  height: 40px;
+  margin: 0;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  transform: scale(1.05); /* 호버 시 버튼 크기 5% 증가 */
+  background-color: #4a90e2; /* 호버 시 배경색 변경 */
+  color: white; /* 호버 시 텍스트 색상 변경 */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 호버 시 그림자 효과 */
+}
+
+.selected-row {
+    background-color: #90EE90 !important; /* 연한 초록색 */
+}
+
+.type10 tbody tr:hover {
+    cursor: pointer;
+}
+
+/* ============================= */
+/* mobile 영역 */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-wrap: wrap;
+  }
+
+  .form-field {
+    margin-right: 1px;
+    margin-bottom: 3px;
+    margin-left: 1px;
+    height: 30px;
+    padding: 5px 5px !important;
+  }
+
+  /* barcode1,2 */
+  .form-row:nth-child(2) .form-field:first-child,
+  .form-row:nth-child(2) .form-field:last-child {
+    /* flex-grow:남은공간확장,flex-shrink(축소),flex-basis(시작크기) */
+    flex: 0 0 100%;
+    max-width: 98%;
+    font-size: 13px;
+    height: 30px;
+  }
+
+  /* 생산량 - 중량 */
+  .form-row:nth-child(3) .form-field:first-child,
+  .form-row:nth-child(3) .form-field:last-child {
+    flex: 0 0 100%;
+    max-width: 49%;
+  }
+
+  button {
+    height: 30px;
+    margin-right: 3px;
+    width: 30%;
+    font-size: 13px !important;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 13px;
+  }
+
+  /* 목록 표시 */
+  li {
+    list-style: none;
+    font-size: 11px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .item-details {
+    margin: 1px 1px 1px 5px;
+  }
+
+}
