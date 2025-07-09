@@ -3,3 +3,8 @@ public_html/ecommerce_java
 *.log
 logs/*.log
 */log/*.log
+*.log
+*.bak
+*.tmp
+vendor/
+node_modules/
