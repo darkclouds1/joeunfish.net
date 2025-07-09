@@ -8,3 +8,6 @@ logs/*.log
 *.tmp
 vendor/
 node_modules/
+logs/*.log
+*.log
+logs/
