@@ -1,0 +1,5 @@
+public_html/ecommerce_java
+.log
+*.log
+logs/*.log
+*/log/*.log
