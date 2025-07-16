@@ -1,11 +1,11 @@
     <?php
     // session_start(); // 세션 시작을 맨 위로 이동
     date_default_timezone_set('Asia/Seoul');
-    $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
 
     // webserver 경로에 따라 동적으로 경로 설정
     $documentRoot = '/home/joeunfish.net/public_html';
-    error_log("\ndocumentRoot: " . $documentRoot, 3, $logFilePath);
+    $logFilePath = $documentRoot . "/logfile.log";
+    error_log("\n[ediRcv_srv_job.php] documentRoot: " . $documentRoot, 3, $logFilePath);
 
     require_once $documentRoot . '/wp-load.php';
     require_once $documentRoot . '/classphp/dbConn_fish.php';

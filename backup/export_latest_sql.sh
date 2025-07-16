@@ -16,50 +16,66 @@ TARGET_PASS="w3m69P21!@"
 TARGET_HOST="45.130.228.170"
 
 BACKUP_DIR="/home/joeunfish.net/backup/backup_db"
-BACKUP_LOG="$BACKUP_DIR/backup_log.txt"
-BACKUP_DETAIL_LOG="$BACKUP_DIR/backup_detail.log"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+
+# 최초 백업 시간 설정 (2025년 7월 12일 16:00)
+INITIAL_BACKUP_TIME="20250713_000000"
 
 # 백업 디렉토리 생성
 mkdir -p "$BACKUP_DIR"
 
-# 백업 로그 함수
-log_backup() {
-    local table=$1
-    local status=$2
-    local rows=$3
-    local file_size=$4
+# logDB에 로그 기록 함수
+log_to_db() {
+    local pg=$1
+    local rmrk=$2
     
-    echo "$(date '+%Y-%m-%d %H:%M:%S') | $table | $status | $rows rows | $file_size" >> "$BACKUP_DETAIL_LOG"
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "INSERT INTO logdb (pg, id, ip, rmrk) VALUES ('$pg', 'system', '127.0.0.1', '$rmrk')" 2>/dev/null
 }
 
-# 실행 전 확인
+# 마지막 백업 시간 조회 (logdb 테이블에서)
+get_last_backup_time() {
+    local last_backup=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT dt FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 1" -s --skip-column-names 2>/dev/null)
+    
+    if [ -n "$last_backup" ]; then
+        echo "$last_backup"
+    else
+        echo "$INITIAL_BACKUP_TIME"
+    fi
+}
+
+get_last_restore_time() {
+    local table_name=$1
+    local last_restore=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT dt FROM logdb WHERE pg = 'backup_${table_name}' AND rmrk LIKE '%복원 성공%' ORDER BY dt DESC LIMIT 1" -s --skip-column-names 2>/dev/null)
+    if [ -n "$last_restore" ]; then
+        echo "$last_restore"
+    else
+        echo "$INITIAL_BACKUP_TIME"
+    fi
+}
+
+# 실행 전 확인 (cronjob용 - 자동 실행)
 echo "=== 증분 백업 시작 ==="
 echo "소스: $SOURCE_HOST/$SOURCE_DB"
 echo "타겟: $TARGET_HOST/$TARGET_DB"
 echo "백업 시간: $TIMESTAMP"
 echo ""
 
-read -p "계속하시겠습니까? (y/N): " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "작업이 취소되었습니다."
-    exit 0
-fi
+# 백업 시작 로그
+log_to_db "backup" "백업 시작: $TIMESTAMP"
 
 # 마지막 백업 시간 확인
-if [ -f "$BACKUP_LOG" ]; then
-    LAST_BACKUP=$(tail -n 1 "$BACKUP_LOG")
-    echo "마지막 백업 시간: $LAST_BACKUP"
-else
-    echo "첫 번째 백업입니다. 전체 데이터를 백업합니다."
-    LAST_BACKUP=""
-fi
+LAST_BACKUP=$(get_last_backup_time)
+echo "마지막 백업 시간: $LAST_BACKUP"
 
 # t로 시작하는 테이블 목록 가져오기
 echo "테이블 목록 확인 중..."
 TABLES=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
     -e "SHOW TABLES LIKE 't%'" | grep -v "Tables_in")
+
+echo "테이블 목록: $TABLES"
 
 # 백업 성공/실패 카운터
 SUCCESS_COUNT=0
@@ -69,71 +85,64 @@ CHANGED_COUNT=0
 
 echo "증분 백업 시작..."
 
-# 각 테이블별 증분 백업
+IFS=$'\n'
 for TABLE in $TABLES; do
-    echo "백업 중: $TABLE"
-    
+    echo "백업 중: [$TABLE]"
+    LAST_BACKUP=$(get_last_restore_time "$TABLE")
     # 테이블의 변경사항 확인
     CHANGED_ROWS=0
     WHERE_CONDITION=""
     
-    if [ -n "$LAST_BACKUP" ]; then
-        # 마지막 백업 이후 변경된 레코드 수 확인
-        case $TABLE in
-            "tascinvt"|"tascinvt3"|"tbarcodein"|"tbarcodeinv"|"tbarcodeinv_m"|"tbarcodeout"|"tdayprod"|"tdayprod_lot"|"tevent"|"tgscodeout"|"tgscodeout_invent"|"tpurchase_in")
-                CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                    -e "SELECT COUNT(*) FROM $TABLE WHERE increate_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-                WHERE_CONDITION="increate_dt > '$LAST_BACKUP'"
-                ;;
-            "tdayprod_mst"|"tdayprodmat_mst"|"torderproducts"|"torderproducts_add"|"tpurchase")
-                CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                    -e "SELECT COUNT(*) FROM $TABLE WHERE create_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-                WHERE_CONDITION="create_dt > '$LAST_BACKUP'"
-                ;;
-            "tprodinvt")
-                CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                    -e "SELECT COUNT(*) FROM $TABLE WHERE invt_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-                WHERE_CONDITION="invt_dt > '$LAST_BACKUP'"
-                ;;
-            "tpurchase_imp")
-                CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                    -e "SELECT COUNT(*) FROM $TABLE WHERE import_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-                WHERE_CONDITION="import_dt > '$LAST_BACKUP'"
-                ;;
-            "tcomcode"|"tcomcodegs")
-                # 코드 테이블은 항상 전체 백업 (변경사항 추적 어려움)
-                CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                    -e "SELECT COUNT(*) FROM $TABLE" -s --skip-column-names 2>/dev/null || echo "0")
-                WHERE_CONDITION=""
-                ;;
-            "torders")
-                CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                    -e "SELECT COUNT(*) FROM $TABLE WHERE order_dt > DATE_FORMAT('$LAST_BACKUP', '%Y%m%d')" -s --skip-column-names 2>/dev/null || echo "0")
-                WHERE_CONDITION="order_dt > DATE_FORMAT('$LAST_BACKUP', '%Y%m%d')"
-                ;;
-            *)
-                # 날짜 컬럼이 없는 테이블은 전체 백업
-                CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                    -e "SELECT COUNT(*) FROM $TABLE" -s --skip-column-names 2>/dev/null || echo "0")
-                WHERE_CONDITION=""
-                ;;
-        esac
-        
-        if [ "$CHANGED_ROWS" -eq 0 ]; then
-            echo "  ✓ $TABLE: 변경사항 없음 (건너뜀)"
-            log_backup "$TABLE" "SKIPPED" "0" "0B"
-            continue
-        fi
-        
-        echo "  📊 $TABLE: $CHANGED_ROWS개 레코드 변경됨"
-        ((CHANGED_COUNT++))
-    else
-        # 첫 번째 백업인 경우 전체 데이터
-        CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-            -e "SELECT COUNT(*) FROM $TABLE" -s --skip-column-names 2>/dev/null || echo "0")
-        echo "  📊 $TABLE: $CHANGED_ROWS개 레코드 (전체 백업)"
-        ((CHANGED_COUNT++))
+    # 마지막 백업 이후 변경된 레코드 수 확인
+    case $TABLE in
+        "tascinvt"|"tascinvt3"|"tbarcodein"|"tbarcodeinv"|"tbarcodeinv_m"|"tbarcodeout"|"tdayprod"|"tdayprod_lot"|"tevent"|"tgscodeout"|"tgscodeout_invent"|"tpurchase_in")
+            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+                -e "SELECT COUNT(*) FROM $TABLE WHERE increate_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
+            WHERE_CONDITION="increate_dt > '$LAST_BACKUP'"
+            ;;
+        "tdayprod_mst"|"tdayprodmat_mst"|"torderproducts"|"torderproducts_add"|"tpurchase")
+            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+                -e "SELECT COUNT(*) FROM $TABLE WHERE create_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
+            WHERE_CONDITION="create_dt > '$LAST_BACKUP'"
+            ;;
+        "tprodinvt")
+            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+                -e "SELECT COUNT(*) FROM $TABLE WHERE invt_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
+            WHERE_CONDITION="invt_dt > '$LAST_BACKUP'"
+            ;;
+        "tpurchase_imp")
+            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+                -e "SELECT COUNT(*) FROM $TABLE WHERE import_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
+            WHERE_CONDITION="import_dt > '$LAST_BACKUP'"
+            ;;
+        "tcomcode"|"tcomcodegs")
+            # 코드 테이블은 항상 전체 백업 (변경사항 추적 어려움)
+            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+                -e "SELECT COUNT(*) FROM $TABLE" -s --skip-column-names 2>/dev/null || echo "0")
+            WHERE_CONDITION=""
+            ;;
+        "torders")
+            LAST_BACKUP_DATE=${LAST_BACKUP:0:8}
+            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+                -e "SELECT COUNT(*) FROM $TABLE WHERE order_dt > '$LAST_BACKUP_DATE'" -s --skip-column-names 2>/dev/null || echo "0")
+            WHERE_CONDITION="order_dt > '$LAST_BACKUP_DATE'"
+            ;;
+        *)
+            # 날짜 컬럼이 없는 테이블은 전체 백업
+            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+                -e "SELECT COUNT(*) FROM $TABLE" -s --skip-column-names 2>/dev/null || echo "0")
+            WHERE_CONDITION=""
+            ;;
+    esac
+    
+    if [ "$CHANGED_ROWS" -eq 0 ]; then
+        echo "  ✓ $TABLE: 변경사항 없음 (건너뜀)"
+        log_to_db "backup_${TABLE}" "$TABLE: 변경사항 없음 (SKIPPED)"
+        continue
     fi
+    
+    echo "  📊 $TABLE: $CHANGED_ROWS개 레코드 변경됨"
+    ((CHANGED_COUNT++))
     
     # 증분 백업 실행
     BACKUP_FILE="$BACKUP_DIR/incremental_${TABLE}_${TIMESTAMP}.sql"
@@ -143,6 +152,7 @@ for TABLE in $TABLES; do
         mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
             --no-create-info --no-create-db \
             --single-transaction \
+            --skip-triggers \
             --where="$WHERE_CONDITION" \
             "$SOURCE_DB" "$TABLE" > "$BACKUP_FILE" 2>/dev/null
     else
@@ -150,6 +160,7 @@ for TABLE in $TABLES; do
         mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
             --no-create-info --no-create-db \
             --single-transaction \
+            --skip-triggers \
             "$SOURCE_DB" "$TABLE" > "$BACKUP_FILE" 2>/dev/null
     fi
     
@@ -157,16 +168,17 @@ for TABLE in $TABLES; do
     if [ $? -eq 0 ] && [ -s "$BACKUP_FILE" ]; then
         file_size=$(du -h "$BACKUP_FILE" | cut -f1)
         echo "  ✅ $TABLE 백업 완료: $(basename "$BACKUP_FILE") ($file_size)"
-        log_backup "$TABLE" "SUCCESS" "$CHANGED_ROWS" "$file_size"
+        log_to_db "backup_${TABLE}" "$TABLE: 백업 성공 ($CHANGED_ROWS rows, $file_size)"
         ((SUCCESS_COUNT++))
     else
         echo "  ❌ $TABLE 백업 실패"
-        log_backup "$TABLE" "FAILED" "0" "0B"
+        log_to_db "backup_${TABLE}" "$TABLE: 백업 실패"
         ((FAILED_COUNT++))
         FAILED_TABLES="$FAILED_TABLES $TABLE"
         rm -f "$BACKUP_FILE"
     fi
 done
+unset IFS
 
 echo ""
 echo "=== 백업 결과 요약 ==="
@@ -182,6 +194,7 @@ fi
 # 성공한 백업이 하나라도 있는지 확인
 if [ $SUCCESS_COUNT -eq 0 ]; then
     echo "변경된 데이터가 없거나 모든 백업이 실패했습니다."
+    log_to_db "backup" "백업 실패: 변경된 데이터 없음"
     exit 0
 fi
 
@@ -190,6 +203,7 @@ INCREMENTAL_FILES=$(find "$BACKUP_DIR" -name "incremental_*_${TIMESTAMP}.sql" -t
 
 if [ -z "$INCREMENTAL_FILES" ]; then
     echo "백업할 변경사항이 없습니다."
+    log_to_db "backup" "백업 실패: 백업할 변경사항 없음"
     exit 0
 fi
 
@@ -214,33 +228,34 @@ for FILE in $INCREMENTAL_FILES; do
     
     if [ $? -eq 0 ]; then
         echo "  ✅ $(basename "$FILE") 복원 완료"
+        log_to_db "backup_$(basename "$FILE" | cut -d'_' -f2)" "$(basename "$FILE"): 복원 성공"
         ((RESTORE_SUCCESS++))
         # 성공한 파일은 보관 (나중에 정리)
         mv "$TEMP_FILE" "${FILE}.restored"
     else
         echo "  ❌ $(basename "$FILE") 복원 실패"
+        log_to_db "backup_$(basename "$FILE" | cut -d'_' -f2)" "$(basename "$FILE"): 복원 실패"
         ((RESTORE_FAILED++))
         rm -f "$TEMP_FILE"
     fi
 done
 
-# 백업 로그 업데이트
-echo "$TIMESTAMP" >> "$BACKUP_LOG"
+# 백업 완료 로그 기록
+if [ $RESTORE_FAILED -eq 0 ]; then
+    log_to_db "backup" "백업 완료: $SUCCESS_COUNT개 테이블 성공, $RESTORE_SUCCESS개 파일 복원 성공"
+else
+    log_to_db "backup" "백업 실패: $RESTORE_FAILED개 파일 복원 실패"
+fi
 
 echo ""
 echo "=== 증분 백업 완료 ==="
 echo "백업 성공: $SUCCESS_COUNT 테이블"
 echo "복원 성공: $RESTORE_SUCCESS 파일"
 echo "복원 실패: $RESTORE_FAILED 파일"
-echo "백업 로그: $BACKUP_LOG"
-echo "상세 로그: $BACKUP_DETAIL_LOG"
 
 if [ $RESTORE_FAILED -gt 0 ]; then
     echo "⚠️  일부 복원이 실패했습니다. 로그를 확인하세요."
 fi
 
 echo "✅ 증분 백업이 완료되었습니다."
-echo "백업결과 확인: ./backup_log_manager.sh show"
-echo "상세정보 확인: ./backup_log_manager.sh detail"
-echo "백업통계 확인: ./backup_log_manager.sh stats"
-echo "백업파일 삭제: ./backup_log_manager.sh delete"
+echo "백업결과 확인: SELECT * FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 10;"

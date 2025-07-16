@@ -292,6 +292,7 @@ function barcodeInv2GsShortCode()
             }
             // 데이터 없음
             if (totalCount == 0 || data === "") {
+                move_stop(); 
                 alert("출고 대상 데이터가 없습니다.");
                 // if (lic !== "") {
                 //   licn = lic + licn;
@@ -327,6 +328,7 @@ function barcodeInv2GsShortCode()
                 alert(
                     "ln628::시스템 장애 입니다. 잠시 후 재시도 하시기 바랍니다." + e.message
                 );
+                move_stop(); 
                 return false;
             }
 

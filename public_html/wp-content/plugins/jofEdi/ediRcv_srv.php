@@ -2,10 +2,10 @@
 
     date_default_timezone_set('Asia/Seoul');
     ob_start();
-
-    $logFilePath = __DIR__ . "/logfile.log";
-
+    
     $documentRoot = '/home/joeunfish.net/public_html';
+    $logFilePath = $documentRoot . "/logfile.log";
+
     require_once($documentRoot . '/wp-load.php');
     require_once($documentRoot . '/classphp/dbConn_fish.php');
     require_once($documentRoot . '/classphp/ediRcv_class.php');

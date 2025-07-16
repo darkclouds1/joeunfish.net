@@ -39,7 +39,7 @@ if ($category == 'order') {
             FP.product_code,
             COM.code_exp AS product_name,
             ROUND(COALESCE(SUM(CASE 
-                WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970') 
+                WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '62980', '68970','67370') 
                 THEN PRD.quantity ELSE 0 
             END) / 
             CASE 
@@ -51,7 +51,7 @@ if ($category == 'order') {
 
             CASE 
                 WHEN SUM(CASE 
-                    WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970') 
+                    WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '62980', '68970','67370') 
                     THEN PRD.quantity ELSE 0 
                 END) = 0 THEN 0
                 WHEN FP.product_code = '8809611290037' THEN 4
@@ -62,14 +62,15 @@ if ($category == 'order') {
 
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '62970' THEN PRD.quantity ELSE 0 END), 0) AS '이천|62970',
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '60470' THEN PRD.quantity ELSE 0 END), 0) AS '양산|60470',
-            COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '66970' THEN PRD.quantity ELSE 0 END), 0) AS '남사|66970',
+            -- COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '66970' THEN PRD.quantity ELSE 0 END), 0) AS '남사|66970',
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '62980' THEN PRD.quantity ELSE 0 END), 0) AS '이천2|62980',
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '68970' THEN PRD.quantity ELSE 0 END), 0) AS '부산|68970',
+            COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '67370' THEN PRD.quantity ELSE 0 END), 0) AS '화성|67370',
 
             COALESCE(GS.GS_qty, 0) AS 'GS편의점',
 
             COALESCE(SUM(CASE 
-                WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970') 
+                WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970','67370') 
                 THEN PRD.quantity ELSE 0 
             END), 0) + COALESCE(GS.GS_qty, 0) AS '총수량'
 

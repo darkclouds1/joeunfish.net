@@ -1,74 +1,86 @@
 #!/bin/bash
 
-# 백업 로그 관리 스크립트
+# 백업 로그 관리 스크립트 (logDB 테이블 기반)
+SOURCE_DB="joeu_fish"
+SOURCE_USER="u753849441_cASrk"
+SOURCE_PASS="w3m69P21!@"
+SOURCE_HOST="localhost"
+
 BACKUP_DIR="/home/joeunfish.net/backup/backup_db"
-BACKUP_LOG="$BACKUP_DIR/backup_log.txt"
-BACKUP_DETAIL_LOG="$BACKUP_DIR/backup_detail.log"
+
+# logDB에 로그 기록 함수
+log_to_db() {
+    local pg=$1
+    local rmrk=$2
+    
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "INSERT INTO logdb (pg, id, ip, rmrk) VALUES ('$pg', 'system', '127.0.0.1', '$rmrk')" 2>/dev/null
+}
 
 # 1. 백업 로그 확인
 show_backup_log() {
     echo "=== 백업 로그 확인 ==="
-    if [ -f "$BACKUP_LOG" ]; then
-        echo "총 백업 횟수: $(wc -l < "$BACKUP_LOG")"
-        echo "최근 5회 백업:"
-        tail -n 5 "$BACKUP_LOG" | nl
-        echo ""
-        echo "마지막 백업: $(tail -n 1 "$BACKUP_LOG")"
-    else
-        echo "백업 로그 파일이 없습니다."
-    fi
+    echo "최근 10회 백업:"
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT dt, rmrk FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 10" 2>/dev/null
+    
+    echo ""
+    echo "총 백업 횟수:"
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT COUNT(*) as '총 백업 횟수' FROM logdb WHERE pg = 'backup'" 2>/dev/null
 }
 
 # 2. 상세 백업 로그 확인
 show_detail_log() {
     echo "=== 상세 백업 로그 확인 ==="
-    if [ -f "$BACKUP_DETAIL_LOG" ]; then
-        echo "최근 10개 백업 상세 정보:"
-        tail -n 50 "$BACKUP_DETAIL_LOG"
-    else
-        echo "상세 백업 로그 파일이 없습니다."
-    fi
+    echo "최근 20개 백업 상세 정보:"
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT dt, rmrk FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 20" 2>/dev/null
 }
 
 # 3. 백업 로그 정리 (30일 이상 된 로그 삭제)
 cleanup_old_logs() {
     echo "=== 오래된 백업 로그 정리 ==="
-    if [ -f "$BACKUP_LOG" ]; then
-        # 30일 이상 된 백업 로그 삭제
-        while IFS= read -r line; do
-            backup_date=$(echo "$line" | cut -d'_' -f1)
-            backup_date_formatted=$(date -d "${backup_date:0:4}-${backup_date:4:2}-${backup_date:6:2}" +%s)
-            current_date=$(date +%s)
-            days_diff=$(( (current_date - backup_date_formatted) / 86400 ))
-            
-            if [ $days_diff -gt 30 ]; then
-                echo "삭제: $line (${days_diff}일 전)"
-                # 해당 백업 파일들도 삭제
-                find "$BACKUP_DIR" -name "*_${line}.sql" -delete
-            fi
-        done < "$BACKUP_LOG" > "$BACKUP_DIR/temp_log.txt"
-        
-        mv "$BACKUP_DIR/temp_log.txt" "$BACKUP_LOG"
-        echo "30일 이상 된 백업 로그가 정리되었습니다."
-    fi
+    
+    # 30일 이상 된 백업 로그 삭제
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "DELETE FROM logdb WHERE pg = 'backup' AND dt < DATE_SUB(NOW(), INTERVAL 30 DAY)" 2>/dev/null
+    
+    deleted_count=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT ROW_COUNT()" -s --skip-column-names 2>/dev/null)
+    
+    echo "30일 이상 된 백업 로그 $deleted_count개가 정리되었습니다."
+    
+    # 해당 백업 파일들도 삭제
+    find "$BACKUP_DIR" -name "*.sql" -mtime +30 -delete
+    echo "30일 이상 된 백업 파일들도 삭제되었습니다."
+    
+    # 정리 완료 로그
+    log_to_db "backup" "오래된 로그 정리: $deleted_count개 로그 삭제"
 }
 
 # 4. 백업 통계 보기
 show_backup_stats() {
     echo "=== 백업 통계 ==="
-    if [ -f "$BACKUP_LOG" ]; then
-        total_backups=$(wc -l < "$BACKUP_LOG")
-        first_backup=$(head -n 1 "$BACKUP_LOG")
-        last_backup=$(tail -n 1 "$BACKUP_LOG")
-        
-        echo "총 백업 횟수: $total_backups"
-        echo "첫 번째 백업: $first_backup"
-        echo "마지막 백업: $last_backup"
-        
-        # 백업 파일 크기 확인
-        total_size=$(find "$BACKUP_DIR" -name "incremental_*.sql" -exec du -ch {} + | tail -n 1 | cut -f1)
-        echo "총 백업 파일 크기: $total_size"
-    fi
+    
+    echo "총 백업 횟수:"
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT COUNT(*) as '총 백업 횟수' FROM logdb WHERE pg = 'backup'" 2>/dev/null
+    
+    echo ""
+    echo "첫 번째 백업:"
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT dt, rmrk FROM logdb WHERE pg = 'backup' ORDER BY dt ASC LIMIT 1" 2>/dev/null
+    
+    echo ""
+    echo "마지막 백업:"
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT dt, rmrk FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 1" 2>/dev/null
+    
+    echo ""
+    echo "백업 파일 크기:"
+    total_size=$(find "$BACKUP_DIR" -name "incremental_*.sql" -exec du -ch {} + | tail -n 1 | cut -f1)
+    echo "총 백업 파일 크기: $total_size"
 }
 
 # 5. 백업 파일 삭제
@@ -104,6 +116,9 @@ delete_backup_files() {
     echo "✅ 백업 파일 삭제 완료"
     echo "삭제된 파일 수: $deleted_count"
     echo "절약된 공간: $total_size_before"
+    
+    # 삭제 로그 기록
+    log_to_db "backup" "백업 파일 삭제: $deleted_count개 파일, $total_size_before"
 }
 
 # 6. 전체 정리 (로그 + 파일)
@@ -113,16 +128,17 @@ cleanup_all() {
     # 백업 파일 삭제
     delete_backup_files
     
-    # 로그 파일 정리
-    if [ -f "$BACKUP_LOG" ]; then
-        echo "" > "$BACKUP_LOG"
-        echo "백업 로그가 초기화되었습니다."
-    fi
+    # 로그 파일 정리 (최근 7일만 유지)
+    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "DELETE FROM logdb WHERE pg = 'backup' AND dt < DATE_SUB(NOW(), INTERVAL 7 DAY)" 2>/dev/null
     
-    if [ -f "$BACKUP_DETAIL_LOG" ]; then
-        echo "" > "$BACKUP_DETAIL_LOG"
-        echo "상세 백업 로그가 초기화되었습니다."
-    fi
+    deleted_logs=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+        -e "SELECT ROW_COUNT()" -s --skip-column-names 2>/dev/null)
+    
+    echo "7일 이상 된 백업 로그 $deleted_logs개가 정리되었습니다."
+    
+    # 정리 완료 로그
+    log_to_db "backup" "전체 백업 정리 완료: $deleted_logs개 로그 삭제"
     
     echo "✅ 전체 백업 정리가 완료되었습니다."
 }
@@ -149,11 +165,11 @@ case "$1" in
         ;;
     *)
         echo "사용법: $0 {show|detail|cleanup|delete|cleanup-all|stats}"
-        echo "  show        - 백업 로그 확인"
-        echo "  detail      - 상세 백업 로그 확인"
+        echo "  show        - 백업 로그 확인 (logDB)"
+        echo "  detail      - 상세 백업 로그 확인 (logDB)"
         echo "  cleanup     - 오래된 로그 정리 (30일 이상)"
         echo "  delete      - 모든 백업 파일 삭제"
         echo "  cleanup-all - 전체 정리 (파일 + 로그)"
-        echo "  stats       - 백업 통계 보기"
+        echo "  stats       - 백업 통계 보기 (logDB)"
         ;;
 esac 

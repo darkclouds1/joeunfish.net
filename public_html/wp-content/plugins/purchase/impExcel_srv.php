@@ -35,7 +35,7 @@ $vendorPath = $_SERVER['DOCUMENT_ROOT'] . '/vendor';
 $autoloadPath = $vendorPath . '/autoload.php';
 
 if (file_exists($autoloadPath)) {
-    error_log("autoload.php 파일을 찾았습니다: $autoloadPath", 3, $logFilePath);
+    // error_log("autoload.php 파일을 찾았습니다: $autoloadPath", 3, $logFilePath);
     require $autoloadPath;
 } else {
     error_log("autoload.php 파일을 찾을 수 없습니다: $autoloadPath", 3, $logFilePath);
@@ -48,19 +48,19 @@ try {
     $spreadsheet->getDefaultStyle()->getFont()->setName('맑은 고딕');
     $spreadsheet->getDefaultStyle()->getFont()->setSize(11);
 
-    error_log("PhpSpreadsheet 클래스를 성공적으로 로드했습니다.", 3, $logFilePath);
+    // error_log("[impExcel_srv.php] PhpSpreadsheet 클래스를 성공적으로 로드했습니다.", 3, $logFilePath);
 } catch (Exception $e) {
-    error_log("PhpSpreadsheet 클래스 로드 실패: " . $e->getMessage(), 3, $logFilePath);
-    die("PhpSpreadsheet 클래스를 로드할 수 없습니다.");
+    error_log("[impExcel_srv.php] PhpSpreadsheet 클래스 로드 실패: " . $e->getMessage(), 3, $logFilePath);
+    die("[impExcel_srv.php] PhpSpreadsheet 클래스를 로드할 수 없습니다.");
 }
 
 // Composer 의존성 확인
 $composerJsonPath = $vendorPath . '/composer.json';
 if (file_exists($composerJsonPath)) {
     $composerJson = json_decode(file_get_contents($composerJsonPath), true);
-    error_log("설치된 의존성: " . print_r($composerJson['require'], true), 3, $logFilePath);
+    // error_log("[impExcel_srv.php] 설치된 의존성: " . print_r($composerJson['require'], true), 3, $logFilePath);
 } else {
-    error_log("composer.json 파일을 찾을 수 없습니다.", 3, $logFilePath);
+    error_log("[impExcel_srv.php] composer.json 파일을 찾을 수 없습니다.", 3, $logFilePath);
 }
 
 // Use PhpSpreadsheet classes
@@ -78,8 +78,9 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 // $sheet->setTitle('Sheet1');
 
 // 기존 파일 로드
-$filePath = __DIR__ . '/impExcel-tmp.xls';
-error_log("filePath: " . $filePath, 3, $logFilePath);
+$filePath = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/uploads/impExcel-tmp.xls';
+// $filePath = __DIR__ . '/impExcel-tmp.xls';
+// error_log("[impExcel_srv.php] filePath: " . $filePath, 3, $logFilePath);
 
 $reader = IOFactory::createReader('Xls');
 $spreadsheet = $reader->load($filePath);
@@ -160,7 +161,7 @@ try {
 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
 $writer->setPreCalculateFormulas(false);
 
-$savePath = __DIR__ . '/impExcel-' . $supply_date . '.xls'; // 새 파일 이름
+$savePath = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/uploads/impExcel-' . $supply_date . '.xls'; // 새 파일 이름
 // error_log("data: " . print_r($savePath, true), 3, $logFilePath);
 $writer->save($savePath);
 

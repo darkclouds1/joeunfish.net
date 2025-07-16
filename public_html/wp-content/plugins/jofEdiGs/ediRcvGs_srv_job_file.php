@@ -12,7 +12,7 @@
     $conn     = $dbConn->conn();
     mysqli_set_charset($conn, 'utf8');
     mysqli_query($conn, "SET time_zone = '+09:00'");
-    $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
+    $logFilePath = $documentRoot . "/logfile.log";
 
     $folderPath = $documentRoot . '/ecommerce_java/recv';
     $files = glob($folderPath . '/*');

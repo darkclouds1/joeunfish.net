@@ -46,8 +46,23 @@ try {
     
     // 8. 템플릿 파일 확인 - uploads 폴더에서 찾도록 변경
     $template_path = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/uploads/daily_order.xls';
+    error_log("\ntemplate_path=" . $template_path, 3, $logFilePath);
+
     if (!file_exists($template_path)) {
-        throw new Exception('템플릿 파일이 없습니다: ' . $template_path);
+        error_log("템플릿 파일이 없습니다: " . $template_path, 3, $logFilePath);
+        
+        // 헤더가 이미 보내졌는지 확인
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+        }
+        
+        echo json_encode([
+            'success' => false,
+            'message' => '템플릿 파일을 찾을 수 없습니다.',
+            'error_type' => 'template_missing'
+        ]);
+        exit;
     }
     error_log("템플릿 파일 존재 확인: " . $template_path, 3, $logFilePath);
     
@@ -59,11 +74,27 @@ try {
     header('Content-Disposition: attachment;filename="업무일지_' . $supply_dt . '.xlsx"');
     header('Cache-Control: max-age=0');
     
-    // 10. 템플릿 로드
+    // 10. 템플릿 로드 - try-catch 추가
     error_log("템플릿 로드 시도...", 3, $logFilePath);
-    $spreadsheet = IOFactory::load($template_path);
-    $sheet = $spreadsheet->getActiveSheet();
-    error_log("템플릿 로드 성공", 3, $logFilePath);
+    try {
+        $spreadsheet = IOFactory::load($template_path);
+        $sheet = $spreadsheet->getActiveSheet();
+        error_log("템플릿 로드 성공", 3, $logFilePath);
+    } catch (Exception $e) {
+        error_log("템플릿 로드 실패: " . $e->getMessage(), 3, $logFilePath);
+        
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+        }
+        
+        echo json_encode([
+            'success' => false,
+            'message' => '템플릿 파일을 찾을 수 없습니다.',
+            'error_type' => 'template_load_failed'
+        ]);
+        exit;
+    }
     
     // 10. 날짜 셀 설정
     $weekday = ['일', '월', '화', '수', '목', '금', '토'];

@@ -15,7 +15,7 @@ TARGET_USER="u753849441_cASrk"
 TARGET_PASS="w3m69P21!@"
 TARGET_HOST="45.130.228.170"
 
-BACKUP_DIR="/home/joeunfish.net/backup/backup_db"
+BACKUP_DIR="/home/joeunfish.net/backup/backup_db_all"
 
 # 백업 디렉토리 생성 (없으면)
 mkdir -p "$BACKUP_DIR"
@@ -49,16 +49,16 @@ for TABLE in $TABLES; do
 done
 
 # wp_users 테이블을 백업 (전체 데이터)
-mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
-    --no-create-info --no-create-db \
-    --triggers --routines --events \
-    "$SOURCE_DB" wp_users > "$BACKUP_DIR/wp_users.sql"
+# mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
+#     --no-create-info --no-create-db \
+#     --triggers --routines --events \
+#     "$SOURCE_DB" wp_users > "$BACKUP_DIR/wp_users.sql"
 
 # wp_usermeta 테이블을 백업 (전체 데이터)
-mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
-    --no-create-info --no-create-db \
-    --triggers --routines --events \
-    "$SOURCE_DB" wp_usermeta > "$BACKUP_DIR/wp_usermeta.sql"
+# mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
+#     --no-create-info --no-create-db \
+#     --triggers --routines --events \
+#     "$SOURCE_DB" wp_usermeta > "$BACKUP_DIR/wp_usermeta.sql"
 
 if [ $? -eq 0 ]; then
     echo "KVM database backup successful"
@@ -76,7 +76,7 @@ if [ -z "$SQL_FILES" ]; then
     exit 1
 fi
 
-# 각 SQL 파일을 webhosting 데이터베이스에 임포트
+# 각 SQL 파일을 webhosting 복원
 for FILE in $SQL_FILES; do
     echo "Importing $FILE into webhosting database..."
     

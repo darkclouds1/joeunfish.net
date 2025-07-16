@@ -9,7 +9,8 @@ DB_USER="u753849441_cASrk"
 DB_PASS="w3m69P21!@"
 DB_HOST="localhost"  # joeunfish.in DB IP
 
-BACKUP_DIR="/home/joeunfish.net/backup/bkdb_0708"
+# 백업 디렉토리 설정 t
+BACKUP_DIR="/home/joeunfish.net/backup/bkdb_0712"
 mkdir -p "$BACKUP_DIR"  # 백업 디렉토리 생성
 
 echo "Starting t~ 테이블 백업..."
@@ -21,12 +22,12 @@ TABLES=$(mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" \
   -e "SHOW TABLES LIKE 't%';" -s --skip-column-names)
 # ─────────────────────────────
 # 각 테이블 백업
-for TABLE in $TABLES; do
+for TABLE in $TABLES; do 
     FILE="$BACKUP_DIR/${TABLE}.sql"
-    echo "Backing up: $TABLE → $FILE"
+    echo "Backing up: $TABLE → $FILE" 
     mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" "$TABLE" > "$FILE"
     
-    if [ $? -eq 0 ]; then
+    if [ $? -eq 0 ]; then 
         echo "✅ $TABLE 백업 완료"
     else
         echo "❌ $TABLE 백업 실패"
