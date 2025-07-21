@@ -65,15 +65,54 @@ if (!class_exists('OrderParserClass')) {
                     if ($parsedData->msgFrom == "GSSM01:DC") {
                         $parsedData->deliveryName = "(주)지에스리테일";
                         // 배송지 정보 추출
-                        $targetValues = [62970, 60470, 66970, 62980, 68970];
+                        // $targetValues = [62970, 60470, 66970, 62980, 68970]; -by 정순장 2025-07-20 화성 추가
+                        $targetValues = [62970, 60470, 62980, 68970, 67370];
+                        $deliveryFound = false; // 배송지 정보 찾기 성공 여부
+                        
+                        // 디버그: 배열 크기와 내용 확인
+                        // error_log("\nln75::배열크기=" . count($details) . " details=" . print_r($details, true), 3, $this->logFilePath);
+                        
                         foreach ($targetValues as $target) {
-                            $index = array_search($target, $details);
-                            // 연속으로 deliveryCode가 나타나는 최초 array 를 찾아서 배송지 정보 추출
-                            if ($index !== false && isset($details[$index + 2]) && $details[$index + 2] == $target) {
-                                $parsedData->deliveryCode = $details[$index];
-                                $parsedData->regionName =   $details[$index - 1];
-                                break;
+                            // 같은 target 값을 가진 모든 인덱스 찾기
+                            $targetIndexes = [];
+                            foreach ($details as $index => $detail) {
+                                // 숫자만 추출해서 비교 (예: "지67370"에서 67370 추출)
+                                $numericPart = preg_replace('/[^0-9]/', '', $detail);
+                                if ($numericPart == $target) {
+                                    $targetIndexes[] = $index;
+                                }
                             }
+                            
+                            // 디버그: 각 target 검색 결과
+                            // error_log("\nln80::target=" . $target . " indexes=" . print_r($targetIndexes, true), 3, $this->logFilePath);
+                            
+                            // target 값이 2개 이상 있으면 배송지 정보 추출
+                            if (count($targetIndexes) >= 2) {
+                                // 첫 번째와 두 번째 target 사이의 값이 regionName
+                                $firstIndex = $targetIndexes[0];
+                                $secondIndex = $targetIndexes[1];
+                                
+                                // 두 인덱스 사이의 값들을 확인
+                                for ($i = $firstIndex + 1; $i < $secondIndex; $i++) {
+                                    if (isset($details[$i]) && 
+                                        !is_numeric($details[$i]) && 
+                                        strpos($details[$i], '센터') !== false) {
+                                        
+                                        $parsedData->deliveryCode = $target;
+                                        $parsedData->regionName = $details[$i];
+                                        $deliveryFound = true;
+                                        // error_log("\nln95::배송지 정보 찾음 - deliveryCode=" . $target . " regionName=" . $details[$i], 3, $this->logFilePath);
+                                        break 2; // 두 개의 foreach 모두 종료
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // 배송지 정보를 찾지 못한 경우 기본값 설정
+                        if (!$deliveryFound) {
+                            $parsedData->deliveryCode = '';
+                            $parsedData->regionName = '';
+                            // error_log("\nln106::배송지 정보 없음 =" . print_r($parsedData, true), 3,  $this->logFilePath);
                         }
                     } elseif ($parsedData->msgFrom == "GSCT04:DC") {
                         $parsedData->deliveryName = "GS25물류센터";

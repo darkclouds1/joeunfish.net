@@ -10,9 +10,12 @@
     $dbConn   = new dbconnClassFish;
     $platForm = $dbConn->MobileCheck();
     $conn     = $dbConn->conn();
+
     mysqli_set_charset($conn, 'utf8');
     mysqli_query($conn, "SET time_zone = '+09:00'");
-    $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
+
+    $logFilePath = $documentRoot . "/logfile.log";
+    error_log("\nln18::logFilePath: " . $logFilePath, 3, $logFilePath);
 
     $folderPath = $documentRoot . '/ecommerce_java/recv';
     $files = glob($folderPath . '/*');
@@ -27,7 +30,7 @@
         }
     }
 
-    // error_log("latestFile: " . $latestFile, 3, $logFilePath);
+    error_log("\nln31::latestFile: " . $latestFile, 3, $logFilePath);
     // GS는 따로 전문데이터를 받지 않고, 이미 받은 최근 전문으로 작업함.
     // exec('/home/joeunfish.online/ecommerce_java/ecommerce.sh');
 
@@ -64,8 +67,11 @@
     $tableOrders = 'torders';
     $tableOrderProducts = 'torderproducts';
 
+    // error_log("\nln68::orders=" . print_r($parser->getOrders(), true), 3, $logFilePath);
+
     foreach ($parser->getOrders() as $order) {
-        // error_log(print_r($parser->getOrders(), true), 3, $logFilePath);
+        // error_log("\nln69::order=" . print_r($order, true), 3, $logFilePath);
+
         $orderData = [
             'msgtype' => $order['msgType'],
             'msgfrom' => $order['msgFrom'],
@@ -79,6 +85,15 @@
             'create_id' => $user_name,
             'modify_id' => $user_name,
         ];
+
+        // error_log("\nln84::orderData=" . print_r($orderData, true), 3, $logFilePath);
+        // if ($orderData['dest_code'] == '68970') { 
+        //     error_log("\nln90::68970orderData=" . print_r($orderData, true), 3, $logFilePath);
+        // }
+
+        if ($orderData['dest_code'] == '67370') { 
+            error_log("\nln90::67370 orderData=" . print_r($orderData, true), 3, $logFilePath);
+        }
 
         // 기존 주문번호 존재하면 삭제하고 새로 추가 (단, msgtype이 ORDCHG인 경우는 삭제하지 않음)
         $orderExists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tableOrders WHERE doc_no = %s", $order['msgId']));

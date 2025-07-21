@@ -19,9 +19,10 @@ TARGET_HOST="45.130.228.170"
 # 기본값: 하루 전 날짜로 자동 설정
 # 수동 설정 시 아래 주석을 해제하고 원하는 날짜 입력 (YYYY-MM-DD 형식)
 # START_DATE="2025-07-15"
+# START_DATE_FORMAT="20250715"
 
-START_DATE=$(date -d "yesterday" +%Y-%m-%d)
-START_DATE_FORMAT=$(date -d "yesterday" +%Y%m%d)
+START_DATE=$(date -d "-2 days" +%Y-%m-%d)
+START_DATE_FORMAT=$(date -d "-2 days" +%Y%m%d)
 
 # 백업 디렉토리 설정
 BACKUP_DIR="/home/joeunfish.net/backup/backup_${START_DATE_FORMAT}"

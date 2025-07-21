@@ -3,7 +3,9 @@
 session_start();
 date_default_timezone_set('Asia/Seoul');
 
-require($_SERVER['DOCUMENT_ROOT'] . '/classphp/dbConn_fish.php');
+// 경로 설정 수정
+$documentRoot = '/home/joeunfish.net/public_html';
+require_once $documentRoot . '/classphp/dbConn_fish.php';
 
 $dbConn = new dbconnClassFish;
 $conn     = $dbConn->conn();
@@ -11,7 +13,7 @@ mysqli_set_charset($conn, 'utf8');
 mysqli_query($conn, "SET NAMES 'utf8'"); // 추가된 부분
 mysqli_query($conn, "SET time_zone = '+09:00'");
 
-$logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
+$logFilePath = $documentRoot . "/logfile.log";
 $category    = isset($_GET['category']) ? $_GET['category'] : 'order';
 
 isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
@@ -59,16 +61,12 @@ if ($category == 'order') {
                 WHEN FP.product_code = '8809611290266' THEN 4
                 ELSE 1 
             END AS '입수',
-
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '62970' THEN PRD.quantity ELSE 0 END), 0) AS '이천|62970',
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '60470' THEN PRD.quantity ELSE 0 END), 0) AS '양산|60470',
-            -- COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '66970' THEN PRD.quantity ELSE 0 END), 0) AS '남사|66970',
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '62980' THEN PRD.quantity ELSE 0 END), 0) AS '이천2|62980',
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '68970' THEN PRD.quantity ELSE 0 END), 0) AS '부산|68970',
             COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '67370' THEN PRD.quantity ELSE 0 END), 0) AS '화성|67370',
-
             COALESCE(GS.GS_qty, 0) AS 'GS편의점',
-
             COALESCE(SUM(CASE 
                 WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970','67370') 
                 THEN PRD.quantity ELSE 0 
@@ -162,7 +160,7 @@ if ($category == 'orderGSCT04') {
         // 동적 SQL 쿼리 실행
         $stmt = $pdo->query($sql);
 
-        error_log('sql=' . print_r($sql, true), 3, $logFilePath); // 서버 로그에 데이터 기록
+        // error_log('sql=' . print_r($sql, true), 3, $logFilePath); // 서버 로그에 데이터 기록
 
         // 결과를 JSON으로 변환하여 클라이언트로 전
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -282,10 +280,6 @@ if ($category == 'update') {
         $serial_no
     );
     // 서버 응답을 JSON 형식으로 일관되게 처리하도록 수정합니다.
-    error_log(print_r(
-        $data,
-        true
-    ), 3, $logFilePath);
 
     header('Content-Type: application/json');
     if ($stmt->execute()) {

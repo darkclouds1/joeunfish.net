@@ -1,4 +1,6 @@
 public_html/ecommerce_java
+backup/backup_db
+public_html/wp-content/uploads
 .log
 *.log
 logs/*.log
