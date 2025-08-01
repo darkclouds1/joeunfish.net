@@ -137,6 +137,7 @@ for TABLE in $TABLES; do
             --no-create-info --no-create-db \
             --single-transaction \
             --skip-triggers \
+            --replace \
             --where="$WHERE_CONDITION" \
             "$SOURCE_DB" "$TABLE" > "$BACKUP_FILE" 2>/dev/null
     else
@@ -145,6 +146,7 @@ for TABLE in $TABLES; do
             --no-create-info --no-create-db \
             --single-transaction \
             --skip-triggers \
+            --replace \
             "$SOURCE_DB" "$TABLE" > "$BACKUP_FILE" 2>/dev/null
     fi
     

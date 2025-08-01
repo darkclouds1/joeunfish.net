@@ -54,10 +54,10 @@ if ($dest_code !== '60000') {
             MAX(PRD.unit_price) AS '단가',
             FLOOR(SUM(COALESCE(PRD.quantity, 0)) + COALESCE(MAX(ADDPRD.quantity_new), 0)) * MAX(PRD.unit_price) AS '금액',
             FLOOR(
-                (SUM(CASE WHEN ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970') 
+                (SUM(CASE WHEN ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970', '67370') 
                         THEN COALESCE(PRD.quantity, 0)
                         ELSE 0 END) + 
-                CASE WHEN ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970') 
+                CASE WHEN ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970', '67370') 
                     THEN COALESCE(MAX(ADDPRD.quantity_new), 0)
                     ELSE 0 END) /
                 CASE 

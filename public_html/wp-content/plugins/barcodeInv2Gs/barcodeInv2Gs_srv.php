@@ -71,7 +71,7 @@ if ($category === '1s') {
             FLOOR(SUM(COALESCE(PRD.quantity_new, PRD.quantity, 0))) AS '수량',
             MAX(PRD.unit_price) AS '단가',
             FLOOR(SUM(COALESCE(PRD.quantity_new, PRD.quantity, 0))) * MAX(PRD.unit_price) AS '금액',
-            FLOOR(COALESCE(SUM(CASE WHEN ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970')
+            FLOOR(COALESCE(SUM(CASE WHEN ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970', '67370')
                                     THEN COALESCE(PRD.quantity_new, PRD.quantity, 0)
                                     ELSE 0 END) /
             CASE

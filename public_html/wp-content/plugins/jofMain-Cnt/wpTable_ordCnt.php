@@ -100,7 +100,7 @@ function jofMainOrdCntChartShortCode()
         $limit
     );
 
-    error_log("[jofMainOrdCntChartShortCode] query= " . $query, 3, $logFilePath);
+    // error_log("[jofMainOrdCntChartShortCode] query= " . $query, 3, $logFilePath);
     $results = $wpdb->get_results($query);
 
     if (empty($results)) {
