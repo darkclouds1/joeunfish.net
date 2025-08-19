@@ -111,6 +111,11 @@ jQuery(document).ready(function ($) {
           rowColor = "background-color: yellow;";
         } 
 
+        // Add this condition to check if the product code starts with "88"
+        if (item["제품코드"].startsWith("88")) {
+          rowColor = "background-color: #f7e18aff;";
+        }
+
         html +=
           "<tr style='" +
           rowColor +
@@ -165,12 +170,16 @@ jQuery(document).ready(function ($) {
             rowColor = "#f0f0f0";
         }
 
+        // Add this condition to check if the product code starts with "88"
+        if (item["제품코드"].startsWith("88")) {
+          rowColor = "background-color: #f7e18aff;";
+        }
+
         html += `<div class='product-box clickable-row' 
                       data-original-style='background-color: ${rowColor}' 
                       style='background-color: ${rowColor}'>`;
         
-        html +=
-          "<div class='product-info'><span>순번: " +
+        html += "<div class='product-info'><span>순번: " +
           (i + 1) +
           "</span><span>코드: " +
           item["제품코드"] +
@@ -347,7 +356,7 @@ jQuery(document).ready(function ($) {
         if (yellowBoxCodes.includes(item["자재코드"])) {
             rowColor = "yellow";
         } else if (item["매입일"] < today) {
-            rowColor = "#f0f0f0";
+            rowColor = "orange";
         }
 
         html += `<div class='product-box clickable-row' 

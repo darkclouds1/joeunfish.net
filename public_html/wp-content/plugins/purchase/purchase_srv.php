@@ -58,11 +58,11 @@ if ($category === 'search') {
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$start_date, $end_date]);
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC); 
 
         echo json_encode([
             'success' => true,
-            'data' => $data
+            'data' => $data 
         ], JSON_UNESCAPED_UNICODE);
     } catch (Exception $e) {
         echo json_encode([
@@ -85,17 +85,17 @@ if ($category === 'getMatCd') {
                 'mat_nm' => $row['mat_nm']
             );
         }
-    }
-
+    } 
+    
     $response = array(
         'status' => 'success',
         'data' => $materials
     );
-
+ 
     echo json_encode($response);
     exit;
 }
-
+  
 // 판매점 조회
 if ($category === 'getStoreCd') {
     $sql = "SELECT DISTINCT store_code, country_origin 
@@ -855,7 +855,7 @@ if ($category === 'search-event') {
                 ORDER BY TEVENT.increate_dt, TEVENT.serial_no DESC
                 ";
 
-        error_log("\n[ln646]sql=" . $sql, 3, $logFilePath);
+        // error_log("\n[ln646]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$start_date, $end_date]);
@@ -913,7 +913,7 @@ if ($category === 'save-event') {
         ]);
 
         // error_log("[ln710]sql=" . $sql, 3, $logFilePath);
-        error_log("[ln909]data=" . json_encode($data), 3, $logFilePath);
+        // error_log("[ln909]data=" . json_encode($data), 3, $logFilePath);
 
         echo json_encode(['success' => true]);
 
@@ -949,7 +949,7 @@ if ($category === 'update-event') {
                     serial_no = ?         -- 일련번호로 레코드 식별
                 ";
 
-        error_log("[ln946]sql=" . $sql, 3, $logFilePath);
+        // error_log("[ln946]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -990,7 +990,7 @@ if ($category === 'delete-event') {
         $placeholders = str_repeat('?,', count($serial_nos) - 1) . '?';
         $sql = "DELETE FROM tevent WHERE serial_no IN ($placeholders)";
 
-        error_log("\n[ln770]sql=" . $sql, 3, $logFilePath);
+        // error_log("\n[ln770]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($serial_nos);
@@ -1011,7 +1011,7 @@ if ($category === 'delete-event') {
 if ($category === 'getEventCode') {
     // 파라미터: code (000=대분류, 그 외 소분류 코드)
     $code = $_GET['code'];
-    error_log("\n[ln1009]code=" . $code, 3, $logFilePath);
+    // error_log("\n[ln1009]code=" . $code, 3, $logFilePath);
 
     if ($code === '000') { // 대분류 조회
         $sql = "SELECT DISTINCT major_code AS code, major_nm AS code_nm 
@@ -1028,7 +1028,7 @@ if ($category === 'getEventCode') {
     }
     $result = $conn->query($sql);
 
-    error_log("[ln1025]sql=" . $sql, 3, $logFilePath);
+    // error_log("[ln1025]sql=" . $sql, 3, $logFilePath);
 
     $data = array();
     if ($result->num_rows > 0) {
@@ -1058,7 +1058,7 @@ if ($category === 'getEventProdList') {
             ORDER BY store_code";    
     $result = $conn->query($sql);
 
-    error_log("[ln1057]sql=" . $sql, 3, $logFilePath);
+    // error_log("[ln1057]sql=" . $sql, 3, $logFilePath);
     $data = array();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {

@@ -311,11 +311,6 @@ if ($category == 'insert') {
     // JSON 문자열을 PHP 배열로 변환합니다.
     $data = json_decode($json_input, true);
 
-    error_log(
-        print_r($data, true),
-        3,
-        $logFilePath
-    );
 
     $grp_code = $data['data'][0];
     $grp_nm = $data['data'][1];
@@ -407,7 +402,7 @@ if ($category == 'invtUpdate') {
     $check_sql = "SELECT * FROM tprodinvt WHERE store_code = ? AND LEFT(invt_dt, 10) = ?";
     $check_stmt = $conn->prepare($check_sql);
 
-    error_log("[ln:390] check_sql: " . $check_sql, 3, $logFilePath);
+    // error_log("[ln:390] check_sql: " . $check_sql, 3, $logFilePath);
 
 
     $check_stmt->bind_param("ss", $store_code, $invt_dt);
@@ -418,7 +413,7 @@ if ($category == 'invtUpdate') {
         $update_sql = "UPDATE tprodinvt SET invt_cnt = ?, modify_id = ? WHERE store_code = ? AND LEFT(invt_dt, 10) = ?";
         $update_stmt = $conn->prepare($update_sql);
 
-        error_log("[ln:401] update_sql: " . $update_sql, 3, $logFilePath);
+        // error_log("[ln:401] update_sql: " . $update_sql, 3, $logFilePath);
 
         $update_stmt->bind_param("ssss", $value, $user_id, $store_code, $invt_dt);
         $update_stmt->execute();

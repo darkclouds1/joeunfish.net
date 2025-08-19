@@ -22,12 +22,10 @@ mysqli_set_charset($conn, 'utf8');
 mysqli_query($conn, "SET time_zone = '+09:00'");
 
 $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
-error_log("\n[ln15] logFilePath=" . $logFilePath, 3, $logFilePath);
+// error_log("\n[ln15] logFilePath=" . $logFilePath, 3, $logFilePath);
 
 // 파라미터
 isset($_GET['category']) ? $category = $_GET['category'] : $category = "";
-error_log("\n[ln20] category=" . $category, 3, $logFilePath);
-
 isset($_GET['start_date']) ? $start_date = $_GET['start_date'] : $start_date = "";
 isset($_GET['end_date']) ? $end_date = $_GET['end_date'] : $end_date = "";
 isset($_GET['bl_no']) ? $bl_no = $_GET['bl_no'] : $bl_no = "";
@@ -118,7 +116,7 @@ function getCoDayData($start_date)
         // 1. SET 쿼리 별도 실행
         $setQuery = "SET @make_dt := '$make_dt', @delivery_dt := '$delivery_dt', @increate_dt := '$increate_dt'";
         if (!$conn->query($setQuery)) {
-            error_log("[ln_co] SET 쿼리 실패: " . $conn->error, 3, $logFilePath);
+            // error_log("[ln_co] SET 쿼리 실패: " . $conn->error, 3, $logFilePath);
             return ['status' => 'error', 'message' => 'SET 쿼리 실패: ' . $conn->error];
         }
 

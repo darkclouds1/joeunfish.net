@@ -21,27 +21,17 @@ mysqli_set_charset($conn, 'utf8');
 mysqli_query($conn, "SET time_zone = '+09:00'");
 
 $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
-error_log("\n[ln15] logFilePath=" . $logFilePath, 3, $logFilePath);
 
 // 파라미터
 isset($_GET['category']) ? $category = $_GET['category'] : $category = "";
-error_log("\n[ln20] category=" . $category, 3, $logFilePath);
-
 isset($_GET['start_date']) ? $start_date = $_GET['start_date'] : $start_date = "";
 isset($_GET['awb']) ? $awb = $_GET['awb'] : $awb = array();
-
 isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
 
 // GS 수불 조회
 if ($category === "search_ImpDay") {
 
-    // GS 수불 데이터 조회
-    error_log("\n[ln39] start_date=" . $start_date, 3, $logFilePath);
-    error_log("\n[ln40] awb=" . $awb, 3, $logFilePath);
-
     $bl_no = substr($awb, -4);
-    error_log("\n[ln41] bl_no=" . $bl_no, 3, $logFilePath);
-
     $data = getImpDayData($start_date, $bl_no);
 
     // 아래는 기존처럼 출력/엑셀/JSON 처리
@@ -63,7 +53,7 @@ if ($category === "search_ImpDay") {
 
 // 통관일자의 BL# 번호 조회
 if ($category === "awb") {
-    error_log("\n[ln61] start_date=" . $start_date, 3, $logFilePath);
+    // error_log("\n[ln61] start_date=" . $start_date, 3, $logFilePath);
 
     $sql = " SELECT 
                 awb
@@ -86,7 +76,7 @@ if ($category === "awb") {
             $awb[] = $row;
         }
     } else {
-        error_log("\n[ln_awb] awb 데이터 없음", 3, $logFilePath); // 데이터 없을 때 로그
+        // error_log("\n[ln_awb] awb 데이터 없음", 3, $logFilePath); // 데이터 없을 때 로그
     }
     // JSON 형식으로 데이터 응답
     echo json_encode($awb);
@@ -100,8 +90,8 @@ function getImpDayData($start_date, $bl_no)
     global $conn, $logFilePath;
     $import_dt = $start_date;
 
-    error_log("\n[ln73] import_dt=" . $import_dt, 3, $logFilePath);
-    error_log("\n[ln74] bl_no=" . $bl_no, 3, $logFilePath);
+    // error_log("\n[ln73] import_dt=" . $import_dt, 3, $logFilePath);
+    // error_log("\n[ln74] bl_no=" . $bl_no, 3, $logFilePath);
 
     $data = array();
     try {

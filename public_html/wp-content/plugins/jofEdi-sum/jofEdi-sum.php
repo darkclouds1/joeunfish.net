@@ -288,7 +288,7 @@ function order_summary()
     // 전체 URL 구성
     $full_api_url = home_url($api_url);
 
-    error_log('API URL: ' . $full_api_url, 3, $logFilePath);
+    // error_log('API URL: ' . $full_api_url, 3, $logFilePath);
 
     $args = array(
         'sslverify' => false

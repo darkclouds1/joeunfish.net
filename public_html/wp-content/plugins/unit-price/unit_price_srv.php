@@ -17,30 +17,59 @@ isset($_GET['category']) ? $category = $_GET['category'] : $category = "";
 // 제품 납품 단가 관리
 if ($category == 'price') {
     $sql = " SELECT
-                    product_name AS '제품명',
-                    product_code AS '제품코드',
-                    code_exp2 AS '원재료',
-                    unit_price AS '단가',
-                    DATE(supply_dt) AS '공급일'
-                    FROM (
+                product_name AS '제품명',
+                product_code AS '제품코드',
+                raw_material AS '원재료',
+                unit_price AS '단가',
+                DATE(supply_dt) AS '공급일'
+            FROM (
+                -- ROW_NUMBER를 사용하여 각 제품의 최신 데이터를 찾기 위한 서브쿼리
+                SELECT
+                    product_name,
+                    product_code,
+                    raw_material,
+                    unit_price,
+                    supply_dt,
+                    ROW_NUMBER() OVER (PARTITION BY product_code ORDER BY supply_dt DESC) AS rn
+                FROM (
+                    -- 1. tcomcode 테이블 기준 상품 정보 조회
                     SELECT
-                    c.code_exp AS product_name,
-                    t.product_code,
-                    c.code_exp2,
-                    t.unit_price,
-                    o.supply_dt,
-                    ROW_NUMBER() OVER (PARTITION BY t.product_code ORDER BY o.supply_dt DESC) AS rn
-                FROM
-                    torderproducts t
-                INNER JOIN torders o ON t.doc_no = o.doc_no
-                INNER JOIN tcomcode c ON t.product_code = c.store_code
-                WHERE
-                    t.unit_price > 0
-                    ) ranked
-                    WHERE rn = 1
-                ORDER BY
-                    product_name ASC, supply_dt DESC;
-                ";
+                        c.code_exp AS product_name,
+                        t.product_code,
+                        c.code_exp2 AS raw_material,
+                        t.unit_price,
+                        o.supply_dt
+                    FROM
+                        torderproducts t
+                    INNER JOIN torders o ON t.doc_no = o.doc_no
+                    INNER JOIN tcomcode c ON t.product_code = c.store_code
+                    WHERE
+                        t.unit_price > 0
+
+                    UNION ALL
+
+                    -- 2. tcomcodegs 테이블 기준 상품 정보 조회
+                    SELECT
+                        g.code_exp AS product_name,
+                        t.product_code,
+                        NULL AS raw_material, -- tcomcodegs에는 원재료 컬럼이 없으므로 NULL 처리
+                        t.unit_price,
+                        o.supply_dt
+                    FROM
+                        torderproducts t
+                    INNER JOIN torders o ON t.doc_no = o.doc_no
+                    INNER JOIN tcomcodegs g ON t.product_code = g.store_code
+                    WHERE
+                        t.unit_price > 0
+                        AND g.grp_code = '2' -- 그룹코드가 '상품코드'인 경우
+                        AND g.use_yn = 'Y'   -- 사용 여부가 'Y'인 경우
+                ) AS combined_products
+            ) AS ranked_products
+            WHERE
+                rn = 1 -- 각 제품별로 가장 최신 데이터만 선택
+            ORDER BY
+                product_name ASC, supply_dt DESC;
+    ";
 
     $result = $conn->query($sql);
     $data = array();
@@ -100,37 +129,55 @@ if ($category == 'old-price') {
         exit;
     }
 
-    $sql = "
-        WITH SupplyHistory AS (
-            SELECT 
-                t.product_name,
-                t.unit_price,
-                DATE(o.supply_dt) as supply_dt  -- 날짜 부분만 추출
-            FROM torderproducts t
-            INNER JOIN torders o ON t.doc_no = o.doc_no
-            INNER JOIN tcomcode c ON t.product_code = c.store_code
-            WHERE t.unit_price > 0 
-            AND t.product_code = '$product_code'
-            GROUP BY t.product_name, t.unit_price, DATE(o.supply_dt)  -- 동일한 조합은 1개만 선택
-        ),
-        PriceCheck AS (
-            SELECT 
-                product_name,
-                unit_price,
-                supply_dt,
-                LAG(unit_price) OVER (ORDER BY supply_dt DESC) AS prev_price
-            FROM SupplyHistory
-        )
-        SELECT
-            product_name AS '제품명',
-            unit_price AS '단가',
-            supply_dt AS '공급일'
-        FROM PriceCheck
-        WHERE prev_price IS NULL  -- 첫 번째 행
-        OR unit_price <> prev_price  -- 이전 단가와 다른 경우
-        ORDER BY supply_dt DESC
-        LIMIT 50;
-        ";
+    $sql = "WITH SupplyHistory AS (
+                -- 1. tcomcode 테이블 기준 상품의 공급 이력
+                SELECT
+                    c.code_exp AS product_name,
+                    t.unit_price,
+                    DATE(o.supply_dt) AS supply_dt
+                FROM torderproducts t
+                INNER JOIN torders o ON t.doc_no = o.doc_no
+                INNER JOIN tcomcode c ON t.product_code = c.store_code
+                WHERE t.unit_price > 0
+                AND t.product_code = '$product_code'
+                GROUP BY c.code_exp, t.unit_price, DATE(o.supply_dt)
+
+                UNION ALL
+
+                -- 2. tcomcodegs 테이블 기준 상품의 공급 이력
+                SELECT
+                    g.code_exp AS product_name,
+                    t.unit_price,
+                    DATE(o.supply_dt) AS supply_dt
+                FROM torderproducts t
+                INNER JOIN torders o ON t.doc_no = o.doc_no
+                INNER JOIN tcomcodegs g ON t.product_code = g.store_code
+                WHERE t.unit_price > 0
+                AND t.product_code = '$product_code'
+                AND g.grp_code = '2' -- 상품 코드만
+                AND g.use_yn = 'Y'   -- 사용중인 코드만
+                GROUP BY g.code_exp, t.unit_price, DATE(o.supply_dt)
+            ),
+            PriceCheck AS (
+                -- 3. 합쳐진 공급 이력에서 단가 변경점 추적
+                SELECT
+                    product_name,
+                    unit_price,
+                    supply_dt,
+                    LAG(unit_price) OVER (ORDER BY supply_dt, unit_price) AS prev_price -- 날짜와 단가로 정렬
+                FROM SupplyHistory
+            )
+            -- 4. 단가가 변경된 이력만 최종 선택
+            SELECT
+                product_name AS '제품명',
+                unit_price AS '단가',
+                supply_dt AS '공급일'
+            FROM PriceCheck
+            WHERE prev_price IS NULL      -- 가장 오래된 첫 단가
+            OR unit_price <> prev_price -- 이전 단가와 다른 경우
+            ORDER BY supply_dt DESC
+            LIMIT 50
+    ";
 
     error_log("[old-price] sql=" . $sql, 3, $logFilePath);
 

@@ -19,24 +19,24 @@
 */3 * * * * if ! find /home/*/public_html/ -maxdepth 2 -type f -newer /usr/local/lsws/cgid -name '.htaccess' -exec false {} +; then systemctl restart lsws; fi
 09,39 * * * * /usr/local/CyberCP/bin/cleansessions >/dev/null 2>&1
 
-# Not used ::주문데이터 ecommerce.sh 실행 
+# Not used ::주문데이터 ecommerce.sh 실행
 # */15 6-21 * * * /bin/bash /home/joeunfish.net/public_html/ecommerce_java/ecommerce.sh >> /var/log/cron.log 2>&1 && echo "ecommerce.sh Finished script at $(date)" >> /var/log/cron.log
-# .dat => 10분마다  DB Insert 
+# .dat => 10분마다  DB Insert
 # */10 * * * * /usr/bin/php /home/joeunfish.net/public_html/wp-content/plugins/jofEdi/ediRcv_srv_job.php
 # */10 * * * * /usr/bin/php /home/joeunfish.net/public_html/wp-content/plugins/jofEdiGs/ediRcvGs_srv_job.php
 
-# Used 1. ~ 5.
 #1. EDI (Java -> PHP) - 20분마다 ediRcv_srv_job 포함.
 */20 7-21 * * * /bin/bash /home/joeunfish.net/backup/edi_sequential_job.sh
 
-#2. .dat => joeunfish.in 
-0 2 * * * /bin/bash /home/joeunfish.net/backup/transfer_latest_dat0.sh >> /var/log/cron.log 2>&1 && echo "transfer Finished script at $(date)" >> /var/log/cron.log
+#2. .dat => joeunfish.in
+0 0 * * * /bin/bash /home/joeunfish.net/backup/transfer_latest_dat0.sh >> /var/log/cron.log 2>&1 && echo "transfer Finished script at $(date)" >> /var/log/cron.log
 
 #3. 주문데이터 .dat -1일 지움
-0 0 * * * /bin/bash /home/joeunfish.net/backup/delete_old_edi-dat.sh
+30 0 * * * /bin/bash /home/joeunfish.net/backup/delete_old_edi-dat.sh
 
-#4. DB data export => joeunfish.in 
-30 2 * * * /bin/bash /home/joeunfish.net/backup/export_latest_sql.sh >> /var/log/cron.log 2>&1
+#4. DB data export => joeunfish.in
+#30 2,12,18 * * * /bin/bash /home/joeunfish.net/backup/export_latest_sql.sh >> /var/log/cron.log 2>&1
+0 1 * * * /bin/bash /home/joeunfish.net/backup/export_latest_day_sql.sh >> /var/log/cron.log 2>&1
 
 # Not used
 # @reboot nohup /home/joeunfish.net/backup/auto_chown_web.sh > /dev/null 2>&1 &
