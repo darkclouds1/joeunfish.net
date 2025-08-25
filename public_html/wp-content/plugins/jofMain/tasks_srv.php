@@ -23,20 +23,20 @@ if ($category === 'search'
     try {
 
         $sql =
-            "     SELECT TAS.*, 
+            "  SELECT TAS.*, 
                 COALESCE(wpu.display_name, '') as modify_name
                 FROM tasks AS TAS
                 LEFT JOIN wp_users wpu
                 ON CONVERT(TAS.create_id USING utf8mb4) = CONVERT(wpu.user_login USING utf8mb4)
                 WHERE TAS.delete_yn = 'n'
                 ORDER BY 
+                TAS.serial_no DESC,
                 TAS.finish_yn ASC,      -- 미완료('n')가 먼저, 완료('y')가 나중에
                 CASE 
                     WHEN TAS.finish_yn = 'n' THEN TAS.due_date 
                     ELSE NULL 
                 END DESC,               -- 미완료 항목만 날짜순 정렬
-                TAS.modify_dt DESC,     -- 수정일시 내림차순
-                TAS.serial_no DESC 
+                TAS.modify_dt DESC     -- 수정일시 내림차순
             ";
 
 

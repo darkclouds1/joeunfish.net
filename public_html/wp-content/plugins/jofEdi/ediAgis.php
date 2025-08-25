@@ -80,6 +80,25 @@ function edi_upload_excel_form_callback()
     ));
 }
 
+add_action('wp_ajax_run_uplus_script', 'run_uplus_script_callback');
+function run_uplus_script_callback()
+{
+    // Check for user permissions (editor or administrator)
+    if (!current_user_can('editor') && !current_user_can('administrator')) {
+        wp_send_json_error('권한이 없습니다.');
+        return;
+    }
+
+    $command = '/home/joeunfish.net/backup/edi_sequential_job.sh A 2>&1';
+    $output = shell_exec($command);
+
+    if ($output === null) {
+        wp_send_json_error('스크립트 실행에 실패했습니다.');
+    } else {
+        wp_send_json_success("스크립트 실행 완료:\n" . $output);
+    }
+}
+
 
 // Your plugin code goes here
 function ediAgis()
@@ -141,6 +160,7 @@ function ediAgis()
                         <button id="excel-form">양식</button>
                         <!-- 버튼 옆에 파일 input 추가 (숨김) -->
                         <input type="file" id="excel-upload-input" accept=".xls,.xlsx" style="display:none;">
+                        <button onclick="run_uplus_script_callback()" id="UplusBtn">U+전자수발주</button>
                     <?php } ?>
                 </div>
                 <div id="orderList" style="margin-top: 10px; margin-bottom: 10px; font-weight: bold; font-size: 20px;">주문목록</div>
@@ -164,7 +184,6 @@ function ediAgis()
                 let platForm = 'computer';
                 let subul_srv = '/wp-content/plugins/jofSubul/subul_srv.php';
 
-                // 랜덤 로딩 이미지 표시
                 document.addEventListener('DOMContentLoaded', function() {
                     // 엑셀 양식 업로드
                     const excelFormBtn = document.getElementById("excel-form");
@@ -216,14 +235,62 @@ function ediAgis()
                         // 엑셀 다운로드 버튼 숨기기 - 요소 존재 여부 확인 후 처리
                         const excelDownBtn = document.getElementById('excelDownBtn');
                         const dejonExcelBtn = document.getElementById('dejonExcelBtn');
+                        const uplusBtn = document.getElementById('UplusBtn');
 
                         if (excelDownBtn) excelDownBtn.style.display = 'none';
                         if (dejonExcelBtn) dejonExcelBtn.style.display = 'none';
+                        if (uplusBtn) uplusBtn.style.display = 'none';
                     } else {
                         // 그렇지 않은 경우 데스크탑으로 간주
                         platForm = 'computer';
                     }
                 });
+
+                function run_uplus_script_callback() {
+                    if (platForm === 'mobile') {
+                        // 모바일에서는 실행하지 않음
+                        return;
+                    }
+                    console.log('U+전자수발주 버튼 클릭');
+                    if (!confirm('전체(수신+미수신) 주문데이터를 새로 받습니다.\n (★ 데이터량에 따른 과금 발생 ★)\n' +
+                        'U+전자수발주 스크립트를 실행하시겠습니까?')) {
+                        return;
+                    }
+
+                    // 로딩 표시
+                    const loadingDiv = document.getElementById('loading');
+                    if(loadingDiv) loadingDiv.style.display = 'block';
+
+                    // admin-ajax.php에 보낼 데이터 준비
+                    const data = new URLSearchParams();
+                    data.append('action', 'run_uplus_script');
+
+                    fetch('/wp-admin/admin-ajax.php', {
+                        method: 'POST',
+                        body: data,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // 성공 메시지를 alert으로 표시하고, 로딩을 즉시 숨깁니다.
+                            document.getElementById('loading').style.display = 'none';
+                            alert('EDI 데이터 수신 작업이 시작되었습니다. 약 1분 후 [주문조회] 버튼을 눌러주세요.');
+                            console.log('서버 응답:', result.data);
+                        } else {
+                            // 로딩을 숨기고 실패 메시지를 표시합니다.
+                            document.getElementById('loading').style.display = 'none';
+                            alert('오류: ' + (result.data || '알 수 없는 오류가 발생했습니다.'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('스크립트 실행 중 오류:', err);
+                        document.getElementById('loading').style.display = 'none';
+                        alert('스크립트 실행 중 통신 오류가 발생했습니다.');
+                    });
+                }
 
                 function ediRcv_srv_job() {
                     // 서버의 PHP 스크립트를 실행합니다.
@@ -1037,13 +1104,3 @@ function ediAgis()
     return ob_get_clean();
 }
 add_shortcode('edi_agis', 'ediAgis');
-
-// add_action('wp_footer', function() {
-//     if (is_user_logged_in()) {
-//         echo '<div style="position: fixed; bottom: 10px; right: 10px; background: #fff; padding: 10px; border: 1px solid #ccc; z-index: 9999;">';
-//         echo '사용자 역할: ' . implode(', ', wp_get_current_user()->roles);
-//         echo '<br>편집자 권한: ' . (current_user_can('editor') ? '있음' : '없음');
-//         echo '<br>관리자 권한: ' . (current_user_can('administrator') ? '있음' : '없음');
-//         echo '</div>';
-//     }
-// });
