@@ -45,7 +45,8 @@ function jofMainShortCode()
                 <button class="barcodeinv2 co-buttons">(CO)상품출고</button>
                 <button class="agisgs gs-buttons">(GS)주문관리</button>
                 <button class="barcodeinv2gs gs-buttons">(GS)상품출고</button>
-                <button class="gsInvt">완출생산관리</button>
+                <!-- <button class="gsInvt">완출생산관리</button> -->
+                <button class="octopusInvt">문어재고관리</button>
                 <button class="ascInvt" style="background-color: #33F;">ASC수불</button>
                 <button class="ascInvt3" style="background-color: #33F;">ASC더조은</button>
                 <button class="barcodeoutmap" style="background-color: #ffffff; color: #000000;">생산(MAP)</button>
@@ -198,11 +199,18 @@ function jofMainShortCode()
             document.querySelector('.agisgs').addEventListener('click', viewAgisGS);
 
             // 완출생산관리(GS)
-            function viewGsInvt(event) {
+            // function viewGsInvt(event) {
+            //     event.preventDefault(); // Prevent form submission
+            //     window.location.href = "/gsinvt/";
+            // }
+            // document.querySelector('.gsInvt').addEventListener('click', viewGsInvt);
+
+            // 문어재고관리(냉동창고) - 2025-08-26 추가
+            function viewOctopusInvt(event) {
                 event.preventDefault(); // Prevent form submission
-                window.location.href = "/gsinvt/";
+                window.location.href = "/octopusInvt/";
             }
-            document.querySelector('.gsInvt').addEventListener('click', viewGsInvt);
+            document.querySelector('.octopusInvt').addEventListener('click', viewOctopusInvt);
 
             // 업체매입
             function viewPurchase(event) {
