@@ -35,6 +35,11 @@ error_log("[octopusInvt_srv.php] increate_dt: " . $increate_dt, 3, $logFilePath)
 
 // category=1s: 문어 재고 조회
 if ($category === '1s') {
+    // 해당 날짜에 저장된 데이터가 있는지 확인
+    $checkSql = "SELECT 1 FROM toctopus_invt WHERE input_dt = '$increate_dt' LIMIT 1";
+    $checkResult = $conn->query($checkSql);
+    $dataExists = $checkResult && $checkResult->num_rows > 0;
+
     $sql = "
     WITH LatestInventoryDates AS (
         SELECT
@@ -54,42 +59,86 @@ if ($category === '1s') {
             toctopus_invt invt
         INNER JOIN
             LatestInventoryDates lid ON invt.serial_no = lid.serial_no AND invt.input_dt = lid.max_input_dt
+    ),
+    MainData AS (
+        SELECT
+            p.serial_no,
+            p.vendor_nm,
+            CONCAT(
+                DATE_FORMAT(p.input_dt, '%c/%e'),
+                '(',
+                CASE DAYOFWEEK(p.input_dt)
+                    WHEN 1 THEN '일' WHEN 2 THEN '월' WHEN 3 THEN '화' WHEN 4 THEN '수'
+                    WHEN 5 THEN '목' WHEN 6 THEN '금' WHEN 7 THEN '토'
+                END,
+                ')'
+            ) AS formatted_input_dt,
+            '$increate_dt' AS input_dt,
+            inv.stock_large,
+            inv.stock_4mi,
+            inv.stock_5mi,
+            inv.stock_6mi,
+            inv.stock_7mi,
+            inv.stock_8mi,
+            inv.stock_9mi,
+            inv.stock_10_15mi,
+            inv.stock_16_20mi,
+            inv.stock_21_25mi,
+            inv.stock_26_30mi,
+            inv.warehouse_nm,
+            (
+                COALESCE(inv.stock_large, 0) + COALESCE(inv.stock_4mi, 0) + COALESCE(inv.stock_5mi, 0) +
+                COALESCE(inv.stock_6mi, 0) + COALESCE(inv.stock_7mi, 0) + COALESCE(inv.stock_8mi, 0) +
+                COALESCE(inv.stock_9mi, 0) + COALESCE(inv.stock_10_15mi, 0) + COALESCE(inv.stock_16_20mi, 0) +
+                COALESCE(inv.stock_21_25mi, 0) + COALESCE(inv.stock_26_30mi, 0)
+            ) AS stock_sum,
+            inv.remark,
+            0 AS is_summary,
+            p.input_dt AS order_dt
+        FROM
+            tpurchase p
+        LEFT JOIN
+            LatestInventoryData inv ON p.serial_no = inv.serial_no
+        WHERE
+            p.mat_cd = 'M003'
+            AND p.qty_cur <> 0
     )
-    SELECT
-        p.serial_no,
-        p.vendor_nm,
-        CONCAT(
-            DATE_FORMAT(p.input_dt, '%c/%e'),
-            '(',
-            CASE DAYOFWEEK(p.input_dt)
-                WHEN 1 THEN '일' WHEN 2 THEN '월' WHEN 3 THEN '화' WHEN 4 THEN '수'
-                WHEN 5 THEN '목' WHEN 6 THEN '금' WHEN 7 THEN '토'
-            END,
-            ')'
-        ) AS formatted_input_dt,
-        '$increate_dt' AS input_dt,
-        COALESCE(inv.stock_large, 0) AS stock_large,
-        COALESCE(inv.stock_4mi, 0) AS stock_4mi,
-        COALESCE(inv.stock_5mi, 0) AS stock_5mi,
-        COALESCE(inv.stock_6mi, 0) AS stock_6mi,
-        COALESCE(inv.stock_7mi, 0) AS stock_7mi,
-        COALESCE(inv.stock_8mi, 0) AS stock_8mi,
-        COALESCE(inv.stock_9mi, 0) AS stock_9mi,
-        COALESCE(inv.stock_10_15mi, 0) AS stock_10_15mi,
-        COALESCE(inv.stock_16_20mi, 0) AS stock_16_20mi,
-        COALESCE(inv.stock_21_25mi, 0) AS stock_21_25mi,
-        COALESCE(inv.stock_26_30mi, 0) AS stock_26_30mi,
-        inv.warehouse_nm,
-        inv.remark
-    FROM
-        tpurchase p
-    LEFT JOIN
-        LatestInventoryData inv ON p.serial_no = inv.serial_no
-    WHERE
-        p.mat_cd = 'M003'
-        AND p.qty_cur <> 0
+    SELECT * FROM MainData
+    ";
+
+    if ($dataExists) {
+        $sql .= "
+        UNION ALL
+        SELECT
+            'SUM' AS serial_no,
+            '합계' AS vendor_nm,
+            '' AS formatted_input_dt,
+            '$increate_dt' AS input_dt,
+            SUM(stock_large) AS stock_large,
+            SUM(stock_4mi) AS stock_4mi,
+            SUM(stock_5mi) AS stock_5mi,
+            SUM(stock_6mi) AS stock_6mi,
+            SUM(stock_7mi) AS stock_7mi,
+            SUM(stock_8mi) AS stock_8mi,
+            SUM(stock_9mi) AS stock_9mi,
+            SUM(stock_10_15mi) AS stock_10_15mi,
+            SUM(stock_16_20mi) AS stock_16_20mi,
+            SUM(stock_21_25mi) AS stock_21_25mi,
+            SUM(stock_26_30mi) AS stock_26_30mi,
+            '' AS warehouse_nm,
+            SUM(stock_sum) AS stock_sum,
+            '' AS remark,
+            1 AS is_summary,
+            NULL AS order_dt
+        FROM MainData
+        ";
+    }
+
+    $sql .= "
     ORDER BY
-        p.input_dt ASC;
+        is_summary ASC,
+        order_dt ASC,
+        vendor_nm ASC;
     ";
 
 
@@ -142,6 +191,11 @@ if ($category === 'saveInvt') {
         );
         
         foreach ($inventoryList as $item) {
+            // 'SUM' 행이 혹시라도 들어오면 건너뛰도록 방어 코드 추가
+            if (isset($item['serial_no']) && $item['serial_no'] === 'SUM') {
+                continue;
+            }
+
             // 숫자 필드 정리 (콤마, 따옴표 제거)
             $stock_fields = ['stock_large', 'stock_4mi', 'stock_5mi', 'stock_6mi', 'stock_7mi', 'stock_8mi', 'stock_9mi', 'stock_10_15mi', 'stock_16_20mi', 'stock_21_25mi', 'stock_26_30mi'];
             foreach ($stock_fields as $field) {

@@ -15,6 +15,7 @@ class octopusInvtClass {
       "16-20미",
       "21-25미",
       "26-30미",
+      "합계",
       "창고명",
       "비고",
     ],
@@ -33,14 +34,15 @@ class octopusInvtClass {
       "stock_16_20mi",
       "stock_21_25mi",
       "stock_26_30mi",
+      "stock_sum",
       "warehouse_nm",
       "remark",
     ],
     col3 = [
-      "c", "l", "c", "r", "r", "r", "r", "r", "r", "r", "r", "r", "r", "r", "l", "l",
+      "c", "l", "c", "r", "r", "r", "r", "r", "r", "r", "r", "r", "r", "r", "r", "l", "l",
     ],
     colw = [
-      "3%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "6%", "10%",
+      "3%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "5%", "6%", "10%",
     ],
     hiddenColumns = [], // 숨길 컬럼이 있다면 여기에 인덱스 추가 (e.g., [0])
   } = {}) {
@@ -84,53 +86,92 @@ class octopusInvtClass {
   makeTabletr(datas) {
     let cleanData = datas.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
     let data = JSON.parse(cleanData);
-    items = data.response.body.items;
-    rtnCnt = items.length;
+    let items = data.response.body.items;
+    let rtnCnt = items.length;
 
-    if (items.length == 0) {
-      alert("데이터가 없습니다. 매입 데이터를 먼저 확인하세요.");
-      return rtnCnt;
-    }
+    const tableBody = table1.querySelector("tbody") || table1.createTBody();
+    tableBody.innerHTML = ""; // 기존 데이터를 지웁니다.
     
     inventoryList = []; // inventoryList 초기화
-    let tbody = table1.createTBody();
 
-    for (let i = 0; i < items.length; i++) {
+    if (items.length == 0) {
+      const row = tableBody.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = this.col.length;
+      cell.textContent = "데이터가 없습니다.";
+      cell.style.textAlign = "center";
+      let divContainer = document.getElementById("tables");
+      divContainer.innerHTML = ""; // 기존 테이블 초기화
+      divContainer.appendChild(table1);
+      return 0;
+    }
+    
+    items.forEach((item, index) => {
       try {
-        idx = idx + 1;
+        const row = tableBody.insertRow(-1);
+        row.style.height = "40px";
 
-        let tr = tbody.insertRow(-1);
-        tr.setAttribute(
-          "style",
-          "height: 40px; text-align: center; vertical-align: middle;"
-        );
+        // 'SUM' 행인 경우 노란색으로 배경색을 설정합니다.
+        if (item.serial_no === 'SUM') {
+            row.style.backgroundColor = 'yellow';
+        }
         
         // 원본 데이터를 inventoryList에 저장
-        inventoryList.push({...items[i]});
+        inventoryList.push({...item});
 
         // 화면 표시용 데이터 생성
-        let displayItem = { ...items[i] };
-        displayItem.serial_no = idx; // 화면에는 1부터 시작하는 번호 표시
-
+        let displayItem = { ...item };
+        if (displayItem.serial_no !== 'SUM') {
+            displayItem.serial_no = index + 1; // 화면에는 1부터 시작하는 번호 표시
+        }
+        
         for (let j = 0; j < this.col2.length; j++) {
-          let tabCell = tr.insertCell(-1);
-          tabCell.setAttribute("style", "height: 40px; vertical-align: middle;");
+          let tabCell = row.insertCell(-1);
+          tabCell.style.verticalAlign = "middle";
           
           if (this.hiddenColumns.includes(j)) {
             tabCell.style.display = "none";
           }
 
           const fieldName = this.col2[j];
-          // 입력 필드가 필요한 컬럼들
-          if (fieldName.startsWith('stock_') || fieldName === 'warehouse_nm' || fieldName === 'remark') {
-            const inputType = (fieldName.startsWith('stock_')) ? 'number' : 'text';
+          // 입력 필드가 필요한 컬럼들 (stock_sum 제외)
+          if (( (fieldName.startsWith('stock_') && fieldName !== 'stock_sum') || fieldName === 'warehouse_nm' || fieldName === 'remark') && item.serial_no !== 'SUM') {
+            const isStockField = fieldName.startsWith('stock_');
             const value = displayItem[fieldName] !== null ? displayItem[fieldName] : '';
-            const textAlign = (inputType === 'number') ? 'right' : 'left';
-            tabCell.innerHTML = `<input type="text" value="${value}" 
+            const textAlign = isStockField ? 'right' : 'left';
+            
+            let formattedValue = value;
+            if ((value === 0 || value === '0') && isStockField) {
+              formattedValue = '';
+            } else if (isStockField && value) {
+              formattedValue = parseInt(String(value).replace(/,/g, ''), 10).toLocaleString();
+            }
+
+            const onInputHandler = isStockField
+                ? `oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value) this.value = parseInt(this.value.replace(/,/g, '')).toLocaleString();"`
+                : '';
+
+            tabCell.innerHTML = `<input type="text" value="${formattedValue}" 
               style="width: 100%; text-align: ${textAlign}; padding: 3px; font-size: 13px;" 
-              onfocus="this.select()">`;
+              onfocus="this.select()"
+              ${onInputHandler}>`;
           } else {
-            tabCell.innerHTML = displayItem[fieldName];
+            let cellValue = displayItem[fieldName];
+            const isStockField = fieldName.startsWith('stock_');
+            if ((cellValue === 0 || cellValue === '0') && isStockField) {
+              cellValue = '';
+            } else if (isStockField && (typeof cellValue === 'number' || (cellValue && !isNaN(parseInt(String(cellValue).replace(/,/g, ''),10))))) {
+              cellValue = parseInt(String(cellValue).replace(/,/g, ''), 10).toLocaleString();
+            }
+            
+            if (item.serial_no === 'SUM' && isStockField) {
+              tabCell.innerHTML = `<span style="color: red; font-weight: bold;">${cellValue}</span>`;
+            } else if (fieldName === 'stock_sum') {
+              tabCell.innerHTML = `<span style="color: red;">${cellValue}</span>`;
+            }
+            else {
+              tabCell.innerHTML = cellValue;
+            }
           }
 
           // 정렬
@@ -143,7 +184,7 @@ class octopusInvtClass {
       } catch (ex) {
         console.log(ex.message);
       }
-    }
+    });
     let divContainer = document.getElementById("tables");
     divContainer.innerHTML = ""; // 기존 테이블 초기화
     divContainer.appendChild(table1);
@@ -154,8 +195,12 @@ class octopusInvtClass {
   // 저장
   saveInventoryData() {
     const increate_dt = document.getElementById("createDate").value;
+
+    // 'SUM' 행을 제외한 실제 데이터만 필터링합니다.
+    const filteredInventoryList = inventoryList.filter(item => item.serial_no !== 'SUM');
+
     const data = {
-      inventoryList: inventoryList, // 전역 변수 inventoryList 사용
+      inventoryList: filteredInventoryList,
     };
 
     const url =
@@ -212,11 +257,19 @@ class octopusInvtClass {
         styleElement.textContent = `
             .inventory-box { margin: 8px; padding: 12px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #ddd; }
             .prod-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-            .input-dt { font-size: 14px; color: #666; }
+            .prod-title .vendor-name { color: blue; }
+            .input-dt { font-size: 14px; color: red; }
             .inventory-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-            .inventory-item { padding: 8px; background: #f8f9fa; border-radius: 5px; }
-            .inventory-item .label { font-weight: bold; color: #444; display: block; margin-bottom: 4px; font-size: 13px; }
-            .inventory-item .value { color: #333; font-size: 14px; text-align: right; }
+            .inventory-item { padding: 8px; background: #f8f9fa; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+            .inventory-item .label { font-weight: bold; color: #444; font-size: 13px; }
+            .inventory-item .value { font-size: 14px; text-align: right; font-weight: bold; }
+            .inventory-box.sum-row .inventory-item .value { color: red; }
+            .sum-display { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; }
+            .sum-display .value { color: red; }
+            .additional-info { margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; }
+            .info-item { display: flex; font-size: 14px; margin-bottom: 5px; }
+            .info-item .label { font-weight: bold; color: #444; width: 60px; flex-shrink: 0; }
+            .info-item .value { color: #333; }
         `;
         document.head.appendChild(styleElement);
     }
@@ -231,6 +284,11 @@ class octopusInvtClass {
         const box = document.createElement('div');
         box.className = 'inventory-box';
         box.dataset.index = index;
+
+        if (item.serial_no === 'SUM') {
+            box.classList.add('sum-row');
+            box.style.backgroundColor = 'yellow';
+        }
 
         const stockItems = [
             { label: '대', value: item.stock_large },
@@ -248,15 +306,52 @@ class octopusInvtClass {
 
         let gridHtml = '';
         stockItems.forEach(stock => {
-            gridHtml += `<div class="inventory-item"><span class="label">${stock.label}</span><span class="value">${Number(stock.value).toLocaleString()}</span></div>`;
+            const displayValue = (stock.value && Number(stock.value) !== 0) ? Number(stock.value).toLocaleString() : '';
+            gridHtml += `<div class="inventory-item"><span class="label">${stock.label}</span><span class="value">${displayValue}</span></div>`;
         });
         
+        let sumHtml = '';
+        if (item.stock_sum !== undefined && item.stock_sum !== null) {
+            const displayValue = (item.stock_sum && Number(item.stock_sum) !== 0) ? Number(item.stock_sum).toLocaleString() : '0';
+            sumHtml = `<div class="sum-display">
+              <span class="label">재고합계</span>
+              <span class="value">${displayValue}</span>
+            </div>`;
+        }
+
+        let additionalInfoHtml = '';
+        if (item.warehouse_nm || item.remark) {
+            additionalInfoHtml += '<div class="additional-info">';
+            if (item.warehouse_nm) {
+                additionalInfoHtml += `<div class="info-item"><span class="label">창고명</span><span class="value">${item.warehouse_nm}</span></div>`;
+            }
+            if (item.remark) {
+                additionalInfoHtml += `<div class="info-item"><span class="label">비고</span><span class="value">${item.remark}</span></div>`;
+            }
+            additionalInfoHtml += '</div>';
+        }
+
+        let titleHtml;
+        if (item.serial_no === 'SUM') {
+            const inventoryDate = document.getElementById("createDate").value;
+            titleHtml = `
+                <div class="prod-title">
+                    <span class="vendor-name">${item.vendor_nm}</span>
+                    <span class="input-dt">재고일: ${inventoryDate}</span>
+                </div>`;
+        } else {
+            titleHtml = `
+                <div class="prod-title">
+                    <span class="vendor-name">${item.vendor_nm}</span>
+                    <span class="input-dt">구매일자: ${item.formatted_input_dt}</span>
+                </div>`;
+        }
+
         box.innerHTML = `
-            <div class="prod-title">
-                <span>${item.vendor_nm}</span>
-                <span class="input-dt">${item.formatted_input_dt}</span>
-            </div>
+            ${titleHtml}
             <div class="inventory-grid">${gridHtml}</div>
+            ${sumHtml}
+            ${additionalInfoHtml}
         `;
         container.appendChild(box);
     });
@@ -276,21 +371,21 @@ function saveInventoryList() {
     const cells = rows[i].cells;
     const dataIndex = i - 1;
 
-    // inventoryList에서 해당 행의 원본 데이터 객체를 찾음
-    if (inventoryList[dataIndex]) {
-      inventoryList[dataIndex].stock_large   = cells[3].querySelector('input').value;
-      inventoryList[dataIndex].stock_4mi      = cells[4].querySelector('input').value;
-      inventoryList[dataIndex].stock_5mi      = cells[5].querySelector('input').value;
-      inventoryList[dataIndex].stock_6mi      = cells[6].querySelector('input').value;
-      inventoryList[dataIndex].stock_7mi      = cells[7].querySelector('input').value;
-      inventoryList[dataIndex].stock_8mi      = cells[8].querySelector('input').value;
-      inventoryList[dataIndex].stock_9mi      = cells[9].querySelector('input').value;
-      inventoryList[dataIndex].stock_10_15mi  = cells[10].querySelector('input').value;
-      inventoryList[dataIndex].stock_16_20mi  = cells[11].querySelector('input').value;
-      inventoryList[dataIndex].stock_21_25mi  = cells[12].querySelector('input').value;
-      inventoryList[dataIndex].stock_26_30mi  = cells[13].querySelector('input').value;
-      inventoryList[dataIndex].warehouse_nm = cells[14].querySelector('input').value;
-      inventoryList[dataIndex].remark       = cells[15].querySelector('input').value;
+    // inventoryList에서 해당 행의 원본 데이터 객체를 찾고, 'SUM' 행은 건너뜁니다.
+    if (inventoryList[dataIndex] && inventoryList[dataIndex].serial_no !== 'SUM') {
+      inventoryList[dataIndex].stock_large   = cells[3].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_4mi      = cells[4].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_5mi      = cells[5].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_6mi      = cells[6].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_7mi      = cells[7].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_8mi      = cells[8].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_9mi      = cells[9].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_10_15mi  = cells[10].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_16_20mi  = cells[11].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_21_25mi  = cells[12].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].stock_26_30mi  = cells[13].querySelector('input').value.replace(/,/g, '');
+      inventoryList[dataIndex].warehouse_nm = cells[15].querySelector('input').value;
+      inventoryList[dataIndex].remark       = cells[16].querySelector('input').value;
     }
   }
 
