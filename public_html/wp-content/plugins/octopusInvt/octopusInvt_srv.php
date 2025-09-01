@@ -29,9 +29,9 @@ isset($_GET['increate_dt']) ? $increate_dt = $_GET['increate_dt'] : $increate_dt
 isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
 
 // 로그 출력
-error_log("[octopusInvt_srv.php] category: " . $category, 3, $logFilePath);
-error_log("[octopusInvt_srv.php] user_id: " . $user_id, 3, $logFilePath);
-error_log("[octopusInvt_srv.php] increate_dt: " . $increate_dt, 3, $logFilePath);
+// error_log("[octopusInvt_srv.php] category: " . $category, 3, $logFilePath);
+// error_log("[octopusInvt_srv.php] user_id: " . $user_id, 3, $logFilePath);
+// error_log("[octopusInvt_srv.php] increate_dt: " . $increate_dt, 3, $logFilePath);
 
 // category=1s: 문어 재고 조회
 if ($category === '1s') {
@@ -141,9 +141,6 @@ if ($category === '1s') {
         vendor_nm ASC;
     ";
 
-
-    error_log("[octopusInvt_srv.php] SQL: " . preg_replace('/\s+/', ' ', $sql), 3, $logFilePath);
-
     $result = $conn->query($sql);
     if (!$result) {
         $error_message = "쿼리 실행 중 오류 발생: " . $conn->error;
@@ -167,7 +164,7 @@ if ($category === 'saveInvt') {
     $input = json_decode(file_get_contents('php://input'), true);
     $inventoryList = $input['inventoryList']; // 클라이언트에서 'inventoryList'로 데이터를 보낸다고 가정
 
-    error_log("[octopusInvt_srv.php] inventoryList: " . print_r($inventoryList, true), 3, $logFilePath);
+    // error_log("[octopusInvt_srv.php] inventoryList: " . print_r($inventoryList, true), 3, $logFilePath);
     
     $inventory_date = $increate_dt;
 
@@ -246,9 +243,87 @@ if ($category === 'saveInvt') {
     exit();
 }
 
+// category=frozen: 냉동 재고 조회
+if ($category === 'frozen_s') {
+    $mat_cd = isset($_GET['mat_cd']) ? $_GET['mat_cd'] : '';
+
+    // error_log("[octopusInvt_srv.php] frozen mat_cd: " . $mat_cd, 3, $logFilePath);
+
+    $sql = "
+        SELECT
+            p.vendor_nm,
+            DATE_FORMAT(p.input_dt, '%y-%m-%d') AS input_dt_formatted,
+            m.mat_nm,
+            p.mat_type,
+            p.lot_nm,
+            p.box as box,
+            p.qty_cur as qty_cur,
+            COALESCE(pi_sum.total_qty_incur, 0) AS stock_qty,
+            (p.qty_cur + COALESCE(pi_sum.total_qty_incur, 0)) AS total_qty,
+            p.remarks AS warehouse_nm
+        FROM
+            tpurchase p
+        JOIN
+            tdayprodmat_mst m ON p.mat_cd = m.mat_cd
+        LEFT JOIN
+            (SELECT tpurchase_serial_no, SUM(qty_incur) AS total_qty_incur
+             FROM tpurchase_in
+             GROUP BY tpurchase_serial_no) AS pi_sum ON p.serial_no = pi_sum.tpurchase_serial_no
+        WHERE
+            m.temp_code = 'F'
+            AND (p.qty_cur + COALESCE(pi_sum.total_qty_incur, 0)) <> 0
+    ";
+
+    $params = [];
+    if (isset($mat_cd) && $mat_cd !== '' && $mat_cd !== 'all') {
+        $sql .= " AND p.mat_cd = ? ";
+        $params[] = $mat_cd;
+    }
+
+    $sql .= "
+        GROUP BY p.serial_no, p.vendor_nm, p.input_dt, m.mat_nm, p.mat_type, p.lot_nm, p.box, p.qty_cur, stock_qty, p.remarks
+        ORDER BY
+            m.mat_nm, p.input_dt DESC, p.vendor_nm
+    ";
+
+
+    // error_log("[octopusInvt_srv.php] SQL: " . $sql, 3, $logFilePath);
+    
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $resultData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $response = [
+            'response' => [
+                'header' => ['resultCode' => '00', 'resultMsg' => 'OK'],
+                'body' => [
+                    'items' => $resultData,
+                    'totalCount' => count($resultData)
+                ]
+            ]
+        ];
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+
+    } catch (Exception $e) {
+        error_log("Frozen inventory query failed: " . $e->getMessage(), 3, $logFilePath);
+        $response = [
+            'response' => [
+                'header' => ['resultCode' => '99', 'resultMsg' => 'Error: ' . $e->getMessage()],
+                'body' => ['items' => [], 'totalCount' => 0]
+            ]
+        ];
+        echo json_encode($response);
+    }
+
+    $pdo = null;
+    exit();
+}
+
+
 // 삭제 로직
 if ($category === 'delete' && !empty($increate_dt)) {
-    error_log("[octopusInvt_srv.php] delete increate_dt: " . $increate_dt, 3, $logFilePath);
+    // error_log("[octopusInvt_srv.php] delete increate_dt: " . $increate_dt, 3, $logFilePath);
 
     try {
         $pdo->beginTransaction();

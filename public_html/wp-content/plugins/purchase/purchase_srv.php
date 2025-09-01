@@ -11,7 +11,7 @@ $pdo = $dbConn->pdo_conn();
 mysqli_set_charset($conn, 'utf8');
 mysqli_query($conn, "SET time_zone = '+09:00'");
 
-$logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
+$logFilePath = __DIR__ . "/logfile.log";
 // error_log("\n[ln15] logFilePath=" . $logFilePath, 3, $logFilePath);        
 
 // 파라미터
@@ -33,6 +33,7 @@ if ($category === 'search') {
                        T.weight AS weight, 
                        T.lot_nm AS lot_nm, 
                        mat.mat_nm AS mat_nm, 
+                       T.mat_type AS mat_type,
                        T.remarks AS remarks, 
                        T.qty_cur AS qty_cur,
                        T.unitPrice AS unitPrice,
@@ -52,17 +53,17 @@ if ($category === 'search') {
                     ON T.modify_id = wpu.user_login
                 WHERE DATE(T.input_dt) BETWEEN ? AND ? 
                 GROUP BY T.serial_no, T.input_dt, T.vendor_nm, T.box, T.weight, 
-                         T.lot_nm, mat.mat_nm, T.remarks, T.qty_cur, T.create_dt, wpu.display_name
+                         T.lot_nm, mat.mat_nm, T.mat_type, T.remarks, T.qty_cur, T.create_dt, wpu.display_name, T.mat_cd
                 ORDER BY CASE WHEN T.qty_cur = 0 THEN 1 ELSE 0 END, T.serial_no DESC, T.qty_cur DESC";
         // error_log("[ln52] sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$start_date, $end_date]);
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         echo json_encode([
             'success' => true,
-            'data' => $data 
+            'data' => $data
         ], JSON_UNESCAPED_UNICODE);
     } catch (Exception $e) {
         echo json_encode([
@@ -85,17 +86,17 @@ if ($category === 'getMatCd') {
                 'mat_nm' => $row['mat_nm']
             );
         }
-    } 
-    
+    }
+
     $response = array(
         'status' => 'success',
         'data' => $materials
     );
- 
+
     echo json_encode($response);
     exit;
 }
-  
+
 // 판매점 조회
 if ($category === 'getStoreCd') {
     $sql = "SELECT DISTINCT store_code, country_origin 
@@ -170,13 +171,14 @@ if ($category === 'save') {
         // Unit 값이 'Box' or 'EA'이면 box 값을, 아니면 weight 값을 사용
         $qty_cur = (strtoupper($unit) == 'BOX' || strtoupper($unit) == 'EA') ? $data['box'] : $data['weight'];
 
-        $sql = "INSERT INTO tpurchase (input_dt, mat_cd, vendor_nm, box, weight, qty_cur, remarks, unitPrice, create_id, create_dt, modify_id) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
+        $sql = "INSERT INTO tpurchase (input_dt, mat_cd, mat_type, vendor_nm, box, weight, qty_cur, remarks, unitPrice, create_id, create_dt, modify_id) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $data['input_dt'],
             $data['mat_cd'],
+            $data['mat_type'],
             $data['vendor_nm'],
             $data['box'],
             $data['weight'],
@@ -243,11 +245,33 @@ if ($category === 'update') {
         $mat_cd = $data['mat_cd'];
 
         // 데이터베이스에서 serial_no로 mat_cd 조회
-        $sql = "SELECT lotin_id FROM tpurchase_in WHERE tpurchase_serial_no = :serial_no";
+        $sql = "SELECT lotin_id FROM tpurchase_in WHERE tpurchase_serial_no = :serial_no LIMIT 1";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':serial_no', $serial_no, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            // 입고 데이터가 있는 경우, 자재, 박스, 중량 변경 시도 확인
+            $sql_check = "SELECT mat_cd, box, weight FROM tpurchase WHERE serial_no = :serial_no";
+            $stmt_check = $pdo->prepare($sql_check);
+            $stmt_check->bindParam(':serial_no', $serial_no, PDO::PARAM_INT);
+            $stmt_check->execute();
+            $original_data = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+            if (
+                $original_data &&
+                ($original_data['mat_cd'] != $data['mat_cd'] ||
+                    $original_data['box'] != $data['box'] ||
+                    $original_data['weight'] != $data['weight'])
+            ) {
+                echo json_encode([
+                    'success' => false,
+                    'error' => '이동 수량이 있으면 수정이 되지 않습니다.'
+                ]);
+                exit;
+            }
+        }
 
         // Unit 값 조회
         $sql = "SELECT unit FROM tdayprodmat_mst WHERE mat_cd = :mat_cd LIMIT 1";
@@ -263,6 +287,7 @@ if ($category === 'update') {
         $sql = "UPDATE tpurchase SET 
             input_dt = ?,
             vendor_nm = ?, 
+            mat_type = ?,
             remarks = ?,
             unitPrice = ?,
             modify_id = ?,
@@ -272,6 +297,7 @@ if ($category === 'update') {
         $params = [
             $data['input_dt'],
             $data['vendor_nm'],
+            $data['mat_type'],
             $data['remarks'],
             $data['unitPrice'],
             $user_id,
@@ -282,6 +308,7 @@ if ($category === 'update') {
             $sql = "UPDATE tpurchase SET 
                 input_dt = ?,
                 mat_cd = ?,
+                mat_type = ?,
                 vendor_nm = ?, 
                 box = ?,
                 weight = ?,
@@ -295,6 +322,7 @@ if ($category === 'update') {
             $params = [
                 $data['input_dt'],
                 $data['mat_cd'],
+                $data['mat_type'],
                 $data['vendor_nm'],
                 $data['box'],
                 $data['weight'],
@@ -319,7 +347,7 @@ if ($category === 'update') {
     } catch (Exception $e) {
         echo json_encode([
             'success' => false,
-            'message' => $result ? '입고데이터가 있으면, 자재명, 입고량은 수정하실 수 없습니다.' : $e->getMessage()
+            'error' => $e->getMessage()
         ]);
     }
 }
@@ -370,16 +398,36 @@ if ($category === 'update-imp') {
 // 업체매입 삭제
 if ($category === 'delete') {
     try {
-
         $pdo->beginTransaction();
 
         $serial_nos = json_decode(file_get_contents('php://input'), true)['serial_nos'];
-
         $placeholders = str_repeat('?,', count($serial_nos) - 1) . '?';
-        $sql = "DELETE FROM tpurchase WHERE serial_no IN ($placeholders)";
-        
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($serial_nos);
+
+        // 1단계: 삭제할 `tpurchase`에 연결된 `tpurchase_in`의 `lotin_id`를 모두 찾습니다.
+        $sql_find_lotin = "SELECT lotin_id FROM tpurchase_in WHERE tpurchase_serial_no IN ($placeholders)";
+        $stmt_find_lotin = $pdo->prepare($sql_find_lotin);
+        $stmt_find_lotin->execute($serial_nos);
+        $lotin_ids = $stmt_find_lotin->fetchAll(PDO::FETCH_COLUMN);
+
+        // 2단계: `tpurchase_in` 데이터가 존재하면, 관련된 하위 데이터를 먼저 삭제합니다.
+        if (!empty($lotin_ids)) {
+            $lotin_placeholders = str_repeat('?,', count($lotin_ids) - 1) . '?';
+
+            // 2a단계: `tdayprod_lot` 테이블에서 관련된 손자 레코드를 삭제합니다.
+            $sql_delete_lot = "DELETE FROM tdayprod_lot WHERE tpurchase_in_lotin_id IN ($lotin_placeholders)";
+            $stmt_delete_lot = $pdo->prepare($sql_delete_lot);
+            $stmt_delete_lot->execute($lotin_ids);
+
+            // 2b단계: `tpurchase_in` 테이블에서 관련된 자식 레코드를 삭제합니다. (lotin_id를 직접 사용)
+            $sql_delete_in = "DELETE FROM tpurchase_in WHERE lotin_id IN ($lotin_placeholders)";
+            $stmt_delete_in = $pdo->prepare($sql_delete_in);
+            $stmt_delete_in->execute($lotin_ids);
+        }
+
+        // 3단계: 마지막으로 `tpurchase` 테이블에서 최상위 레코드를 삭제합니다.
+        $sql_delete_purchase = "DELETE FROM tpurchase WHERE serial_no IN ($placeholders)";
+        $stmt_delete_purchase = $pdo->prepare($sql_delete_purchase);
+        $stmt_delete_purchase->execute($serial_nos);
 
         $pdo->commit();
 
@@ -391,7 +439,7 @@ if ($category === 'delete') {
         if ($e->getCode() == 23000 && strpos($e->getMessage(), 'Integrity constraint violation: 1451') !== false) {
             echo json_encode([
                 'success' => false,
-                'error' => "이동된 재료가 있으면 삭제할 수 없습니다."
+                'error' => "삭제하려는 데이터에 연결된 생산 데이터가 있어 삭제할 수 없습니다."
             ]);
         } else {
             echo json_encode([
@@ -544,18 +592,26 @@ if ($category === 'search-in') {
 // 업체매입 삭제
 if ($category === 'delete-in') {
     try {
+        $pdo->beginTransaction();
         $lotin_ids = json_decode(file_get_contents('php://input'), true)['lotin_ids'];
 
         $placeholders = str_repeat('?,', count($lotin_ids) - 1) . '?';
+
+        // 1. tdayprod_lot에서 관련 데이터를 먼저 삭제합니다.
+        $sql_delete_lot = "DELETE FROM tdayprod_lot WHERE tpurchase_in_lotin_id IN ($placeholders)";
+        $stmt_delete_lot = $pdo->prepare($sql_delete_lot);
+        $stmt_delete_lot->execute($lotin_ids);
+
+        // 2. tpurchase_in에서 데이터를 삭제합니다.
         $sql = "DELETE FROM tpurchase_in WHERE lotin_id IN ($placeholders)";
-
-        // error_log("[ln502]sql=" . $sql, 3, $logFilePath);
-
         $stmt = $pdo->prepare($sql);
         $stmt->execute($lotin_ids);
 
+        $pdo->commit();
         echo json_encode(['success' => true]);
+
     } catch (Exception $e) {
+        $pdo->rollBack();
         echo json_encode([
             'success' => false,
             'error' => $e->getMessage()
@@ -855,7 +911,7 @@ if ($category === 'search-event') {
                 ORDER BY TEVENT.increate_dt, TEVENT.serial_no DESC
                 ";
 
-        // error_log("\n[ln646]sql=" . $sql, 3, $logFilePath);
+        error_log("\n[ln646]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$start_date, $end_date]);
@@ -913,7 +969,7 @@ if ($category === 'save-event') {
         ]);
 
         // error_log("[ln710]sql=" . $sql, 3, $logFilePath);
-        // error_log("[ln909]data=" . json_encode($data), 3, $logFilePath);
+        error_log("[ln909]data=" . json_encode($data), 3, $logFilePath);
 
         echo json_encode(['success' => true]);
 
@@ -949,7 +1005,7 @@ if ($category === 'update-event') {
                     serial_no = ?         -- 일련번호로 레코드 식별
                 ";
 
-        // error_log("[ln946]sql=" . $sql, 3, $logFilePath);
+        error_log("[ln946]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -990,7 +1046,7 @@ if ($category === 'delete-event') {
         $placeholders = str_repeat('?,', count($serial_nos) - 1) . '?';
         $sql = "DELETE FROM tevent WHERE serial_no IN ($placeholders)";
 
-        // error_log("\n[ln770]sql=" . $sql, 3, $logFilePath);
+        error_log("\n[ln770]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($serial_nos);
@@ -1011,7 +1067,7 @@ if ($category === 'delete-event') {
 if ($category === 'getEventCode') {
     // 파라미터: code (000=대분류, 그 외 소분류 코드)
     $code = $_GET['code'];
-    // error_log("\n[ln1009]code=" . $code, 3, $logFilePath);
+    error_log("\n[ln1009]code=" . $code, 3, $logFilePath);
 
     if ($code === '000') { // 대분류 조회
         $sql = "SELECT DISTINCT major_code AS code, major_nm AS code_nm 
@@ -1028,7 +1084,7 @@ if ($category === 'getEventCode') {
     }
     $result = $conn->query($sql);
 
-    // error_log("[ln1025]sql=" . $sql, 3, $logFilePath);
+    error_log("[ln1025]sql=" . $sql, 3, $logFilePath);
 
     $data = array();
     if ($result->num_rows > 0) {
@@ -1058,7 +1114,7 @@ if ($category === 'getEventProdList') {
             ORDER BY store_code";    
     $result = $conn->query($sql);
 
-    // error_log("[ln1057]sql=" . $sql, 3, $logFilePath);
+    error_log("[ln1057]sql=" . $sql, 3, $logFilePath);
     $data = array();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {

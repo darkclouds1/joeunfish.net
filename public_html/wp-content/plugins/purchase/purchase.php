@@ -104,9 +104,10 @@ function purchaseShortCode()
 
                 <div class="purchase-input-container input-row">
                     <input type="date" id="input-dt" value="<?php echo date('Y-m-d'); ?>" placeholder="매입일">
-                    <select id="mat-cd" class="fixed-width" placeholder="자재명" maxlength="5" style="width: 200px;" onkeypress="focusNext(event, 'vendor-nm')">
+                    <select id="mat-cd" class="fixed-width" placeholder="자재명" maxlength="5" style="width: 200px;" onkeypress="focusNext(event, 'mat-type')">
                         <option value="">자재명</option>
                     </select>
+                    <input type="text" id="mat-type" class="fixed-width" placeholder="자재종류" maxlength="10" style="width: 120px;" onkeypress="focusNext(event, 'vendor-nm')">
                     <input type="text" id="vendor-nm" class="fixed-width" placeholder="업체명" maxlength="10" style="width: 150px;" onkeypress=" focusNext(event, 'box' )">
                     <input type="text" id="box" class="fixed-width" placeholder="BOX 수" maxlength="10" style="width: 100px;" onkeypress=" focusNext(event, 'weight' )">
                     <input type="text" id="weight" class="fixed-width" placeholder="Weight(kg)" maxlength="13" style="width: 100px;" onkeypress=" focusNext(event, 'remarks' )">

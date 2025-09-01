@@ -1,0 +1,288 @@
+.form-menu {
+    color: white;
+    padding: 5px 5px;
+    text-align: center;
+    font-size: 15px;
+    background-color: #2c80cf;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  
+  .frozen-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 요소들 사이의 간격 */
+    flex-wrap: wrap; /* 화면이 작아지면 다음 줄로 넘김 */
+    margin-bottom: 10px; /* 아래쪽 여백 추가 */
+  }
+  
+  .frozen-input-container .form-field {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 15px;
+      min-width: 150px; /* 최소 너비 설정 */
+      width: 250px; /* 너비를 250px로 늘림 */
+  }
+  
+  /* 날짜 입력 필드에 대한 스타일 */
+  .frozen-input-container input[type="date"] {
+      height: 40px !important;
+      width: 110px !important;
+      font-size: 13px !important;
+      margin-bottom: 0px 0px 3px 0px !important;
+  }
+  
+  button, input, select, date {
+   height: 40px !important;
+  }
+  
+  button {
+   width: 100px !important;
+   padding: 1px 1px;
+   transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
+  }
+  
+  button:hover {
+   background-color: #2c80cf !important; /* 파란색으로 변경 */
+   color: white !important; /* 텍스트 색상을 흰색으로 */
+  }
+  
+  .frozen-input-container button {
+   width: 100px !important;
+   padding: 1px 1px;
+  }
+  
+  .search-row {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f0f7ff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin: 5px 0;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 추가 */
+  font-size: 15px;
+  }
+  
+  .search-row:hover {
+  border-color: #4a90e2; /* 테두리 색상 변경 */
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #FFFF54; /* 배경색 살짝 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+  }
+  
+  .frozen-input-container.search-row button,
+  .frozen-input-container.search-row date,
+  .frozen-input-container.search-row label {
+    font-size: 15px !important;
+  }
+  
+  .form-row {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 5px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #f0f7ff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin: 5px 0;
+    transition: all 0.3s ease;
+    font-size: 15px;
+  }
+  
+  .form-row:hover {
+    border-color: #4a90e2;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    background-color: #FFFF54;
+    transform: translateY(-2px);
+  }
+  
+  .button-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .frozen-input-container button {
+   white-space: nowrap;
+   cursor: pointer;
+   width: 130px;
+  }
+  
+  .table-container {
+   font-size: 13px;
+   border-collapse: separate;
+  }
+  
+  .table-container thead th {
+   height: 40px;
+   border-right: 1px solid #fff;
+   padding: 0px 0px 0px 0px;
+   background-color: #000;
+   color: #fff;
+   text-align: center;
+  }
+  
+  /* 테이블 기본 설정 */
+  .table-container table {
+   border-collapse: collapse !important;
+   table-layout: fixed !important;
+  }
+  
+  /* 테이블 셀 높이 강제 설정 */
+  .table-container tbody tr,
+  .table-container tbody td {
+   height: 35px !important;
+   max-height: 35px !important;
+   min-height: 35px !important;
+   padding: 3px !important;
+   box-sizing: border-box !important;
+   font-size: 13px !important;
+  }
+  
+  /* 셀 내부 컨텐츠 제어 */
+  .table-container tbody td {
+   overflow: visible !important;  /* hidden에서 visible로 변경 */
+   white-space: normal !important;  /* nowrap에서 normal로 변경 */
+   word-wrap: break-word !important;  /* 긴 텍스트 줄바꿈 허용 */
+   line-height: 1.2 !important;  /* 줄간격 약간 늘림 */
+  }
+  
+  .table-container input[type="text"] {
+      padding: 3px !important;
+      width: 100%; /* 셀 너비에 맞게 조정 */
+      box-sizing: border-box;
+  }
+  
+  /* input 요소 높이 조절 */
+  .table-container input[type="checkbox"] {
+   height: 20px !important;
+   margin: 0 !important;
+   vertical-align: middle !important;
+  }
+  
+  /* 테이블 내부의 모든 요소들의 마진과 패딩 초기화 */
+  .table-container tbody td * {
+   margin: 0 !important;
+   padding: 0 !important;
+  }
+  
+  .alternate-color-1 td {
+   background-color: #F2F2F2; /* 회색 */
+  }
+  
+  .alternate-color-2 td {
+   background-color: #ffffff; /* 흰색 */
+  }
+  
+  .selected-row td{
+   background-color: #BBF731 !important; /* 원하는 색상으로 변경 가능 */
+  }
+  
+  /* 테이블 행 호버 효과 */
+  .table-container tbody tr:hover td {
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #FFFF54; /* 배경색 살짝 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+  }
+  
+  /* 테이블 헤더 고정 */
+  .table-container thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #000;
+  text-align: center;
+  }
+  
+  .total-qty-cell {
+    font-weight: normal !important; 
+    color: rgba(255, 0, 13, 0.377) !important;
+  }
+  
+  /* 태블릿 및 작은 데스크톱 화면 */
+  @media (max-width: 1024px) {
+   .frozen-input-container.input-row input,
+   .frozen-input-container.input-row button {
+       flex-basis: calc(33.333% - 10px);
+   }
+   
+   .frozen-input-container #remarks {
+       flex-basis: 100%;
+   }
+  }
+  
+  /* 모바일 화면 */
+  @media (max-width: 768px) {
+  
+   button {
+       height: 35px !important;
+       padding: 0px 0px !important;
+       font-size: 12px !important;
+   }
+  
+   .form-menu {
+       font-size: 13px !important;
+   }
+  
+   .frozen-input-container {
+       flex-direction: column;
+   }
+   
+   .frozen-input-container.search-row {
+       flex-direction: row;
+       flex-wrap: nowrap !important; /* 줄바꿈 방지 */
+       gap: 5px; /* 요소들 사이 간격 */
+   }
+  
+   .frozen-input-container button {
+       width: 70px;
+   }
+           
+   .actions {
+       flex-direction: row; /* column에서 row로 변경 */
+       justify-content: center; /* 가운데 정렬 유지 */
+       gap: 5px; /* 버튼 사이 간격 조정 */
+   }
+  
+   .frozen-input-container.input-row button {
+       height: 40px !important;
+       width: 110px !important;
+       font-size: 14px !important;
+       margin-bottom: 3px !important;
+       vertical-align: middle; /* 요소들의 수직 정렬 */
+   }
+  
+   /* mobile view for octopus inventory */
+   .inventory-box { margin: 4px; padding: 8px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #ddd; }
+   .prod-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+   .prod-title .vendor-name { color: blue; }
+   .input-dt { font-size: 14px; color: red; }
+   .inventory-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 3px; }
+   .inventory-item { padding: 2px 4px; background: #f8f9fa; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+   .inventory-item .label { font-weight: bold; color: #444; font-size: 13px; }
+   .inventory-item .value { font-size: 14px; text-align: right; font-weight: bold; }
+   .inventory-box.sum-row .inventory-item .value { color: red; }
+   .sum-display { margin-top: 2px; padding-top: 2px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; }
+   .sum-display .value { color: red; }
+   .additional-info { margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px; }
+   .info-item { display: flex; font-size: 14px; margin-bottom: 3px; }
+   .info-item .label { font-weight: bold; color: #444; width: 60px; flex-shrink: 0; }
+   .info-item .value { color: #333; }
+  }
+  

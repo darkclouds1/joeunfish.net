@@ -10,6 +10,7 @@ class PurchaseClass {
       "kg",
       // "Lot 명",
       "자재명",
+      "자재종류",
       "비고",
       "단가",
       "재고",
@@ -27,7 +28,8 @@ class PurchaseClass {
       "6%", // Weight(kg)
       // "13%", // Lot 명
       "10%", // 자재명
-      "10%", // 비고
+      "8%", // 자재종류
+      "8%", // 비고
       "6%", // 단가
       "6%", // 현재고
       "6%", // 이동량
@@ -44,6 +46,7 @@ class PurchaseClass {
       "weight",
       // "lot_nm",
       "mat_nm",
+      "mat_type",
       "remarks",
       "unitPrice",
       "qty_cur",
@@ -52,7 +55,7 @@ class PurchaseClass {
       "modify_name",
       "이동",
     ];
-    this.alignments = ["c", "c", "c", "l", "r", "r", "l", "l", "r", "r", "r", "c", "c", "c"];
+    this.alignments = ["c", "c", "c", "l", "r", "r", "l", "l", "l", "r", "r", "r", "c", "c", "c"];
     this.data = [];
     this.selectedRow = null;
     this.purchase_srv = window.purchase_srv || '/wp-content/plugins/purchase/purchase_srv.php';
@@ -152,7 +155,7 @@ class PurchaseClass {
     this.columns.forEach((col, i) => {
       const th = document.createElement("th");
 
-      if (i === 0 || i === 1 || i === 12 || i === 13) {
+      if (i === 0 || i === 1 || i === 13 || i === 14) {
         // 첫 번째 열에는 정렬 링크를 추가하지 않음
         th.innerHTML = col;
       } else {
@@ -396,6 +399,7 @@ class PurchaseClass {
 
     console.log("[ln375::displaySelectedRecordInInputs]item=" + item.mat_cd);
     document.getElementById('mat-cd').value = item.mat_cd || "";
+    document.getElementById("mat-type").value = item.mat_type || "";
     document.getElementById("vendor-nm").value = item.vendor_nm || "";
     document.getElementById("box").value = item.box || "";
     document.getElementById("weight").value = item.weight || "";
@@ -417,6 +421,7 @@ class PurchaseClass {
     // 입력 필드에 값 설정
     document.getElementById("input-dt").value = item.input_dt?.substr(0, 10) || "";
     document.getElementById("mat-cd").value = item.mat_cd || "";
+    document.getElementById("mat-type").value = item.mat_type || "";
     document.getElementById("vendor-nm").value = item.vendor_nm || "";
     document.getElementById("box").value = item.box || "";
     document.getElementById("weight").value = item.weight || "";
@@ -431,12 +436,13 @@ class PurchaseClass {
     // 저장할 데이터 찾기
     const input_dt = document.getElementById("input-dt").value;
     const mat_cd = document.getElementById("mat-cd").value;
+    const mat_type = document.getElementById("mat-type").value;
     const vendor_nm = document.getElementById("vendor-nm").value;
     const box = document.getElementById("box").value;
     const weight = document.getElementById("weight").value;
     const remarks = document.getElementById("remarks").value;
     const unitPrice = document.getElementById("unitPrice").value;
-    const data = { input_dt, mat_cd, vendor_nm, box, weight, remarks, unitPrice };
+    const data = { input_dt, mat_cd, mat_type, vendor_nm, box, weight, remarks, unitPrice };
 
     const missingFields = [];
 
@@ -481,6 +487,7 @@ class PurchaseClass {
     const data = {
       input_dt: document.getElementById("input-dt").value,
       mat_cd: document.getElementById("mat-cd").value,
+      mat_type: document.getElementById("mat-type").value,
       vendor_nm: document.getElementById("vendor-nm").value,
       box: document.getElementById("box").value,
       weight: document.getElementById("weight").value,

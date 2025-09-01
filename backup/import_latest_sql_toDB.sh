@@ -1,15 +1,24 @@
 #!/bin/bash
 
-# webhosting (.website) 변수 설정
+# webhosting (.in) 변수 설정
 DB_NAME="u753849441_fw9gm"
 DB_USER="u753849441_cASrk"
 DB_PASS="w3m69P21!@"
-DB_HOST="130.228.170"  # 원격 데이터베이스 IP 주소
+DB_HOST="45.130.228.170"  # 원격 데이터베이스 IP 주소
 
 # -----------------------------------------------
 #  backup_t_tables.sh 에서 백업한 파일 경로 설정
-BACKUP_DIR="/home/joeunfish.net/backup/bkdb_0708"
+# Get the current date in YYYY-MM-DD format
+# CURRENT_DATE=$(date +"%Y-%m-%d")
+# CURRENT_DATE=2024-07-08
+CURRENT_DATE=$(date +"%Y-%m-%d")
+TODAY=$(date +"%m%d")
+BACKUP_DIR="/home/joeunfish.net/backup/bkdb_${TODAY}"
+
 # -----------------------------------------------
+
+# Create the local backup directory if it doesn't exist
+mkdir -p ${BACKUP_DIR}
 
 # 모든 백업 .sql 파일 찾기
 SQL_FILES=$(find "$BACKUP_DIR" -name "*.sql" -type f -printf '%T@ %p\n' | sort -nr | cut -d' ' -f2-)

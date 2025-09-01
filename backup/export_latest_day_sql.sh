@@ -25,7 +25,7 @@ START_DATE=$(date -d "-2 days" +%Y-%m-%d)
 START_DATE_FORMAT=$(date -d "-2 days" +%Y%m%d)
 
 # 백업 디렉토리 설정
-BACKUP_DIR="/home/joeunfish.net/backup/backup_${START_DATE_FORMAT}"
+BACKUP_DIR="/home/joeunfish.net/backup/net_backup_${START_DATE_FORMAT}"
 
 # 백업 디렉토리 생성
 mkdir -p "$BACKUP_DIR"

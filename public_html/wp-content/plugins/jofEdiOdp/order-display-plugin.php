@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Order Display Plugin
-Description: Display order data based on store and delivery date selection
+Description: (CO) 주문 조회 하단, :: 점포別 :: PO# & 제품 목록 조회
 Version: 1.0
 Author: darkcloud
 */

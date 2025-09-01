@@ -7,10 +7,10 @@
 DB_NAME="joeu_fish"
 DB_USER="u753849441_cASrk"
 DB_PASS="w3m69P21!@"
-DB_HOST="localhost"  # joeunfish.in DB IP
+DB_HOST="localhost"  # DB IP
 
 # 백업 디렉토리 설정 t
-BACKUP_DIR="/home/joeunfish.net/backup/bkdb_0712"
+BACKUP_DIR="/home/joeunfish.net/backup/bkdb_0830"
 mkdir -p "$BACKUP_DIR"  # 백업 디렉토리 생성
 
 echo "Starting t~ 테이블 백업..."
@@ -37,8 +37,11 @@ done
 # ─────────────────────────────
 # wp_users 
 # ─────────────────────────────
-    mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" wp_users > "$FILE"
+echo "Backing up: wp_users"
+mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" wp_users > "$BACKUP_DIR/wp_users.sql"
+
 # wp_usermeta 테이블을 백업 (전체 데이터)
-    mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" wp_usermeta > "$FILE"
+echo "Backing up: wp_usermeta"
+mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" wp_usermeta > "$BACKUP_DIR/wp_usermeta.sql"
 
 echo "모든 t~ 테이블 백업이 완료되었습니다."

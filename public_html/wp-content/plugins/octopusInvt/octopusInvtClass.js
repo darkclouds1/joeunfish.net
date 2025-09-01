@@ -59,7 +59,7 @@ class octopusInvtClass {
     if (head != "") return; // 제목란이 있으면.. ajaxmore
     idx = 0;
     table1 = document.createElement("table");
-    table1.setAttribute("class", "type10 type11");
+    table1.setAttribute("class", "type10");
     table1.setAttribute("id", "specData");
     table1.setAttribute("style", "width:100%");
 
@@ -109,7 +109,7 @@ class octopusInvtClass {
     items.forEach((item, index) => {
       try {
         const row = tableBody.insertRow(-1);
-        row.style.height = "40px";
+        row.style.height = "30px"; // 40px에서 25px으로 수정
 
         // 'SUM' 행인 경우 노란색으로 배경색을 설정합니다.
         if (item.serial_no === 'SUM') {
@@ -152,7 +152,7 @@ class octopusInvtClass {
                 : '';
 
             tabCell.innerHTML = `<input type="text" value="${formattedValue}" 
-              style="width: 100%; text-align: ${textAlign}; padding: 3px; font-size: 13px;" 
+              style="width: 100%; text-align: ${textAlign}; padding: 3px; font-size: 12px; padding-right: 3px; height: 30px; box-sizing: border-box;" 
               onfocus="this.select()"
               ${onInputHandler}>`;
           } else {

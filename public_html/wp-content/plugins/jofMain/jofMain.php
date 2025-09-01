@@ -17,7 +17,8 @@ function jofMainShortCode()
     // $platForm = $dbConn->MobileCheck();
 
     $userCan = array(
-        'edit' => current_user_can('editor') || current_user_can('administrator')
+        // 'edit' => current_user_can('editor') || current_user_can('administrator')
+        'edit' => is_user_logged_in()       // 모든 로그인한 사용자 접근 가능
     );
 
 ?>
@@ -46,7 +47,7 @@ function jofMainShortCode()
                 <button class="agisgs gs-buttons">(GS)주문관리</button>
                 <button class="barcodeinv2gs gs-buttons">(GS)상품출고</button>
                 <!-- <button class="gsInvt">완출생산관리</button> -->
-                <button class="octopusInvt">문어재고관리</button>
+                <button class="octopusInvt">냉동자재(재고)</button>
                 <button class="ascInvt" style="background-color: #33F;">ASC수불</button>
                 <button class="ascInvt3" style="background-color: #33F;">ASC더조은</button>
                 <button class="barcodeoutmap" style="background-color: #ffffff; color: #000000;">생산(MAP)</button>

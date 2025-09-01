@@ -46,7 +46,7 @@ function showTMat_Mst() {
 // --------------------------
 function fetchDataForTMst() {
   const url = '/wp-content/plugins/dayProd/dayProd_srv.php?category=tMstSearch';
-  console.log('[dayProd_srv::url] ' + url);
+  console.log('[ln49::dayProd_srv::url] ' + url);
 
   fetch(url)
     .then((response) => response.json())
@@ -359,8 +359,11 @@ window.selectTMatMstRow = function(index) {
 };
 
 
+// 자재마스터 컬럼 정의
+window.tMatMstVisibleColumns = ['prod_cd', 'prod_nm', 'mat_cd', 'mat_nm', 'unit', 'order_num', 'inv_yn','temp_code', 'use_yn'];
+
 // 자재마스터 데이터 조회
-function fetchDataForTMatMst() {
+function fetchDataForTMatMst() { 
     const url = '/wp-content/plugins/dayProd/dayProd_srv.php?category=tMatMstSearch';
     console.log('[dayProd_srv::url] ' + url);
 
@@ -376,8 +379,7 @@ function fetchDataForTMatMst() {
             output += '<thead>';
             output += '<tr style="background-color: #d3d3d3;">';
 
-            const visibleColumns = ['prod_cd', 'prod_nm', 'mat_cd', 'mat_nm', 'unit', 'order_num', 'inv_yn', 'use_yn'];
-            visibleColumns.forEach((key) => {
+            window.tMatMstVisibleColumns.forEach((key) => {
                 output += `<th>${key}</th>`;
             });
             output += `<th>수정</th><th>삭제</th><th>추가</th>`;
@@ -394,7 +396,7 @@ function fetchDataForTMatMst() {
                               style="background-color: ${color}"
                               onclick="selectTMatMstRow(${index})">`;
 
-                visibleColumns.forEach((key) => {
+                window.tMatMstVisibleColumns.forEach((key) => {
                     output += `<td style="text-align: left;">${item[key]}</td>`;
                 });
 
@@ -431,11 +433,11 @@ window.addTMatMstRowBelow = function (index) {
                 <option value="Y">Y</option>
                 <option value="N">N</option>
             </select></td>
+        <td><input type='text' name='temp_code' style='width: 80px; font-size: 12px; padding: 5px 5px;'></td>
         <td><select name='use_yn' style='width: 60px; font-size: 12px; padding: 5px 5px;'>
                 <option value="Y">Y</option>
                 <option value="N">N</option>
             </select></td>
-        <td></td>
         <td><a href="#" onclick='saveTMatMstNewRow(this); return false;'>저장</a></td>
         <td><a href="#" onclick='cancelTMatMstRow(this); return false;'>취소</a></td>
     `;
@@ -453,7 +455,8 @@ window.saveTMatMstNewRow = function (element) {
     unit: inputs[3].value,
     order_num: parseInt(inputs[4].value),
     inv_yn: inputs[5].value,
-    use_yn: inputs[6].value,
+    temp_code: inputs[6].value,
+    use_yn: inputs[7].value,
     create_id: user_id,
   };
 
@@ -510,16 +513,10 @@ window.editTMatMstRow = function (index) {
   );
 
   cells.forEach((cell, idx) => {
-    const key = Object.keys(tMatMstItems[index])[idx];
+    const key = window.tMatMstVisibleColumns[idx];
     const text = cell.innerText;
     const cellWidth = cell.offsetWidth;
-    if (
-      key !== 'create_dt' &&
-      key !== 'create_id' &&
-      key !== 'modify_dt' &&
-      key !== 'modify_id' &&
-      key !== 'prod_nm'
-    ) {
+    if (key !== 'prod_cd' && key !== 'prod_nm' && key !== 'mat_cd') {
       if (key === 'inv_yn') {
         cell.innerHTML = `<select name='${key}' style='width: 60px; font-size: 12px; padding: 5px 5px;'>
                     <option value="Y" ${
@@ -572,17 +569,19 @@ window.saveTMatMstRow = function (index) {
   const data = {
     prod_cd: originalItem.prod_cd, // 원래 키 값 유지
     mat_cd: originalItem.mat_cd, // 원래 키 값 유지
-    mat_nm: inputs[2].value,
-    unit: inputs[3].value,
-    order_num: parseInt(inputs[4].value),
-    inv_yn: inputs[5].value,
-    use_yn: inputs[6].value,
+    mat_nm: inputs[0].value,
+    unit: inputs[1].value,
+    order_num: parseInt(inputs[2].value),
+    inv_yn: inputs[3].value,
+    temp_code: inputs[4].value,
+    use_yn: inputs[5].value,
     modify_id: user_id,
   };
 
   const url =
     '/wp-content/plugins/dayProd/dayProd_srv.php?category=tMatMstUpdate';
-  console.log('[dayProd_srv::url] ' + url);
+  console.log('[ln589::dayProd_srv::url] ' + url);
+  console.log('data: ' + JSON.stringify(data));
 
   fetch(url, {
     method: 'POST',
@@ -610,7 +609,8 @@ window.cancelTMatMstEditRow = function (index) {
   );
 
   cells.forEach((cell, idx) => {
-    cell.innerHTML = tMatMstItems[index][Object.keys(tMatMstItems[index])[idx]];
+    const key = window.tMatMstVisibleColumns[idx];
+    cell.innerHTML = tMatMstItems[index][key];
   });
 
   const editButton = tableRow.querySelector('td:nth-last-child(3) a');

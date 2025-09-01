@@ -1,4 +1,5 @@
 <?php
+define( 'WP_CACHE', true );
 
 define('COOKIE_DOMAIN', false);
 define('SITECOOKIEPATH', '/');
@@ -86,6 +87,10 @@ define( 'WP_DEBUG_DISPLAY', false );
 
 
 /* That's all, stop editing! Happy publishing. */
+// 고정 도메인 사용
+define('WP_HOME', 'https://joeunfish.net');
+define('WP_SITEURL', 'https://joeunfish.net');
+
 
 /** Absolute path to the WordPress directory. */
 if (!defined('ABSPATH')) { 
@@ -94,11 +99,3 @@ if (!defined('ABSPATH')) {
 
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';
-
-// 고정 도메인 사용
-define('WP_HOME', 'https://joeunfish.net');
-define('WP_SITEURL', 'https://joeunfish.net');
-
-// 현재 도메인 사용
-// define('WP_HOME', 'https://' . $_SERVER['HTTP_HOST']);
-// define('WP_SITEURL', 'https://' . $_SERVER['HTTP_HOST']);

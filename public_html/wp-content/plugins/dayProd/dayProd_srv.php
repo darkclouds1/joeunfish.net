@@ -11,7 +11,7 @@
     mysqli_set_charset($conn, 'utf8');
     mysqli_query($conn, "SET time_zone = '+09:00'");
 
-    $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
+    $logFilePath = __DIR__ . "/logfile.log";
 
     // 파라미터
     isset($_GET['category']) ? $category = $_GET['category'] : $category = "";
@@ -473,6 +473,7 @@
             if (isset($update_stmt)) $update_stmt->close();
         }
     }
+
     // 제품 마스터 삭제
     if ($category == 'tMstDelete') {
         $json_input = file_get_contents('php://input');
@@ -586,6 +587,7 @@
             m2.unit as unit,
             m2.order_num as order_num,
             COALESCE(m2.inv_yn, '') as inv_yn,
+            COALESCE(m2.temp_code, '') as temp_code,
             m2.use_yn as use_yn,
             m2.create_dt as create_dt,
             m2.create_id as create_id,
@@ -655,6 +657,7 @@
                         mat_nm = ?,
                         unit = ?,
                         inv_yn = ?,
+                        temp_code = ?,
                         use_yn = ?,
                         modify_dt = CURRENT_TIMESTAMP,
                         modify_id = ?
@@ -662,10 +665,11 @@
 
             $stmt = $conn->prepare($update_sql);
             $stmt->bind_param(
-                "sssssss",
+                "ssssssss",
                 $data['mat_nm'],
                 $data['unit'],
                 $data['inv_yn'],
+                $data['temp_code'],
                 $data['use_yn'],
                 $data['modify_id'],
                 $data['prod_cd'],
@@ -758,13 +762,14 @@
             }
 
             $stmt->bind_param(
-                "ssssisss",
+                "ssssissss",
                 $data['prod_cd'],
                 $data['mat_cd'],
                 $data['mat_nm'],
                 $data['unit'],
                 $data['order_num'],
                 $data['inv_yn'],
+                $data['temp_code'],
                 $data['use_yn'],
                 $data['create_id']
             );
