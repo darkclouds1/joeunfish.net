@@ -149,10 +149,10 @@ class FrozenInvtClass {
                     cellValue = parseInt(String(cellValue).replace(/,/g, ''), 10).toLocaleString();
                 }
 
-                // '합계' 컬럼(total_qty)에 CSS 클래스 추가
+                // '합계','자재명' 컬럼(total_qty)에 CSS 클래스 추가
                 if (fieldName === 'total_qty' || fieldName === 'mat_nm') {
                     cell.classList.add('total-qty-cell');
-                    cell.style.color = "darkred";
+                    cell.style.color = "red";
                     cell.style.fontWeight = "bold";
                 }
 
@@ -248,5 +248,3 @@ class FrozenInvtClass {
         });
     }
 }
-
-

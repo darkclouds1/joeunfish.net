@@ -71,7 +71,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   margin: 5px 0;
   transition: all 0.3s ease; /* 부드러운 전환 효과 추가 */
-  font-size: 15px;
+  font-size: 13px;
   }
   
   .search-row:hover {
@@ -83,8 +83,10 @@
   
   .frozen-input-container.search-row button,
   .frozen-input-container.search-row date,
+  .frozen-input-container.search-row input,
+  .frozen-input-container.search-row select,
   .frozen-input-container.search-row label {
-    font-size: 15px !important;
+    font-size: 14px !important;
   }
   
   .form-row {
@@ -211,8 +213,8 @@
   }
   
   .total-qty-cell {
-    font-weight: normal !important; 
-    color: rgba(255, 0, 13, 0.377) !important;
+    font-weight: bold !important; 
+    color: red !important;
   }
   
   /* 태블릿 및 작은 데스크톱 화면 */
@@ -285,4 +287,3 @@
    .info-item .label { font-weight: bold; color: #444; width: 60px; flex-shrink: 0; }
    .info-item .value { color: #333; }
   }
-  

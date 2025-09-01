@@ -27,7 +27,7 @@ function octopusInvtShortCode()
         $sql = "
             SELECT mat_cd, CONCAT(mat_cd, '|', mat_nm) AS mat_display
             FROM `tdayprodmat_mst`
-            WHERE temp_code = 'F'
+            WHERE temp_code = 'f'
             GROUP BY mat_cd, mat_nm
             ORDER BY mat_nm;
         ";

@@ -1,4 +1,4 @@
- <?php
+<?php
     header('Content-Type: application/json; charset=UTF-8');
     session_start();
     date_default_timezone_set('Asia/Seoul');
@@ -750,9 +750,10 @@
                         unit, 
                         order_num, 
                         inv_yn,
+                        temp_code,
                         use_yn, 
                         create_id
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $stmt = $conn->prepare($insert_sql);
             if (

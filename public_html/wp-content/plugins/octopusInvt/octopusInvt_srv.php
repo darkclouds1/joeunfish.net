@@ -294,6 +294,34 @@ if ($category === 'frozen_s') {
         $stmt->execute($params);
         $resultData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        if (count($resultData) > 0) {
+            $totalBox = 0;
+            $totalQtyCur = 0;
+            $totalStockQty = 0;
+            $totalTotalQty = 0;
+
+            foreach ($resultData as $row) {
+                $totalBox += (float)$row['box'];
+                $totalQtyCur += (float)$row['qty_cur'];
+                $totalStockQty += (float)$row['stock_qty'];
+                $totalTotalQty += (float)$row['total_qty'];
+            }
+
+            $totalRow = [
+                'vendor_nm' => '합계',
+                'input_dt_formatted' => '',
+                'mat_nm' => '',
+                'mat_type' => '',
+                'lot_nm' => '',
+                'box' => $totalBox,
+                'qty_cur' => $totalQtyCur,
+                'stock_qty' => $totalStockQty,
+                'total_qty' => $totalTotalQty,
+                'warehouse_nm' => ''
+            ];
+            $resultData[] = $totalRow;
+        }
+
         $response = [
             'response' => [
                 'header' => ['resultCode' => '00', 'resultMsg' => 'OK'],
