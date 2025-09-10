@@ -7,7 +7,7 @@ class CodeInvSumClass {
       "단위",
       "발주수량",
       "입점수량",
-      "유통기한",
+      "소비기한",
       "원산지",
       "박스",
     ],
@@ -248,7 +248,7 @@ class CodeInvSumClass {
                     <div class="content">
                         <span class="item">[${items[i]["no"]}] [납품일자] ${items[i]["supply_dt"]} [점명] ${neItem.store_name} </span>
                         <div class="item-details">
-                        [ITEM#] ${newItem.item_code} [상품명] ${items[i]["product_name"]} [단위] ${newItem.unit} [수량] ${newItem.received_quantity} [유통기한] ${newItem.expiration_date} [원산지] ${newItem.country_origin} [박스] ${newItem.box_count}
+                        [ITEM#] ${newItem.item_code} [상품명] ${items[i]["product_name"]} [단위] ${newItem.unit} [수량] ${newItem.received_quantity} [소비기한] ${newItem.expiration_date} [원산지] ${newItem.country_origin} [박스] ${newItem.box_count}
                         </div>
                     </div>
                     <div class="button-container" id="link${idx}" style="display:none;">

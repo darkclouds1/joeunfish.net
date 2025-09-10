@@ -49,7 +49,8 @@ if [ $? -eq 0 ]; then
 
     if [ -f "$LOG_FILE" ]; then
         # 로그 파일의 마지막 'result : ' 라인에 '005'가 포함되어 있다면 데이터가 없는 것으로 간주
-        if grep "result : " "$LOG_FILE" | tail -n 1 | grep -q "005"; then
+        # 'A' 파라미터가 아닐 경우에만 빈 파일 생성 로직을 실행
+        if [ "$1" != "A" ] && grep "result : " "$LOG_FILE" | tail -n 1 | grep -q "005"; then
             log_message "로그 확인: 수신된 데이터 없음 (result: 005). 빈 파일을 생성합니다."
             RECV_DIR="$EC_HOME/recv"
             mkdir -p "$RECV_DIR"

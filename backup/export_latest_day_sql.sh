@@ -21,8 +21,8 @@ TARGET_HOST="45.130.228.170"
 # START_DATE="2025-07-15"
 # START_DATE_FORMAT="20250715"
 
-START_DATE=$(date -d "-2 days" +%Y-%m-%d)
-START_DATE_FORMAT=$(date -d "-2 days" +%Y%m%d)
+START_DATE=$(date -d "-1 days" +%Y-%m-%d)
+START_DATE_FORMAT=$(date -d "-1 days" +%Y%m%d)
 
 # 백업 디렉토리 설정
 BACKUP_DIR="/home/joeunfish.net/backup/net_backup_${START_DATE_FORMAT}"

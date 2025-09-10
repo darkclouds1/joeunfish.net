@@ -121,6 +121,11 @@ class FrozenInvtClass {
             const row = tableBody.insertRow(-1);
             row.style.height = "35px";
 
+            // 마지막 '합계' 행의 배경색을 노란색으로 설정
+            if (index === items.length - 1 && items.length > 1) {
+                row.style.backgroundColor = "yellow";
+            }
+
             // 클릭 이벤트
             row.addEventListener("click", () => {
                 if (this.selectedRow) {
@@ -204,6 +209,11 @@ class FrozenInvtClass {
         items.forEach((item, index) => {
             const box = document.createElement('div');
             box.className = 'inventory-box';
+
+            // 마지막 '합계' 항목의 배경색을 노란색으로 설정
+            if (index === items.length - 1 && items.length > 1) {
+                box.style.backgroundColor = "yellow";
+            }
 
             const formatNumber = (value) => Number(value || 0).toLocaleString();
 

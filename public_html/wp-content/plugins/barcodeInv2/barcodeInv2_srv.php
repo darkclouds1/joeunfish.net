@@ -16,7 +16,7 @@ isset($_GET['category']) ? $category = $_GET['category'] : $category = "";
 isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
 isset($_GET['increate_dt']) ? $increate_dt = $_GET['increate_dt'] : $increate_dt = "";
 isset($_GET['store_no']) ? $store_code = $_GET['store_no'] : $store_code = "";  // store_code 임
-// 유통기한, 중량, 상품코드 => Update용
+// 소비기한, 중량, 상품코드 => Update용
 isset($_GET['expi_date']) ? $expi_date = $_GET['expi_date'] : $expi_date = "";
 isset($_GET['weights']) ? $weight = $_GET['weights'] : $weight = "";
 isset($_GET['prod_code']) ? $prod_code = $_GET['prod_code'] : $prod_code = "";

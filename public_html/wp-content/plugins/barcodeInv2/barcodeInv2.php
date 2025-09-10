@@ -289,7 +289,7 @@ function barcodeInv2ShortCode()
                 }
             });
 
-            console.log("[handleInvoicePrint::]params=", params);
+            // console.log("[handleInvoicePrint::]params=", params);
             invoice2Print(deliveryDate, store_no, params);
         }
 

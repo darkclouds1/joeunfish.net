@@ -31,13 +31,14 @@
     // 명령줄 인수 확인
     if (isset($argv[1])) {
         $filename = $argv[1];
-        $latestFile = $filename;
+        $latestFile = $folderPath . '/' . basename($filename);
 
         // 파일 존재 여부 확인
         if (!file_exists($latestFile)) {
             error_log("파일을 찾을 수 없습니다: " . $latestFile, 3, $logFilePath);
             die("파일을 찾을 수 없습니다.");
         }
+        // die("파일이 확인 되었습니다");
     } else {
         error_log("파일명이 제공되지 않았습니다.", 3, $logFilePath);
         die("사용법: php " . basename(__FILE__) . " <파일명>");

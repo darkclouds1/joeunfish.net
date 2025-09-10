@@ -55,7 +55,7 @@ $sql = "SELECT
             com.code_exp,
             com.unit,
             ROUND(SUM(COALESCE(tout.weight, 0)), 1) AS total_weight,
-            Min(tout.expi_date) AS '유통기한',
+            Min(tout.expi_date) AS '소비기한',
             com.country_origin,
             COUNT(tout.barcode_out) AS box,
             ROUND(prd.unit_price * SUM(COALESCE(tout.weight, 0))) AS '금액'
@@ -228,7 +228,7 @@ foreach ($invoiceDataByDocNo as $ordDocNo => $invoiceData) {
                     <th style="border-bottom: double; text-align: center; width: 70px;">단위</th>
                     <th style="border-bottom: double; text-align: center; width: 80px;">입점 중량</th>
                     <th style="border-bottom: double; text-align: center; width: 80px;">박스 수량</th>
-                    <th style="border-bottom: double; text-align: center;">유통기한</th>
+                    <th style="border-bottom: double; text-align: center;">소비기한</th>
                     <th style="border-bottom: double; text-align: center;">원산지</th>
                     <th style="border-bottom: double; text-align: center; width: 80px;">온도</th></tr>';
 
@@ -246,7 +246,7 @@ foreach ($invoiceDataByDocNo as $ordDocNo => $invoiceData) {
             $html1page .= '<td style="text-align: right; padding-right: 30px;">' . htmlspecialchars($row['total_weight'], ENT_QUOTES, 'UTF-8') . '</td>';
             // $html1page .= '<td style="text-align: right; padding-right: 30px;">' . htmlspecialchars($row['box'], ENT_QUOTES, 'UTF-8') . '</td>';
             $html1page .= '<td style="text-align: right; padding-right: 30px;">' . ($storeCode !== '063' ? htmlspecialchars($row['box'], ENT_QUOTES, 'UTF-8') : '') . '</td>';
-            $html1page .= '<td style="text-align: center;">' . htmlspecialchars($row['유통기한'], ENT_QUOTES, 'UTF-8') . '</td>';
+            $html1page .= '<td style="text-align: center;">' . htmlspecialchars($row['소비기한'], ENT_QUOTES, 'UTF-8') . '</td>';
             $html1page .= '<td style="text-align: center;">' . htmlspecialchars($row['country_origin'], ENT_QUOTES, 'UTF-8') . '</td>';
             // 온도
             $html1page .= '<td></td>';
@@ -329,7 +329,7 @@ foreach ($invoiceDataByDocNo as $ordDocNo => $invoiceData) {
                         <th style="border-bottom: double;">단위</th>
                         <th style="border-bottom: double;">입점 중량</th>
                         <th style="border-bottom: double;">박스 수량</th>
-                        <th style="border-bottom: double;">유통기한</th>                    
+                        <th style="border-bottom: double;">소비기한</th>                    
                         <th style="border-bottom: double;" colspan="2">비고</th>
                         </tr>';
 
@@ -343,7 +343,7 @@ foreach ($invoiceDataByDocNo as $ordDocNo => $invoiceData) {
             'UTF-8'
         ) . '</td>';
         $html2page .= '<td style="width: 80px; border-bottom: double;">' . htmlspecialchars($row['box'], ENT_QUOTES, 'UTF-8') . '</td>';
-        $html2page .= '<td style="width: 100px; border-bottom: double;">' . htmlspecialchars($row['유통기한'], ENT_QUOTES, 'UTF-8') . '</td>';
+        $html2page .= '<td style="width: 100px; border-bottom: double;">' . htmlspecialchars($row['소비기한'], ENT_QUOTES, 'UTF-8') . '</td>';
         $html2page .= '<td style="width: 80px; border-bottom: double;"></td>'; // 비고
         $html2page .= '<td style="width: 80px; border-bottom: double;"></td>'; // 비고2
         $html2page .= '</tr>';

@@ -10,7 +10,7 @@ class CodeInvClass {
       "단위",
       "입점수량",
       "개별중량",
-      "유통기한",
+      "소비기한",
       "원산지",
       "단가",
       "금액",
@@ -176,13 +176,13 @@ class CodeInvClass {
 
     for (var i = 0; i < items.length; i++) {
       idx = idx + 1;
-      // 납품일이 월요일이면 유통기한을 전체 -1day로 변경
+      // 납품일이 월요일이면 소비기한을 전체 -1day로 변경
       let supplyDate = new Date(items[i]["납품일"]);
       if (supplyDate.getDay() === 1) {
         // 월요일 체크
-        items[i]["유통기한"] = new Date(items[i]["유통기한"]);
-        items[i]["유통기한"].setDate(items[i]["유통기한"].getDate() - 1);
-        items[i]["유통기한"] = items[i]["유통기한"].toISOString().split("T")[0]; // 날짜 형식으로 변환
+        items[i]["소비기한"] = new Date(items[i]["소비기한"]);
+        items[i]["소비기한"].setDate(items[i]["소비기한"].getDate() - 1);
+        items[i]["소비기한"] = items[i]["소비기한"].toISOString().split("T")[0]; // 날짜 형식으로 변환
       }
       newItem = {
         no: idx,
@@ -240,7 +240,7 @@ class CodeInvClass {
           }" readonly>
                 <input type="checkbox" id="quantity-checkbox-${idx}" onchange="toggleInput(${idx}, 'quantity')">입점수량 미표기</br> 
                 <div class="item-spacing" style="margin-right: 10px;"></div>
-                [유통기한] <input type="date" id="expi_date-${idx}" value="${items[i]["expi_date"]
+                [소비기한] <input type="date" id="expi_date-${idx}" value="${items[i]["expi_date"]
           }" ${isSpecialRegionWithTempCode(items[i]["region"], items[i]["temp_code"])
             ? 'data-original="' + items[i]["expi_date"] + '"'
             : ""
@@ -248,7 +248,7 @@ class CodeInvClass {
                 <input type="checkbox" id="expi_date-checkbox-${idx}" onchange="toggleInput(${idx}, 'expi_date')" ${isSpecialRegionWithTempCode(items[i]["region"], items[i]["temp_code"])
             ? "checked"
             : ""
-          }>유통기한 미표기
+          }>소비기한 미표기
                   <div class="item-spacing" style="margin-right: 10px;"></div>
                   [개별중량] <input type="text" id="weights-${idx}" value="${items[i]["weights"]
           }" style="width: 70ch; height: 1.7em;"> 
@@ -272,7 +272,7 @@ class CodeInvClass {
           }" maxlength="5">
                 <input type="checkbox" id="quantity-checkbox-${idx}" onchange="toggleInput(${idx}, 'quantity')">입점수량 미표기</br>
                 <div class="item-spacing" style="margin-right: 10px;"></div>
-                [유통기한] <input type="date" id="expi_date-${idx}" value="${items[i]["expi_date"]
+                [소비기한] <input type="date" id="expi_date-${idx}" value="${items[i]["expi_date"]
           }" ${isSpecialRegionWithTempCode(items[i]["region"], items[i]["temp_code"])
             ? 'data-original="' + items[i]["expi_date"] + '"'
             : ""
@@ -280,7 +280,7 @@ class CodeInvClass {
       <input type="checkbox" id="expi_date-checkbox-${idx}" onchange="toggleInput(${idx}, 'expi_date')" ${isSpecialRegionWithTempCode(items[i]["region"], items[i]["temp_code"])
             ? "checked"
             : ""
-          }>유통기한 미표기
+          }>소비기한 미표기
             </div>
     </li>`;
       } else {
@@ -294,7 +294,7 @@ class CodeInvClass {
           }" maxlength="5"> 
                 <input type="checkbox" id="quantity-checkbox-${idx}" onchange="toggleInput(${idx}, 'quantity')">입점수량 미표기</br> 
                 <div class="item-spacing" style="margin-right: 10px;"></div>
-                [유통기한] <input type="date" id="expi_date-${idx}" value="${items[i]["expi_date"]
+                [소비기한] <input type="date" id="expi_date-${idx}" value="${items[i]["expi_date"]
           }" ${isSpecialRegionWithTempCode(items[i]["region"], items[i]["temp_code"])
             ? 'data-original="' + items[i]["expi_date"] + '"'
             : ""
@@ -302,7 +302,7 @@ class CodeInvClass {
       <input type="checkbox" id="expi_date-checkbox-${idx}" onchange="toggleInput(${idx}, 'expi_date')" ${isSpecialRegionWithTempCode(items[i]["region"], items[i]["temp_code"])
             ? "checked"
             : ""
-          }>유통기한 미표기
+          }>소비기한 미표기
             </div>
     </li>`;
       }
@@ -320,7 +320,7 @@ class CodeInvClass {
           this.updateBarcodeList(idx, "quantity", e.target.value)
         );
       }
-      // 유통기한
+      // 소비기한
       let expiDayElement = document.getElementById(`expi_date-${idx}`);
       if (expiDayElement) {
         expiDayElement.addEventListener("blur", (e) =>
@@ -338,7 +338,7 @@ class CodeInvClass {
     });
   }
 
-  // 입점수량, 유통기한 外
+  // 입점수량, 소비기한 外
   updateBarcodeList(idx, key, value) {
 
     // 기존 값과 비교
