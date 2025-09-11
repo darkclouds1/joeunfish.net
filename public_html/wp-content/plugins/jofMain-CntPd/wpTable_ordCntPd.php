@@ -1,13 +1,13 @@
 <?php
-/* Plugin Name: jofMain_ordcntchartPd : 수량-예측챠트
-Plugin URI: https://joeunfish.net
-Description: 조은수산 주문 예측 챠트
-Version: 1.0
+/* Plugin Name: jofMain-jofMain_ordcntchartPd : 수량-예측챠트
+Plugin URI: https://joeunfish.online
+Description: 조은수산 주문 예측 챠트 & 에측데이터 저장
+Version: 2.0
 Author: Monolith
 Author URI: https://uloca.net
 License: GPL2 */
 
-// $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
+// $logFilePath = __DIR__ . "/logfile.log";
 // error_log("ln10::logFilePath: " . $logFilePath . "\n", 3, $logFilePath);
 
 function enqueue_chartjsPd()
@@ -20,7 +20,7 @@ add_action('wp_enqueue_scripts', 'enqueue_chartjsPd');
 function jofMainOrdCntPdChartShortCode()
 {
     global $wpdb;
-    $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log";
+    $logFilePath = __DIR__ . "/logfile.log";
 
     $orders_table = 'torders';
     $orderproducts_table = 'torderproducts';
@@ -468,6 +468,68 @@ function jofMainOrdCntPdChartShortCode()
         }
     }
 
+    // --- 예측 데이터 DB 저장 로직 시작 (하루에 한 번만 실행) ---
+    $predict_table = 'torder_predict';
+    $base_dt = date('Y-m-d');
+
+    // 오늘 날짜로 생성된 예측 데이터가 이미 있는지 확인
+    $prediction_exists_today = $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM {$predict_table} WHERE product_code = %s AND base_dt = %s",
+        $selected_product,
+        $base_dt
+    ));
+
+    // 오늘 생성된 예측이 없는 경우에만 DB 업데이트 수행
+    if ($prediction_exists_today == 0) {
+        $tomorrow_date = date('Y-m-d', strtotime('+1 day'));
+
+        $wpdb->query('START TRANSACTION');
+
+        // 1. 기존 예측 데이터 삭제 (선택된 상품의 내일 이후 데이터)
+        $delete_result = $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$predict_table} WHERE product_code = %s AND predict_dt >= %s",
+            $selected_product,
+            $tomorrow_date
+        ));
+
+        $update_error = false;
+        if ($delete_result !== false) {
+            // 2. 새로 생성된 예측 데이터 삽입
+            for ($i = 0; $i < count($next_week_dates); $i++) {
+                $insert_result = $wpdb->insert(
+                    $predict_table,
+                    [
+                        'predict_dt'    => $next_week_dates[$i],
+                        'product_code'  => $selected_product,
+                        'predict_qty'   => $next_week_predictions[$i],
+                        'base_dt'       => $base_dt,
+                    ],
+                    [
+                        '%s',
+                        '%s',
+                        '%d',
+                        '%s',
+                    ]
+                );
+
+                if ($insert_result === false) {
+                    $update_error = true;
+                    break; // 오류 발생 시 루프 중단
+                }
+            }
+        } else {
+            $update_error = true; // 삭제 실패
+        }
+
+        if ($update_error) {
+            $wpdb->query('ROLLBACK'); // 오류 발생 시 롤백
+            error_log("Prediction DB update failed for product: " . $selected_product, 3, $logFilePath);
+        } else {
+            $wpdb->query('COMMIT'); // 성공 시 커밋
+        }
+    }
+    // --- 예측 데이터 DB 저장 로직 종료 ---
+
     // 예측 기간의 레이블 추가
     // $last_date = end($labels);
     $last_date = $labels[count($labels) - 1]; // 마지막 날짜를 가져오는 부분 수정
@@ -553,26 +615,19 @@ function jofMainOrdCntPdChartShortCode()
             array(
                 'type' => 'line',
                 'label' => '요일별 예측 주문량',
-                'data' => array_map(function ($date, $pred) use ($weekday_predictions, &$weekdayPdData) {
-                    $dateObj = new DateTime($date);
-                    $weekday = $dateObj->format('w');
-                    $week_of_month = ceil($dateObj->format('j') / 7);
-
-                    if ($week_of_month == 1 || $week_of_month == 3 || $week_of_month == 5) {
-                        $prediction = $weekday_predictions['first_third'][$weekday];
-                    } else {
-                        $prediction = $weekday_predictions['second_fourth'][$weekday];
-                    }
+                'data' => array_map(function ($date, $pred) use (&$weekdayPdData) {
+                    // DB 저장 시 사용된 정확한 예측값($pred)을 그대로 사용하고,
+                    // 화면 표시용으로 재계산하던 부정확한 로직을 제거합니다.
 
                     // monthPdDate 배열에 데이터 저장
                     $weekdayPdData[] = array(
                         'date' => $date,
-                        'quantity' => $prediction
+                        'quantity' => $pred
                     );
 
                     return [
                         'x' => $date,
-                        'y' => $prediction
+                        'y' => $pred
                     ];
                 }, $next_week_dates, $next_week_predictions),
                 'borderColor' => 'rgba(255, 159, 64, 1)',
@@ -706,15 +761,15 @@ function jofMainOrdCntPdChartShortCode()
             var lastSelectedCell = null;
 
             table.addEventListener('click', function(e) {
-                 var cell = e.target;
-                if (cell.tagName !== 'TD' || cell.cellIndex === 7) return; // 헤더나 마지막 열(합계)은 제외
+                var cell = e.target.closest('td');
+                if (!cell || cell.cellIndex === 7) return; // 헤더나 마지막 열(합계)은 제외
 
                 if (lastSelectedCell) {
                     lastSelectedCell.style.backgroundColor = ''; // 이전 선택 셀 색상 초기화
                 }
 
                 if (cell !== lastSelectedCell) {
-                    cell.style.backgroundColor = '#BBF731'; // #BBF731 새로 선택한 셀 색상 변경
+                    cell.style.backgroundColor = '#BBF731'; // 새로 선택한 셀 색상 변경
                     lastSelectedCell = cell;
                 } else {
                     lastSelectedCell = null; // 같은 셀을 다시 클릭하면 선택 해제

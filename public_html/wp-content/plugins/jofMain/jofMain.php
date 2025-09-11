@@ -3,7 +3,7 @@
  Plugin Name: jofMain-jofMain : 조은수산 입|출고 관리
  Plugin URI: https://joeunfish.net
  Description: 조은수산 입|출고 관리
- Version: 1.1
+ Version: 1.2
  Author: Monolith
  Author URI: https://uloca.net
  License: GPL2
@@ -29,7 +29,7 @@ function jofMainShortCode()
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>mainMenu</title>
-        <link rel="stylesheet" type="text/css" href="/jof/css/jofMain.css" />
+        <link rel="stylesheet" type="text/css" href="/jof/css/jofMain.css?v=<?php echo time(); ?>" />
         <script rel="preload" src="/jof/js/joeunfish.js"></script>
         <script rel="preload" src="/wp-content/plugins/jofMain/tasks.js"></script>
     </head>
@@ -58,6 +58,7 @@ function jofMainShortCode()
                 <button class="orderSummary">주문통계</button>
                 <button class="analysis">주문예측</button>
                 <button class="subul subul-buttons">수불관리</button>
+                <button class="subul-trace subul-buttons">추적(연어필렛)</button>
                 <button id="openTaskBtn" class="tasks" style="background-color: #F3F;">공지사항</button>
             </div> 
 
@@ -280,6 +281,13 @@ function jofMainShortCode()
                 window.location.href = "/subul/";
             }
             document.querySelector('.subul').addEventListener('click', viewSubul);
+
+            // 추적(연어필렛)
+            function viewSubulTrace(event) {
+                event.preventDefault(); 
+                window.location.href = "/subul-trace/";
+            }
+            document.querySelector('.subul-trace').addEventListener('click', viewSubulTrace);
 
             // 주문통계
             function viewOrderSummary(event) {

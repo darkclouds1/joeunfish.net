@@ -9,26 +9,6 @@
   padding-right: 5px; /* 오른쪽 여백 */
 }
 
-.contents button {
-    height: 50px !important;
-    padding: 0px 10px 0px 10px !important;
-}
-
-.gs-buttons {
-    background-color: #22AA7C !important; /* Jade Green */
-    color: rgb(255, 255, 255) !important; /* 텍스트 색상 */
-}
-
-.co-buttons {
-    background-color: #0577a8 !important;
-    color: white !important; /* 텍스트 색상 */
-}
-
-.subul-buttons {
-    background-color: #f3f7f8 !important;
-    color: black !important; /* 텍스트 색상 */
-}
-
 .button-container {
   display: flex;
   flex-wrap: wrap; /* 넘치면 다음 줄로 배치 */
@@ -47,7 +27,7 @@
   text-decoration: none;
   display: inline-block;
   font-size: 15px;
-  margin: 2px 2px;
+  margin: 2px 2px 20px 2px;
   cursor: pointer;
   border-radius: 12px;
   transition: background-color 0.3s ease, transform 0.3s ease;
@@ -55,31 +35,26 @@
   height: 70px; /* 버튼의 높이를 동일하게 설정 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
 }
+
 .button-container button:hover {
-  background-color: #e26534 !important;
+  background-color: yellow !important;
+  color: black !important;
   transform: translateY(-5px); /* 호버 시 살짝 위로 이동 */
 }
 
-/* PC 화면에서의 버튼 배열 */
-@media (min-width: 600px) {
-  .button-container {
-    row-gap: 20px; /* 줄 사이의 간격을 늘림 */
-  }
+.co-buttons {
+    background-color: #E31936 !important;
+    color: white !important; /* 텍스트 색상 */
 }
 
-/* 모바일에서 버튼이 한 줄에 2개만 나오도록 설정 */
-@media (max-width: 600px) {
-  .button-container {
-    justify-content: center;
-    gap: 2px; /* 버튼 간 간격 축소 */
-    padding: 2px; /* 컨테이너 패딩 축소 */
-  }
-  .button-container button {
-    width: 45%;
-    height: 40px;
-    font-size: 15px;
-    margin: 3px; /* 버튼 마진 축소 */
-  }
+.gs-buttons {
+    background-color: #22AA7C !important; /* Jade Green */
+    color: rgb(255, 255, 255) !important; /* 텍스트 색상 */
+}
+
+.subul-buttons {
+    background-color: #f3f7f8 !important;
+    color: black !important; /* 텍스트 색상 */
 }
 
 /* jofEdi-sum */
@@ -104,14 +79,6 @@
 #show-order-summary {
     padding: 10px;
 }
-
-
-@media (max-width: 768px) {
-    #order-summary-grid .ag-body-viewport {
-        overflow-x: auto !important;
-    }
-}
-
 
 /* jofEdi-sumGs */
 #order-summary-container {
@@ -399,16 +366,26 @@
     align-items: center;
 }
 
-/* 모바일에서 shortcode 숨김 */
-@media (max-width: 600px) {
-  .shortcode-hide-mobile {
-    display: none !important;
-  }
+/* 모바일에서 버튼이 한 줄에 2개만 나오도록 설정 */
+@media (max-width: 768px) {
+    #orderGs-summary-grid .ag-body-viewport {
+        overflow-x: auto !important;
+    }
 
- .entry-title {
-    margin-top: 20px !important;
- }
- .form-menu {
-    margin-top: 20px !important;
- }
+    .button-container {
+        justify-content: center;
+        gap: 2px; /* 버튼 간 간격 축소 */
+        padding: 2px; /* 컨테이너 패딩 축소 */
+    }
+    .button-container button {
+        width: 45%;
+        height: 40px;
+        font-size: 15px;
+        margin: 5px; /* 버튼 마진 축소 */
+    }
+
+    .subul-buttons {
+        background-color: #f3f7f8 !important;
+        color: black !important; /* 텍스트 색상 */
+    }
 }
