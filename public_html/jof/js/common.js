@@ -3,7 +3,7 @@
 
 //  재고조회 서버 주소
 if (typeof barcodeOut_srv === 'undefined') {
-  var barcodeOut_srv = '/wp-content/plugins/barcodeOut/barcodeOut_srv.php';
+    var barcodeOut_srv = '/wp-content/plugins/barcodeOut/barcodeOut_srv.php';
 }
 String.prototype.string = function (len) {
   var s = "",
@@ -148,29 +148,28 @@ function getAjax(server, client) {
 // progress bar
 function move() {
   var loading = document.getElementById("loading");
-  // if (!loading) {
-  //   loading = document.createElement("div");
-  //   loading.id = "loading";
-  //   loading.style.position = "fixed";
-  //   loading.style.top = "0";
-  //   loading.style.left = "0";
-  //   loading.style.width = "100vw";
-  //   loading.style.height = "100vh";
-  //   loading.style.background = "rgba(0,0,0,0.3)";
-  //   loading.style.display = "flex";
-  //   loading.style.justifyContent = "center";
-  //   loading.style.alignItems = "center";
-  //   loading.style.zIndex = "9999";
-  //   loading.style.pointerEvents = "none";
-  //   loading.innerHTML = `
-  //     <div style='background:#fff;padding:20px 40px;border-radius:8px;font-size:20px;display:flex;flex-direction:column;align-items:center;color:#222;'>
-  //       <img src="/img/loading/0.gif" alt="로딩중">
-  //       로딩중...
-  //     </div>
-  //   `;
-  //   document.body.appendChild(loading);
-  // }
-
+  if (!loading) {
+    loading = document.createElement("div");
+    loading.id = "loading";
+    loading.style.position = "fixed";
+    loading.style.top = "0";
+    loading.style.left = "0";
+    loading.style.width = "100vw";
+    loading.style.height = "100vh";
+    loading.style.background = "rgba(0,0,0,0.3)";
+    loading.style.display = "flex";
+    loading.style.justifyContent = "center";
+    loading.style.alignItems = "center";
+    loading.style.zIndex = "9999";
+    loading.style.pointerEvents = "none";
+    loading.innerHTML = `
+      <div style='background:#fff;padding:20px 40px;border-radius:8px;font-size:20px;display:flex;flex-direction:column;align-items:center;color:#222;'>
+        <img src="/img/loading/0.gif" alt="로딩중">
+        로딩중...
+      </div>
+    `;
+    document.body.appendChild(loading);
+  }
   loading.style.display = "flex";
 }
 
@@ -250,7 +249,7 @@ function fetchInventoryData() {
     dataType: "json",
     success: function (data) {
       // console.log(data);
-      var formattedResult = "[재고]연어:" + data.cnt_fillets + ", 스테이크:" + data.cnt_steaks + ", 벌크:" + data.cnt_steaks_bulk + ", 완출:" + data.cnt_wanchul;
+      var formattedResult = "[재고]연어:" + data.cnt_fillets + ", 스테이크:" +  data.cnt_steaks + ", 벌크:" + data.cnt_steaks_bulk + ", 완출:" +  data.cnt_wanchul;
       $("#joeun_cnt").val(formattedResult);
     },
     error: function (xhr, status, error) {
@@ -281,20 +280,21 @@ function bindTableEvents() {
 
 // bl번호 수동입력 추가되는 JavaScript 함수들
 function handleSelect(select) {
-  if (select.value === "") {
-    let input = prompt("BL번호를 입력하세요 (4자리 숫자 또는 4자리+영문자 B/E):", "");
-    if (input) {
-      // 영문자와 숫자만 추출, 대문자로 변환
-      input = input.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    if (select.value === "") {
+        let input = prompt("BL번호를 입력하세요 (4자리 숫자 또는 4자리+영문자 B/E):", "");
+        if (input) {
+            // 영문자와 숫자만 추출, 대문자로 변환
+            input = input.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 
-      // 4자리 숫자 또는 4자리 숫자+B/E만 허용
-      if (/^\d{4}$/.test(input) || /^\d{4}[BE]$/.test(input)) {
-        let newOption = new Option(input, input);
-        select.add(newOption);
-        select.value = input;
-      } else {
-        alert("형식이 올바르지 않습니다. 4자리 숫자 또는 4자리 숫자+영문자 B/E만 입력하세요. 예) 1234, 1234B, 1234E");
-      }
+            // 4자리 숫자 또는 4자리 숫자+B/E만 허용
+            if (/^\d{4}$/.test(input) || /^\d{4}[BE]$/.test(input)) {
+                let newOption = new Option(input, input);
+                select.add(newOption);
+                select.value = input;
+            } else {
+                alert("형식이 올바르지 않습니다. 4자리 숫자 또는 4자리 숫자+영문자 B/E만 입력하세요. 예) 1234, 1234B, 1234E");
+            }
+        }
     }
-  }
 }
+

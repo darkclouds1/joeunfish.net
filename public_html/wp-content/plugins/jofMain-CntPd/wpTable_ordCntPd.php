@@ -7,8 +7,9 @@ Author: Monolith
 Author URI: https://uloca.net
 License: GPL2 */
 
-// $logFilePath = __DIR__ . "/logfile.log";
-// error_log("ln10::logFilePath: " . $logFilePath . "\n", 3, $logFilePath);
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 function enqueue_chartjsPd()
 {
@@ -16,6 +17,156 @@ function enqueue_chartjsPd()
     wp_enqueue_script('chartjs-adapter-date-fns', 'https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js', array('chartjs'), null, true);
 }
 add_action('wp_enqueue_scripts', 'enqueue_chartjsPd');
+
+/**
+ * 주어진 상품 코드에 대한 예측 데이터를 생성하는 공통 함수
+ * @param string $product_code 예측할 상품 코드
+ * @return array|null 예측 데이터 (dates, predictions) 또는 데이터 부족 시 null
+ */
+function jof_get_product_predictions($product_code) {
+    global $wpdb;
+
+    $twelve_months_ago = date('Ymd', strtotime('-12 months'));
+    $tomorrow = date('Ymd', strtotime('+1 day'));
+
+    $query = $wpdb->prepare("
+        SELECT ord.supply_dt, SUM(prd.quantity) AS total_cnt
+        FROM torders ord JOIN torderproducts prd ON ord.doc_no = prd.doc_no
+        WHERE prd.product_code = %s AND ord.supply_dt BETWEEN %s AND %s
+        GROUP BY ord.supply_dt ORDER BY ord.supply_dt ASC",
+        $product_code, $twelve_months_ago, $tomorrow
+    );
+    $results = $wpdb->get_results($query);
+
+    if (empty($results) || count($results) < 10) {
+        return null; // 데이터 부족
+    }
+
+    $labels = [];
+    $data = [];
+    $allData = [];
+    foreach ($results as $row) {
+        $date = DateTime::createFromFormat('Ymd', $row->supply_dt);
+        $formattedDate = $date->format('Y-m-d');
+        $labels[] = $formattedDate;
+        $data[] = round($row->total_cnt);
+        $allData[] = ['date' => $formattedDate, 'quantity' => round($row->total_cnt)];
+    }
+
+    $today_weekday = (int)date('w');
+    $realDataCount = 9 + $today_weekday;
+    if ($realDataCount > 14) $realDataCount = 8;
+
+    $pdWeekCount = (4 * 7) + 1;
+    $pdDataCount = $pdWeekCount - $realDataCount;
+
+    $last_seven_days_data = array_slice($allData, -$realDataCount);
+
+    $weekday_data = ['first_third' => array_fill(0, 7, []), 'second_fourth' => array_fill(0, 7, [])];
+    $weekday_dates = ['first_third' => array_fill(0, 7, []), 'second_fourth' => array_fill(0, 7, [])];
+    $month_weeks = [];
+
+    foreach ($results as $row) {
+        $date = DateTime::createFromFormat('Ymd', $row->supply_dt);
+        $weekday = $date->format('w');
+        $year_month = $date->format('Ym');
+        $day = $date->format('j');
+
+        if (!isset($month_weeks[$year_month])) {
+            $first_day_of_month = new DateTime($date->format('Y-m-01'));
+            $first_day_weekday = $first_day_of_month->format('w');
+            $first_full_week_start = $first_day_weekday == 0 ? 1 : 8 - $first_day_weekday;
+            $month_weeks[$year_month] = [];
+            $current_week = 0;
+            for ($i = 1; $i <= 31; $i++) {
+                if ($i < $first_full_week_start) {
+                    $month_weeks[$year_month][$i] = 0;
+                } else {
+                    if ($i == $first_full_week_start) $current_week = 1;
+                    $month_weeks[$year_month][$i] = $current_week;
+                    if (($i - $first_full_week_start + 1) % 7 == 0) $current_week++;
+                }
+            }
+        }
+
+        $week_of_month = $month_weeks[$year_month][$day];
+        if ($week_of_month == 2 || $week_of_month == 4) {
+            $weekday_data['second_fourth'][$weekday][] = $row->total_cnt;
+            $weekday_dates['second_fourth'][$weekday][] = $row->supply_dt;
+        } else {
+            $weekday_data['first_third'][$weekday][] = $row->total_cnt;
+            $weekday_dates['first_third'][$weekday][] = $row->supply_dt;
+        }
+    }
+
+    $weekday_predictions = ['first_third' => array_fill(0, 7, 0), 'second_fourth' => array_fill(0, 7, 0)];
+    for ($i = 0; $i < 7; $i++) {
+        if (!empty($weekday_data['first_third'][$i])) {
+            $weekday_predictions['first_third'][$i] = intval(calculateWeightedMovingAverage($weekday_data['first_third'][$i], $weekday_dates['first_third'][$i]));
+        }
+        if (!empty($weekday_data['second_fourth'][$i])) {
+            $weekday_predictions['second_fourth'][$i] = intval(calculateWeightedMovingAverage($weekday_data['second_fourth'][$i], $weekday_dates['second_fourth'][$i]));
+        }
+    }
+
+    $next_week_dates = [];
+    $next_week_predictions = [];
+    $confidenceIntervals = []; // 신뢰구간 추가
+
+    for ($i = 1; $i < $pdDataCount + 1; $i++) {
+        $date = new DateTime("+$i days");
+        $next_week_dates[] = $date->format('Y-m-d');
+        $year = $date->format('Y');
+        $month = $date->format('m');
+        $day = $date->format('j');
+        $weekday = $date->format('w');
+        $year_month = $date->format('Ym');
+
+        if (!isset($month_weeks[$year_month])) {
+             $first_day_of_month = new DateTime("$year-$month-01");
+            $first_day_weekday = $first_day_of_month->format('w');
+            $first_week_start = $first_day_weekday == 0 ? 1 : 8 - $first_day_weekday;
+            $month_weeks[$year_month] = [];
+            $current_week = 1;
+            for ($j = 1; $j <= 31; $j++) {
+                if ($j < $first_week_start) {
+                    $month_weeks[$year_month][$j] = 5;
+                } else {
+                    $month_weeks[$year_month][$j] = $current_week;
+                    if ($j % 7 == $first_week_start % 7 && $j != $first_week_start) {
+                        $current_week++;
+                    }
+                }
+            }
+        }
+
+        $week_of_month = $month_weeks[$year_month][$day];
+        $prediction = 0;
+        if ($week_of_month == 1 || $week_of_month == 3 || $week_of_month == 5) {
+            $prediction = $weekday_predictions['first_third'][$weekday];
+        } else {
+            $prediction = $weekday_predictions['second_fourth'][$weekday];
+        }
+        $next_week_predictions[] = $prediction;
+        $confidenceIntervals[] = $prediction * 0.1; // 예시: 신뢰구간을 예측값의 10%로 설정
+    }
+
+    // 실제 데이터와 예측 데이터를 합쳐서 반환
+    $all_predictions = array_merge(array_slice($data, 0, count($data) - $realDataCount), $next_week_predictions);
+
+    return [
+        'labels' => $labels,
+        'data' => $data,
+        'predictions' => $all_predictions,
+        'confidence_intervals' => $confidenceIntervals,
+        'weekday_predictions' => $weekday_predictions,
+        'last_seven_days_data' => $last_seven_days_data,
+        'pd_data_count' => $pdDataCount,
+        'next_week_dates' => $next_week_dates,
+        'next_week_predictions' => $next_week_predictions,
+    ];
+}
+
 
 function jofMainOrdCntPdChartShortCode()
 {
@@ -55,8 +206,6 @@ function jofMainOrdCntPdChartShortCode()
         $_SESSION['selected_product_ordcnt'] = $selected_product;
     }
 
-    $_SESSION['selected_product'] = $selected_product;
-
     $selected_unit = '';
     foreach ($products as $product) {
         if ($product->product_code == $selected_product) {
@@ -95,723 +244,8 @@ function jofMainOrdCntPdChartShortCode()
     $results = $wpdb->get_results($query);
     $output = "<form method='post'>";
 
-    if (empty($results)) {
-        // 제품선택
-        $output .= "<select name='product_select_ordcnt' onchange='this.form.submit()'>";
-        $output .= "<option value=''>제품을 선택하세요</option>";
-
-        foreach ($products as $product) {
-            $selected = ($product->product_code == $selected_product) ? 'selected' : '';
-            $output .= "<option value='{$product->product_code}' {$selected}>{$product->product_name}</option>";
-        }
-        $output .= "</select>";
-        $output .= "</form>";
-        $output .= "<p>데이터가 없습니다. (제품 코드: $selected_product, 기간: $two_months_ago ~ $tomorrow)</p>";
-        return $output;
-    }
-
-    $labels = array();
-    $data = array();
-    $product_name = '';
-
-    foreach ($results as $row) {
-        $date = DateTime::createFromFormat('Ymd', $row->supply_dt);
-        $formattedDate = $date->format('Y-m-d');
-
-        // $labels[] = $date->format('m/d');
-        $labels[] = $date->format('Y-m-d');
-        $data[] = round($row->total_cnt);
-        $chart_data['labels'][] = $row->supply_dt;
-
-        // 모든 데이터를 배열에 저장
-        $allData[] = [
-            'date' => $formattedDate,
-            'quantity' => round($row->total_cnt)
-        ];
-
-        if (empty($product_name)) {
-            $product_name = $row->product_name;
-        }
-    }
-
-    // 데이터를 날짜순으로 정렬 (최신 날짜가 마지막에 오도록)
-    usort($allData, function ($a, $b) {
-        return strtotime($a['date']) - strtotime($b['date']);
-    });
-
-    // 오늘의 요일 확인 (0: 일요일, 1: 월요일, ..., 6: 토요일)
-    $today_weekday = (int)date('w');
-
-    // 요일에 따라 가져올 데이터의 개수 결정
-    $realDataCount = 9 + $today_weekday;
-    if ($realDataCount > 14) $realDataCount = 8; // 토요일이면 8개만 가져오기
-
-    // 예측데이터 갯수 정하기, 3주(21개에서 realDataCount 뺀 갯수) => 22개로 해야함.
-    // -> pdData의 첫 데이터는 삭제 (내일 주문을 표시) 
-    // 개수 조정 2025-03-19
-    $pdWeekCount = (4 * 7) + 1; // 8주 + 1일
-    $pdDataCount = $pdWeekCount - $realDataCount;
-
-    // 마지막 $data_count개의 데이터를 $lastRealData에 저장
-    $lastRealData = array_slice($allData, -$realDataCount);
-    // error_log("ln147::lastRealData: " . print_r($lastRealData, true), 3, $logFilePath);
-
-    // 선형 회귀 분석 부분
-    $n = count($data);
-    if ($n <= 2 || count(array_unique($data)) === 1) {
-        // 제품선택
-        $output = "<form method='post'>";
-        $output .= "<select name='product_select_ordcnt' onchange='this.form.submit()'>";
-        $output .= "<option value=''>제품을 선택하세요</option>";
-
-        foreach ($products as $product) {
-            $selected = ($product->product_code == $selected_product) ? 'selected' : '';
-            $output .= "<option value='{$product->product_code}' {$selected}>{$product->product_name}</option>";
-        }
-
-        $output .= "</select>";
-        $output .= "<p><br>데이터가 충분하지 않거나 모든 값이 동일하여 예측을 수행할 수 없습니다.</p><p>다른 제품을 선택하세요.</p>";
-        $output .= "</form>";
-
-        return $output;
-    }
-
-    if ($n <= 1) {
-        $slope = 0;
-        $intercept = 0;
-    } else {
-        $sum_x = 0;
-        $sum_y = 0;
-        $sum_xy = 0;
-        $sum_xx = 0;
-
-        for ($i = 0; $i < $n; $i++) {
-            $sum_x += $i;
-            $sum_y += $data[$i];
-            $sum_xy += $i * $data[$i];
-            $sum_xx += $i * $i;
-        }
-
-        if ($n * $sum_xx - $sum_x * $sum_x == 0) {
-            $slope = 0;
-            $intercept = 0;
-        } else {
-            $slope = ($n * $sum_xy - $sum_x * $sum_y) / ($n * $sum_xx - $sum_x * $sum_x);
-            $intercept = ($sum_y - $slope * $sum_x) / $n;
-        }
-    }
-
-    // 표준 오차 계산 부분
-    $predictionData = array();
-    $confidenceIntervals = array();
-    $sum_squared_residuals = 0;
-
-    if ($n > 2) {
-
-        for ($i = 0; $i < $n; $i++) {
-            $predicted = $slope * $i + $intercept;
-            $sum_squared_residuals += pow($data[$i] - $predicted, 2);
-        }
-        $standardError = sqrt($sum_squared_residuals / ($n - 2));
-
-        // 선형 회귀 분석 부분
-        $predictionData = array_map('intval', $predictionData);
-
-        // 예측 데이터 갯수(pdDataCount) 만큼 예측 -by dc 2024-10-14
-        for ($i = 0; $i < $n + $pdDataCount; $i++) {
-            $predicted = intval($slope * $i + $intercept);
-            $predictionData[] = $predicted;
-
-            // 신뢰구간 계산
-            $denominator = $n * pow(array_sum(array_map(function ($x) use ($n) {
-                return pow($x - $n / 2, 2);
-            }, range(1, $n))), 2);
-
-            if ($denominator != 0) {
-                $confidence = 1.96 * sqrt(1 / $n + pow($i - $n / 2, 2) / $denominator);
-            } else {
-                $confidence = 0; // 또는 다른 적절한 기본값
-            }
-
-            $confidenceIntervals[] = $confidence * $standardError;
-        }
-    } else {
-        // 데이터가 충분하지 않은 경우, 예측 데이터와 신뢰구간을 빈 배열로 설정
-        $predictionData = array_fill(0, $n + $pdDataCount, null);
-        $confidenceIntervals = array_fill(0, $n + $pdDataCount, null);
-    }
-
-    // 차트 데이터 구조
-    $chart_data = [
-        'labels' => [],
-        'datasets' => []
-    ];
-
-    // 실제 주문량 데이터셋
-    $chart_data['datasets'][] = array(
-        'type' => 'line',
-        'label' => '실제 주문량',
-        'data' => array_map('intval', $data), // 정수로 변환
-        'borderColor' => 'rgba(75, 192, 192, 1)',
-        'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
-        'borderWidth' => 2,
-        'pointRadius' => 0,
-        'fill' => false,
-        'tension' => 0.4,
-        'cubicInterpolationMode' => 'monotone',
-        'yAxisID' => 'y',
-    );
-
-    // 예측 주문량 데이터셋 (충분한 데이터가 있는 경우에만 추가)
-    if ($n > 2) {
-        $chart_data['datasets'][] = array(
-            'type' => 'line',
-            'label' => '예측 주문량',
-            'data' => array_map('intval', $predictionData), // 정수로 변환
-            'borderColor' => 'rgba(255, 99, 132, 1)',
-            'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
-            'borderWidth' => 2,
-            'pointRadius' => 0,
-            'fill' => false,
-            'tension' => 0.4,
-            'cubicInterpolationMode' => 'monotone',
-            'yAxisID' => 'y',
-        );
-
-        // 신뢰구간 데이터셋 추가
-        $chart_data['datasets'][] = array(
-            'type' => 'line',
-            'label' => '신뢰구간 (상한)',
-            'data' => array_map(function ($pred, $conf) {
-                return isset($pred) && isset($conf) ? intval($pred + $conf) : null;
-            }, $predictionData, $confidenceIntervals),
-            'borderColor' => 'rgba(255, 99, 132, 0.5)',
-            'backgroundColor' => 'rgba(255, 99, 132, 0.1)',
-            'borderWidth' => 1,
-            'pointRadius' => 0,
-            'fill' => '+1',
-            'tension' => 0.4,
-            'cubicInterpolationMode' => 'monotone',
-            'yAxisID' => 'y',
-        );
-
-        $chart_data['datasets'][] = array(
-            'type' => 'line',
-            'label' => '신뢰구간 (하한)',
-            'data' => array_map(function ($pred, $conf) {
-                return isset($pred) && isset($conf) ? $pred - $conf : null;
-            }, $predictionData, $confidenceIntervals),
-            'borderColor' => 'rgba(255, 99, 132, 0.5)',
-            'backgroundColor' => 'rgba(255, 99, 132, 0.1)',
-            'borderWidth' => 1,
-            'pointRadius' => 0,
-            'fill' => false,
-            'tension' => 0.4,
-            'cubicInterpolationMode' => 'monotone',
-            'yAxisID' => 'y',
-        );
-    }
-
-    // -----------------------------------
-    // 요일별 선형회귀분석 데이터 준비
-    // -----------------------------------
-    $weekday_data = array(
-        'first_third' => array_fill(0, 7, array()),
-        'second_fourth' => array_fill(0, 7, array())
-    );
-
-    $weekday_dates = array(
-        'first_third' => array_fill(0, 7, array()),
-        'second_fourth' => array_fill(0, 7, array())
-    );
-
-    // 월별 주차 정보를 저장할 배열
-    $month_weeks = array();
-    foreach ($results as $row) {
-        $date = DateTime::createFromFormat('Ymd', $row->supply_dt);
-        $weekday = $date->format('w');
-        $year_month = $date->format('Ym');
-        $day = $date->format('j');
-
-        // 해당 월의 주차 정보가 없으면 계산
-        if (!isset($month_weeks[$year_month])) {
-            $first_day_of_month = new DateTime($date->format('Y-m-01'));
-            $first_day_weekday = $first_day_of_month->format('w');
-
-            // 첫 번째 완전한 주의 시작일 계산
-            $first_full_week_start = $first_day_weekday == 0 ? 1 : 8 - $first_day_weekday;
-
-            $month_weeks[$year_month] = array();
-            $current_week = 0; // 0주차부터 시작
-            for ($i = 1; $i <= 31; $i++) {
-                if ($i < $first_full_week_start) {
-                    $month_weeks[$year_month][$i] = 0; // 첫 번째 완전한 주 이전은 0주차
-                } else {
-                    if ($i == $first_full_week_start) {
-                        $current_week = 1; // 첫 번째 완전한 주 시작
-                    }
-                    $month_weeks[$year_month][$i] = $current_week;
-                    if (($i - $first_full_week_start + 1) % 7 == 0) {
-                        $current_week++;
-                    }
-                }
-            }
-        }
-
-        $week_of_month = $month_weeks[$year_month][$day];
-
-        if ($week_of_month == 2 || $week_of_month == 4) {
-            $weekday_data['second_fourth'][$weekday][] = $row->total_cnt;
-            $weekday_dates['second_fourth'][$weekday][] = $row->supply_dt;
-        } else {
-            $weekday_data['first_third'][$weekday][] = $row->total_cnt;
-            $weekday_dates['first_third'][$weekday][] = $row->supply_dt;
-        }
-        // error_log("ln365::weekday_data: " . print_r($weekday_data, true), 3, $logFilePath);
-        // error_log("ln366::weekday_dates: " . print_r($weekday_dates, true), 3, $logFilePath);
-    }
-
-    $weekday_predictions = array(
-        'first_third' => array_fill(0, 7, 0),
-        'second_fourth' => array_fill(0, 7, 0)
-    );
-
-
-    for ($i = 0; $i < $pdDataCount; $i++) {
-        if (!empty($weekday_data['first_third'][$i])) {
-            $weekday_predictions['first_third'][$i] = intval(calculateWeightedMovingAverage($weekday_data['first_third'][$i], $weekday_dates['first_third'][$i]));
-        }
-        if (!empty($weekday_data['second_fourth'][$i])) {
-            $weekday_predictions['second_fourth'][$i] = intval(calculateWeightedMovingAverage($weekday_data['second_fourth'][$i], $weekday_dates['second_fourth'][$i]));
-        }
-    }
-
-    // 데이터가 없는 경우를 대비한 안전 장치
-    $weekday_predictions['first_third'] = array_map('floatval', $weekday_predictions['first_third']);
-    $weekday_predictions['second_fourth'] = array_map('floatval', $weekday_predictions['second_fourth']);
-
-    // error_log("ln391::weekday_predictions: " . print_r($weekday_predictions, true), 3, $logFilePath);
-
-    // --------------------------
-    // 주차별 예측 데이터 생성
-    // --------------------------
-    $next_week_dates = [];
-    $next_week_predictions = [];
-
-    // 월별 주차 정보를 저장할 배열
-    $month_weeks = array();
-
-    // 오늘 날짜의 주차 정보 확인
-    $today = new DateTime();
-    $today_year_month = $today->format('Ym');
-    $today_day = $today->format('j');
-
-    // 오늘 날짜의 주차 계산
-    $first_day_of_month = new DateTime($today->format('Y-m-01'));
-    $first_day_weekday = $first_day_of_month->format('w');
-    $first_week_start = $first_day_weekday == 0 ? 1 : 8 - $first_day_weekday;
-
-    $month_weeks[$today_year_month] = array();
-    $current_week = 1;
-    for ($j = 1; $j <= 31; $j++) {
-        if ($j < $first_week_start) {
-            $month_weeks[$today_year_month][$j] = 5; // 이전 달의 마지막 주로 처리
-        } else {
-            $month_weeks[$today_year_month][$j] = $current_week;
-            if ($j >= $first_week_start && ($j - $first_week_start + 1) % 7 == 0) {
-                $current_week++;
-            }
-        }
-    }
-
-    // error_log("Month weeks array: " . print_r($month_weeks, true), 3, $logFilePath);
-
-    $today_week_of_month = $month_weeks[$today_year_month][$today_day];
-    $DIDA = ($today_week_of_month == 2 || $today_week_of_month == 4);
-
-    for ($i = 1; $i < $pdDataCount + 1; $i++) {
-        $date = new DateTime("+$i days");
-        $next_week_dates[] = $date->format('Y-m-d');
-
-        $year = $date->format('Y');
-        $month = $date->format('m');
-        $day = $date->format('j');
-        $weekday = $date->format('w');
-        $year_month = $date->format('Ym');
-
-        // 해당 월의 주차 정보가 없으면 계산
-        if (!isset($month_weeks[$year_month])) {
-            $first_day_of_month = new DateTime("$year-$month-01");
-            $first_day_weekday = $first_day_of_month->format('w');
-            $first_week_start = $first_day_weekday == 0 ? 1 : 8 - $first_day_weekday;
-
-            $month_weeks[$year_month] = array();
-            $current_week = 1;
-            for ($j = 1; $j <= 31; $j++) {
-                if ($j < $first_week_start) {
-                    $month_weeks[$year_month][$j] = 5; // 이전 달의 마지막 주로 처리
-                } else {
-                    $month_weeks[$year_month][$j] = $current_week;
-                    if ($j % 7 == $first_week_start % 7 && $j != $first_week_start) {
-                        $current_week++;
-                    }
-                }
-            }
-        }
-
-        $week_of_month = $month_weeks[$year_month][$day];
-        // 주차에 따른 예측 데이터 선택
-        if ($week_of_month == 1 || $week_of_month == 3 || $week_of_month == 5) {
-            $next_week_predictions[] = $weekday_predictions['first_third'][$weekday];
-        } else {
-            $next_week_predictions[] = $weekday_predictions['second_fourth'][$weekday];
-        }
-    }
-
-    // --- 예측 데이터 DB 저장 로직 시작 (하루에 한 번만 실행) ---
-    $predict_table = 'torder_predict';
-    $base_dt = date('Y-m-d');
-
-    // 오늘 날짜로 생성된 예측 데이터가 이미 있는지 확인
-    $prediction_exists_today = $wpdb->get_var($wpdb->prepare(
-        "SELECT COUNT(*) FROM {$predict_table} WHERE product_code = %s AND base_dt = %s",
-        $selected_product,
-        $base_dt
-    ));
-
-    // 오늘 생성된 예측이 없는 경우에만 DB 업데이트 수행
-    if ($prediction_exists_today == 0) {
-        $tomorrow_date = date('Y-m-d', strtotime('+1 day'));
-
-        $wpdb->query('START TRANSACTION');
-
-        // 1. 기존 예측 데이터 삭제 (선택된 상품의 내일 이후 데이터)
-        $delete_result = $wpdb->query($wpdb->prepare(
-            "DELETE FROM {$predict_table} WHERE product_code = %s AND predict_dt >= %s",
-            $selected_product,
-            $tomorrow_date
-        ));
-
-        $update_error = false;
-        if ($delete_result !== false) {
-            // 2. 새로 생성된 예측 데이터 삽입
-            for ($i = 0; $i < count($next_week_dates); $i++) {
-                $insert_result = $wpdb->insert(
-                    $predict_table,
-                    [
-                        'predict_dt'    => $next_week_dates[$i],
-                        'product_code'  => $selected_product,
-                        'predict_qty'   => $next_week_predictions[$i],
-                        'base_dt'       => $base_dt,
-                    ],
-                    [
-                        '%s',
-                        '%s',
-                        '%d',
-                        '%s',
-                    ]
-                );
-
-                if ($insert_result === false) {
-                    $update_error = true;
-                    break; // 오류 발생 시 루프 중단
-                }
-            }
-        } else {
-            $update_error = true; // 삭제 실패
-        }
-
-        if ($update_error) {
-            $wpdb->query('ROLLBACK'); // 오류 발생 시 롤백
-            error_log("Prediction DB update failed for product: " . $selected_product, 3, $logFilePath);
-        } else {
-            $wpdb->query('COMMIT'); // 성공 시 커밋
-        }
-    }
-    // --- 예측 데이터 DB 저장 로직 종료 ---
-
-    // 예측 기간의 레이블 추가
-    // $last_date = end($labels);
-    $last_date = $labels[count($labels) - 1]; // 마지막 날짜를 가져오는 부분 수정
-    for ($i = 1; $i <= $pdDataCount; $i++) {
-        $next_date = date('Y-m-d', strtotime($last_date . ' +' . $i . ' days'));
-        $labels[] = $next_date;
-    }
-
-    $mapeData = array();
-    for ($i = 0; $i < count($data); $i++) {
-        $actual = $data[$i];
-        $predicted = $predictionData[$i];
-        // 0으로 나누는 오류 방지
-        if ($actual != 0) {
-            $mape = abs(($actual - $predicted) / $actual) * 100;
-            $mapeData[] = $mape;
-        } else {
-            $mapeData[] = null; // 또는 0으로 설정
-        }
-    }
-
-    // 차트 데이터 구조
-    $chart_data = array(
-        'labels' => $labels,
-        'datasets' => array(
-            array(
-                'type' => 'line',
-                'label' => '실제 주문량',
-                'data' => $data,
-                'borderColor' => 'rgba(75, 192, 192, 1)',
-                'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
-                'borderWidth' => 2,
-                'pointRadius' => 0,
-                'fill' => false,
-                'tension' => 0.4,
-                'cubicInterpolationMode' => 'monotone',
-                'yAxisID' => 'y',
-            ),
-            array(
-                'type' => 'line',
-                'label' => '신뢰구간 (상한)',
-                'data' => array_map(function ($pred, $conf) {
-                    return isset($pred) && isset($conf) ? intval($pred + $conf) : null;
-                }, $predictionData, $confidenceIntervals),
-                'borderColor' => 'rgba(255, 99, 132, 0.5)',
-                'backgroundColor' => 'rgba(255, 99, 132, 0.1)',
-                'borderWidth' => 1,
-                'pointRadius' => 0,
-                'fill' => '+1',
-                'tension' => 0.4,
-                'cubicInterpolationMode' => 'monotone',
-                'yAxisID' => 'y',
-            ),
-            array(
-                'type' => 'line',
-                'label' => '신뢰구간 (하한)',
-                'data' => array_map(function ($pred, $conf) {
-                    return isset($pred) && isset($conf) ? intval($pred - $conf) : null;
-                }, $predictionData, $confidenceIntervals),
-                'borderColor' => 'rgba(255, 99, 132, 0.5)',
-                'backgroundColor' => 'rgba(255, 99, 132, 0.1)',
-                'borderWidth' => 1,
-                'pointRadius' => 0,
-                'fill' => false,
-                'tension' => 0.4,
-                'cubicInterpolationMode' => 'monotone',
-                'yAxisID' => 'y',
-            ),
-            array(
-                'type' => 'line',
-                'label' => '예측 주문량',
-                'data' => $predictionData,
-                'borderColor' => 'rgba(255, 99, 132, 1)',
-                'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
-                'borderWidth' => 2,
-                'pointRadius' => 0,
-                'fill' => false,
-                'tension' => 0.4,
-                'cubicInterpolationMode' => 'monotone',
-                'yAxisID' => 'y',
-            ),
-            // 요일별 예측 주문량 데이터셋
-            array(
-                'type' => 'line',
-                'label' => '요일별 예측 주문량',
-                'data' => array_map(function ($date, $pred) use (&$weekdayPdData) {
-                    // DB 저장 시 사용된 정확한 예측값($pred)을 그대로 사용하고,
-                    // 화면 표시용으로 재계산하던 부정확한 로직을 제거합니다.
-
-                    // monthPdDate 배열에 데이터 저장
-                    $weekdayPdData[] = array(
-                        'date' => $date,
-                        'quantity' => $pred
-                    );
-
-                    return [
-                        'x' => $date,
-                        'y' => $pred
-                    ];
-                }, $next_week_dates, $next_week_predictions),
-                'borderColor' => 'rgba(255, 159, 64, 1)',
-                'backgroundColor' => 'rgba(255, 159, 64, 0.2)',
-                'borderWidth' => 2,
-                'pointRadius' => 3,
-                'fill' => false,
-                'tension' => 0,
-                'yAxisID' => 'y',
-            ),
-        ),
-    );
-
-    // ----------------------------------------------------------
-    // 1달 예측데이터 그리드 표시 (마지막 7일 데이터와 동시에 표시)
-    // ----------------------------------------------------------
-    // error_log("ln524::lastRealData: " . print_r($lastRealData, true), 3, $logFilePath);
-    // error_log("ln525::weekdayPdData: " . print_r($weekdayPdData, true), 3, $logFilePath);
-
-    // $weekdayPdData의 첫 번째 요소 삭제 및 인덱스 재배열
-    array_shift($weekdayPdData);
-    $weekdayPdData = array_values($weekdayPdData);
-    // error_log("ln591::weekdayPdData: " . print_r($weekdayPdData, true), 3, $logFilePath);
-
-    // 마지막 7일 데이터와 요일별 예측 주문량 데이터 결합
-    $lastRealDataCount = count($lastRealData);
-    $weekdayPdData = array_merge($lastRealData, $weekdayPdData);
-    // error_log("ln595::combinedArray: " . print_r($weekdayPdData, true), 3, $logFilePath);
-
-    // 1. 요일 배열 정의
-    $weekdays = array('일', '월', '화', '수', '목', '금', '토', '주간합계');
-
-    // 2. 첫 번째 데이터의 요일 확인
-    $first_day_weekday = date('w', strtotime($weekdayPdData[0]['date']));
-
-    // 4. 테이블 헤더 생성
-    $weekdayPdData_html = "<br><table class='order-table' border='1'><tr>";
-    foreach ($weekdays as $day) {
-        $weekdayPdData_html .= "<th style='background-color: #f0f0f0; font-size: 13px;'>{$day}</th>";
-    }
-    $weekdayPdData_html .= "</tr>";
-
-    // -------------------
-    // 5. 데이터 표시
-    // -------------------
-    $data_index = 0;
-    $row = 0;
-    $weekdayPdDataCount = count($weekdayPdData);
-    $maxRows = ceil($weekdayPdDataCount / 7); // 필요한 행의 수 계산
-
-    // error_log("\nln623::weekdayPdDataCount: " . $weekdayPdDataCount . ", maxRows: " . $maxRows, 3, $logFilePath);
-
-    while ($data_index < $weekdayPdDataCount) {
-        $weekdayPdData_html .= "<tr>";
-        $cells_in_row = 0;
-
-        // error_log("\nln622::data_index: " . $data_index, 3, $logFilePath);
-        if ($data_index >= $weekdayPdDataCount) break;
-
-        // 데이터 채우기
-        $week_total = 0;
-        while ($cells_in_row < 7 ) {
-            // error_log("\n-----------------------------------", 3, $logFilePath);
-            // error_log("\nln638::cells_in_row: " . $cells_in_row, 3, $logFilePath);
-            // error_log("\nln638::data_index: " . $data_index, 3, $logFilePath);
-            // error_log("\nln639::weekdayPdDataCount: " . $weekdayPdDataCount, 3, $logFilePath);
-
-            $date = $weekdayPdData[$data_index]['date'];
-            $prediction = $weekdayPdData[$data_index]['quantity'];
-            $week_total += $prediction;
-
-            // 해당 날짜의 주차 계산
-            $weekOfMonth = getWeekOfMonth($date);
-
-            // DIDA 주 여부 확인 (2주차, 4주차)
-            // $isDIDAWeek = ($weekOfMonth == 2 || $weekOfMonth == 4);
-
-            $color = ($lastRealDataCount > $data_index) ? 'black' : 'red';
-            $isToday = date('n/j', strtotime($date)) == date('n/j');
-            $weekdayPdData_html .= "<td style='text-align: center; font-size: 13px;" . ($isToday ? " background-color: #BBF731;" : "") . "'>";
-            $weekdayPdData_html .= "<font color='$color'>(" . date('n/j', strtotime($date)) . ")</font><br>";
-            $weekdayPdData_html .= number_format($prediction);
-            $weekdayPdData_html .= "</td>";
-
-            $data_index++;
-            $cells_in_row++;
-            if ($data_index >= $weekdayPdDataCount) break;
-        }
-
-
-        // 주차별 멘트 설정 - 단순화
-        switch ($row) {
-            case 0:
-                $weekOfMonth = getWeekOfMonth($weekdayPdData[$data_index - $cells_in_row]['date']);
-                $totalMent = ($weekOfMonth == 2 || $weekOfMonth == 4) ?
-                    '(DIDA)<br>전주실적' : '전주실적';
-                break;
-            default:
-                $weekOfMonth = getWeekOfMonth($weekdayPdData[$data_index - $cells_in_row]['date']);
-                $totalMent = ($weekOfMonth == 2 || $weekOfMonth == 4) ?
-                    '(DIDA)<br>주간예측' : '주간예측';
-                break;
-        }
-
-        // 남은 셀 채우기 (남은 셀 없이 항상 21개 데이터가 있어야 정상 )
-        while ($cells_in_row < 7) {
-            $weekdayPdData_html .= "<td></td>";
-            $cells_in_row++;
-        }
-        
-        $color = ($lastRealDataCount > $cells_in_row) ? 'red' : 'red';
-        $weekdayPdData_html .= "<td style='text-align: center; font-size: 13px; background-color: #f0f0f0;'><font color='{$color}'>{$totalMent}</font><br>" . number_format($week_total) . "</td>";
-        $weekdayPdData_html .= "</tr>";
-        $row++;
-
-        // 안전장치: 무한 루프 방지
-        if ($row > 8) {
-            error_log("Warning: Loop exceeded 10 iterations. Breaking to prevent infinite loop.", 3, $logFilePath);
-            break;
-        }
-        
-        $weekdayPdData_html .= "</tr>";
-    }
-
-    $weekdayPdData_html .= "</table>";
-    $weekdayPdData_html .=
-        "
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var table = document.querySelector('.order-table');
-            var lastSelectedCell = null;
-
-            table.addEventListener('click', function(e) {
-                var cell = e.target.closest('td');
-                if (!cell || cell.cellIndex === 7) return; // 헤더나 마지막 열(합계)은 제외
-
-                if (lastSelectedCell) {
-                    lastSelectedCell.style.backgroundColor = ''; // 이전 선택 셀 색상 초기화
-                }
-
-                if (cell !== lastSelectedCell) {
-                    cell.style.backgroundColor = '#BBF731'; // 새로 선택한 셀 색상 변경
-                    lastSelectedCell = cell;
-                } else {
-                    lastSelectedCell = null; // 같은 셀을 다시 클릭하면 선택 해제
-                }
-            });
-        });
-        </script>";
-
-
-    // 차트 데이터 구조 수정(요일별 예측 주문량)
-    $today = new DateTime();
-    $next_week_dates = array();
-    $next_week_predictions = array();
-
-    // 요일 배열 추가
-    $weekdays = array('일', '월', '화', '수', '목', '금', '토');
-
-    // 일요일부터 시작하도록 조정
-    $daysUntilSunday = 7 - $today->format('w');
-    $startDate = clone $today;
-    $startDate->modify("+{$daysUntilSunday} days");
-
-    // 463번 줄 주변의 코드 수정
-    $next_week_predictions = array();
-    for ($i = 0; $i < 7; $i++) {
-
-        $week_of_month = ceil(date('j', strtotime("+$i days")) / 7);
-
-        if ($week_of_month == 1 || $week_of_month == 3 || $week_of_month == 5) {
-            $next_week_predictions[] = $weekday_predictions['first_third'][$i];
-        } else {
-            $next_week_predictions[] = $weekday_predictions['second_fourth'][$i];
-        }
-    }
-
-    $chart_id = 'myChart_' . uniqid();
-    $output = "<form method='post'>";
-
-    // ---------------
-    // 제품선택
-    // ---------------
-    $output .= "<div style='height: 10px;'></div>"; // 추가 50픽셀의 간격
+    // 제품 선택 UI 생성
+    $output .= "<div style='height: 10px;'></div>";
     $output .= "<select name='product_select_ordcnt' onchange='this.form.submit()'>";
     $output .= "<option value=''>제품을 선택하세요</option>";
     foreach ($products as $product) {
@@ -821,19 +255,294 @@ function jofMainOrdCntPdChartShortCode()
     $output .= "</select>";
     $output .= "</form>";
 
-    // 한달 예측데이터 그리드 표시
-    $output .= $weekdayPdData_html;
+    if (!empty($selected_product)) {
+        // 예측 데이터 가져오기
+        $predictionResult = jof_get_product_predictions($selected_product);
 
-    // 차트 표시
-    $output .= "<div style='height: 30px;'></div>"; // 추가 50픽셀의 간격
-    $output .= "<div style='width: 98%; margin: 0 auto;'>";
-    $output .= "<div style='position: relative; height: 300px;'><canvas id='{$chart_id}'></canvas></div>";
-    $output .= "</div>";
+        if (!$predictionResult) {
+            $output .= "<p>데이터가 부족하여 예측을 생성할 수 없습니다. (제품 코드: $selected_product)</p>";
+        } else {
+            // 예측 결과에서 변수 추출
+            $labels = $predictionResult['labels'];
+            $data = $predictionResult['data'];
+            $predictionData = $predictionResult['predictions'];
+            $confidenceIntervals = $predictionResult['confidence_intervals'];
+            $weekday_predictions = $predictionResult['weekday_predictions'];
+            $lastRealData = $predictionResult['last_seven_days_data'];
+            $pdDataCount = $predictionResult['pd_data_count'];
+            $next_week_dates = $predictionResult['next_week_dates'];
+            $next_week_predictions = $predictionResult['next_week_predictions'];
+            $weekdayPdData = []; // 초기화
 
-    // $output .= "<div style='height: 30px;'></div>"; // 추가 40픽셀의 간격
+            // 예측 기간의 레이블 추가
+            if (!empty($labels)) {
+                $last_date = end($labels);
+                for ($i = 1; $i <= $pdDataCount; $i++) {
+                    $next_date = date('Y-m-d', strtotime($last_date . ' +' . $i . ' days'));
+                    $labels[] = $next_date;
+                }
+            }
 
-    $output .=
-        "<script>
+            // 선형 회귀분석 데이터 계산
+            $linear_regression_data = jof_calculate_linear_regression($data, count($labels));
+
+            // MAPE 데이터 계산 (실제 데이터가 있는 기간만)
+            $mapeData = array();
+            $dataCount = count($data);
+            for ($i = 0; $i < $dataCount; $i++) {
+                $actual = $data[$i];
+                if (isset($predictionData[$i])) {
+                    $predicted = $predictionData[$i];
+                    if ($actual != 0) {
+                        $mape = abs(($actual - $predicted) / $actual) * 100;
+                        $mapeData[] = $mape;
+                    } else {
+                        $mapeData[] = null;
+                    }
+                } else {
+                    $mapeData[] = null;
+                }
+            }
+
+            // 차트 데이터 구조
+            $chart_data = array(
+                    'labels' => $labels,
+                    'datasets' => array(
+                        array(
+                            'type' => 'line',
+                            'label' => '실제 주문량',
+                            'data' => $data,
+                            'borderColor' => 'rgba(75, 192, 192, 1)',
+                            'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
+                            'borderWidth' => 2,
+                            'pointRadius' => 0,
+                            'fill' => false,
+                            'tension' => 0.4,
+                            'cubicInterpolationMode' => 'monotone',
+                            'yAxisID' => 'y',
+                        ),
+                        array(
+                            'type' => 'line',
+                            'label' => '선형 회귀분석 예측',
+                            'data' => $linear_regression_data,
+                            'borderColor' => 'rgba(54, 162, 235, 1)',
+                            'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
+                            'borderWidth' => 2,
+                            'pointRadius' => 0,
+                            'fill' => false,
+                            'tension' => 0,
+                            'borderDash' => [5, 5],
+                            'yAxisID' => 'y',
+                        ),
+                        // 요일별 예측 주문량 데이터셋
+                        array(
+                            'type' => 'line',
+                            'label' => '요일별 예측 주문량',
+                            'data' => array_map(function ($date, $pred) use (&$weekdayPdData) {
+                                // DB 저장 시 사용된 정확한 예측값($pred)을 그대로 사용하고,
+                                // 화면 표시용으로 재계산하던 부정확한 로직을 제거합니다.
+
+                                // monthPdDate 배열에 데이터 저장
+                                $weekdayPdData[] = array(
+                                    'date' => $date,
+                                    'quantity' => $pred
+                                );
+
+                                return [
+                                    'x' => $date,
+                                    'y' => $pred
+                                ];
+                            }, $next_week_dates, $next_week_predictions),
+                            'borderColor' => 'rgba(255, 159, 64, 1)',
+                            'backgroundColor' => 'rgba(255, 159, 64, 0.2)',
+                            'borderWidth' => 2,
+                            'pointRadius' => 3,
+                            'fill' => false,
+                            'tension' => 0,
+                            'yAxisID' => 'y',
+                        ),
+                    ),
+                );
+
+                // ----------------------------------------------------------
+                // 1달 예측데이터 그리드 표시 (마지막 7일 데이터와 동시에 표시)
+                // ----------------------------------------------------------
+                // error_log("ln524::lastRealData: " . print_r($lastRealData, true), 3, $logFilePath);
+                // error_log("ln525::weekdayPdData: " . print_r($weekdayPdData, true), 3, $logFilePath);
+
+                // $weekdayPdData의 첫 번째 요소 삭제 및 인덱스 재배열
+                array_shift($weekdayPdData);
+                $weekdayPdData = array_values($weekdayPdData);
+                // error_log("ln591::weekdayPdData: " . print_r($weekdayPdData, true), 3, $logFilePath);
+
+                // 마지막 7일 데이터와 요일별 예측 주문량 데이터 결합
+                $lastRealDataCount = count($lastRealData);
+                $weekdayPdData = array_merge($lastRealData, $weekdayPdData);
+                // error_log("ln595::combinedArray: " . print_r($weekdayPdData, true), 3, $logFilePath);
+
+                // 1. 요일 배열 정의
+                $weekdays = array('일', '월', '화', '수', '목', '금', '토', '주간합계');
+
+                // 2. 첫 번째 데이터의 요일 확인
+                $first_day_weekday = date('w', strtotime($weekdayPdData[0]['date']));
+
+                // 4. 테이블 헤더 생성
+                $weekdayPdData_html = "<br><table class='order-table' border='1'><tr>";
+                foreach ($weekdays as $day) {
+                    $weekdayPdData_html .= "<th style='background-color: #f0f0f0; font-size: 13px;'>{$day}</th>";
+                }
+                $weekdayPdData_html .= "</tr>";
+
+                // -------------------
+                // 5. 데이터 표시
+                // -------------------
+                $data_index = 0;
+                $row = 0;
+                $weekdayPdDataCount = count($weekdayPdData);
+                $maxRows = ceil($weekdayPdDataCount / 7); // 필요한 행의 수 계산
+
+                // error_log("\nln623::weekdayPdDataCount: " . $weekdayPdDataCount . ", maxRows: " . $maxRows, 3, $logFilePath);
+
+                while ($data_index < $weekdayPdDataCount) {
+                    $weekdayPdData_html .= "<tr>";
+                    $cells_in_row = 0;
+
+                    // error_log("\nln622::data_index: " . $data_index, 3, $logFilePath);
+                    if ($data_index >= $weekdayPdDataCount) break;
+
+                    // 데이터 채우기
+                    $week_total = 0;
+                    while ($cells_in_row < 7 ) {
+                        // error_log("\n-----------------------------------", 3, $logFilePath);
+                        // error_log("\nln638::cells_in_row: " . $cells_in_row, 3, $logFilePath);
+                        // error_log("\nln638::data_index: " . $data_index, 3, $logFilePath);
+                        // error_log("\nln639::weekdayPdDataCount: " . $weekdayPdDataCount, 3, $logFilePath);
+
+                        $date = $weekdayPdData[$data_index]['date'];
+                        $prediction = $weekdayPdData[$data_index]['quantity'];
+                        $week_total += $prediction;
+
+                        // 해당 날짜의 주차 계산
+                        $weekOfMonth = getWeekOfMonth($date);
+
+                        // DIDA 주 여부 확인 (2주차, 4주차)
+                        // $isDIDAWeek = ($weekOfMonth == 2 || $weekOfMonth == 4);
+
+                        $color = ($lastRealDataCount > $data_index) ? 'black' : 'red';
+                        $isToday = date('n/j', strtotime($date)) == date('n/j');
+                        $weekdayPdData_html .= "<td style='text-align: center; font-size: 13px;" . ($isToday ? " background-color: #BBF731;" : "") . "'>";
+                        $weekdayPdData_html .= "<font color='$color'>(" . date('n/j', strtotime($date)) . ")</font><br>";
+                        $weekdayPdData_html .= number_format($prediction);
+                        $weekdayPdData_html .= "</td>";
+
+                        $data_index++;
+                        $cells_in_row++;
+                        if ($data_index >= $weekdayPdDataCount) break;
+                    }
+
+
+                    // 주차별 멘트 설정 - 단순화
+                    switch ($row) {
+                        case 0:
+                            $weekOfMonth = getWeekOfMonth($weekdayPdData[$data_index - $cells_in_row]['date']);
+                            $totalMent = ($weekOfMonth == 2 || $weekOfMonth == 4) ?
+                                '(DIDA)<br>전주실적' : '전주실적';
+                            break;
+                        default:
+                            $weekOfMonth = getWeekOfMonth($weekdayPdData[$data_index - $cells_in_row]['date']);
+                            $totalMent = ($weekOfMonth == 2 || $weekOfMonth == 4) ?
+                                '(DIDA)<br>주간예측' : '주간예측';
+                            break;
+                    }
+
+                    // 남은 셀 채우기 (남은 셀 없이 항상 21개 데이터가 있어야 정상 )
+                    while ($cells_in_row < 7) {
+                        $weekdayPdData_html .= "<td></td>";
+                        $cells_in_row++;
+                    }
+                    
+                    $color = ($lastRealDataCount > $cells_in_row) ? 'red' : 'red';
+                    $weekdayPdData_html .= "<td style='text-align: center; font-size: 13px; background-color: #f0f0f0;'><font color='{$color}'>{$totalMent}</font><br>" . number_format($week_total) . "</td>";
+                    $weekdayPdData_html .= "</tr>";
+                    $row++;
+
+                    // 안전장치: 무한 루프 방지
+                    if ($row > 8) {
+                        error_log("Warning: Loop exceeded 10 iterations. Breaking to prevent infinite loop.", 3, $logFilePath);
+                        break;
+                    }
+                    
+                    $weekdayPdData_html .= "</tr>";
+                }
+
+                $weekdayPdData_html .= "</table>";
+                $weekdayPdData_html .=
+                    "
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var table = document.querySelector('.order-table');
+                var lastSelectedCell = null;
+
+                table.addEventListener('click', function(e) {
+                    var cell = e.target.closest('td');
+                    if (!cell || cell.cellIndex === 7) return; // 헤더나 마지막 열(합계)은 제외
+
+                    if (lastSelectedCell) {
+                        lastSelectedCell.style.backgroundColor = ''; // 이전 선택 셀 색상 초기화
+                    }
+
+                    if (cell !== lastSelectedCell) {
+                        cell.style.backgroundColor = '#BBF731'; // 새로 선택한 셀 색상 변경
+                        lastSelectedCell = cell;
+                    } else {
+                        lastSelectedCell = null; // 같은 셀을 다시 클릭하면 선택 해제
+                    }
+                });
+            });
+            </script>";
+
+
+            // 차트 데이터 구조 수정(요일별 예측 주문량)
+            $today = new DateTime();
+            $next_week_dates = array();
+            $next_week_predictions = array();
+
+            // 요일 배열 추가
+            $weekdays = array('일', '월', '화', '수', '목', '금', '토');
+
+            // 일요일부터 시작하도록 조정
+            $daysUntilSunday = 7 - $today->format('w');
+            $startDate = clone $today;
+            $startDate->modify("+{$daysUntilSunday} days");
+
+            // 463번 줄 주변의 코드 수정
+            $next_week_predictions = array();
+            for ($i = 0; $i < 7; $i++) {
+
+                $week_of_month = ceil(date('j', strtotime("+$i days")) / 7);
+
+                if ($week_of_month == 1 || $week_of_month == 3 || $week_of_month == 5) {
+                    $next_week_predictions[] = $weekday_predictions['first_third'][$i];
+                } else {
+                    $next_week_predictions[] = $weekday_predictions['second_fourth'][$i];
+                }
+            }
+
+            $chart_id = 'myChart_' . uniqid();
+
+            // 한달 예측데이터 그리드 표시
+            $output .= $weekdayPdData_html;
+
+            // 차트 표시
+            $output .= "<div style='height: 30px;'></div>"; // 추가 50픽셀의 간격
+            $output .= "<div style='width: 98%; margin: 0 auto;'>";
+            $output .= "<div style='position: relative; height: 300px;'><canvas id='{$chart_id}'></canvas></div>";
+            $output .= "</div>";
+
+            // $output .= "<div style='height: 30px;'></div>"; // 추가 40픽셀의 간격
+
+            $output .=
+                "<script>
 document.addEventListener('DOMContentLoaded', function() {
     var chartData = " . json_encode($chart_data) . ";
     var chartId = '" . $chart_id .
@@ -931,9 +640,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>";
 
-    // 1주일 평균 예측 주문량 텍스트 및 일주일 예측 주문량 합계 추가
-    $output .=
-    "
+            // 1주일 평균 예측 주문량 텍스트 및 일주일 예측 주문량 합계 추가
+            $output .=
+            "
 <style>
     .prediction-box {
         display: flex;
@@ -1001,6 +710,12 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </div>";
 
+        } // end of else for if (!$predictionResult)
+    } else {
+        // 제품이 선택되지 않았을 경우 차트를 표시하지 않음
+        $output .= "<p>제품을 선택해주세요.</p>";
+    }
+
     return $output;
 }
 
@@ -1015,7 +730,7 @@ function calculateWeightedMovingAverage($data, $dates)
     if (array_sum($data) == 0) {
         return 1; // 또는 다른 기본값
     }
-
+ 
     // 이상치 제거
     $filtered_data = removeOutliersMAD($data);
 
@@ -1145,6 +860,46 @@ function getWeekOfMonth($date)
     // 일요일부터 시작하는 주차 계산
     $offset = $dayOfMonth + $firstDayWeekday - 1;
     return ceil($offset / 7);
+}
+
+// 선형 회귀분석 계산 함수
+function jof_calculate_linear_regression($data, $total_points) {
+    $n = count($data);
+    if ($n < 2) {
+        return array_fill(0, $total_points, 0); // 데이터가 부족하여 계산 불가
+    }
+
+    $sum_x = 0;
+    $sum_y = 0;
+    $sum_xy = 0;
+    $sum_x2 = 0;
+
+    foreach ($data as $i => $y) {
+        $x = $i;
+        $sum_x += $x;
+        $sum_y += $y;
+        $sum_xy += $x * $y;
+        $sum_x2 += $x * $x;
+    }
+
+    $denominator = ($n * $sum_x2 - $sum_x * $sum_x);
+    if ($denominator == 0) {
+        // 0으로 나누기 방지, 평균값 반환
+        $avg = $sum_y / $n;
+        return array_fill(0, $total_points, round($avg));
+    }
+
+    $slope = ($n * $sum_xy - $sum_x * $sum_y) / $denominator;
+    $intercept = ($sum_y - $slope * $sum_x) / $n;
+
+    $regression_line = [];
+    for ($i = 0; $i < $total_points; $i++) {
+        $predicted_y = $slope * $i + $intercept;
+        // 예측값은 0보다 작을 수 없음
+        $regression_line[] = round(max(0, $predicted_y));
+    }
+
+    return $regression_line;
 }
 
 add_shortcode('jofMain_ordcntchartPd', 'jofMainOrdCntPdChartShortCode');

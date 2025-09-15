@@ -1,0 +1,262 @@
+/* subul_pd.css */
+
+/* --- 표준 스타일 (octopusInvt.css 기준) --- */
+.form-menu {
+    color: white;
+    padding: 5px;
+    text-align: center;
+    font-size: 15px;
+    background-color: #2c80cf;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin: 5px 0;
+    font-weight: 600;
+}
+
+button, input, select {
+    height: 40px !important;
+}
+
+button {
+    width: 100px !important;
+    padding: 1px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2c80cf !important;
+    color: white !important;
+}
+
+.search-row {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 5px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #f0f7ff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin: 5px 0;
+    transition: all 0.3s ease;
+    font-size: 13px;
+}
+
+.search-row:hover {
+    border-color: #4a90e2;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    background-color: #FFFF54;
+    transform: translateY(-2px);
+}
+
+/* --- 수불추적관리 전용 스타일 --- */
+
+/* 기존 .search-conditions를 .search-row로 대체 */
+.search-row label {
+    font-weight: bold;
+}
+
+.search-row input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+/* --- 결과 테이블 --- */
+#tables-pd {
+    width: 100%;
+    overflow-x: auto; /* 모바일에서 가로 스크롤 가능하도록 */
+}
+
+.subul-pd-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: center;
+}
+
+.subul-pd-table th,
+.subul-pd-table td {
+    border: 1px solid #dee2e6;
+    padding: 10px;
+}
+
+.subul-pd-table thead th {
+    background-color: #343a40;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2; /* sticky 헤더가 다른 요소 위에 오도록 */
+}
+
+.subul-pd-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.subul-pd-table tbody .expected-sale {
+    background-color: peachpuff;
+}
+
+.subul-pd-table tbody .actual-sale {
+    background-color: yellow;
+}
+
+.subul-pd-table tbody tr:hover {
+    background-color: #96f3a6;
+}
+
+/* 첫 번째, 두 번째 열 고정 (가로 스크롤 시) - 주석 처리 */
+/*
+.subul-pd-table th:first-child,
+.subul-pd-table td:first-child,
+.subul-pd-table th:nth-child(2),
+.subul-pd-table td:nth-child(2) {
+    position: sticky;
+    left: 0;
+    z-index: 1; 
+    background-color: inherit; 
+}
+
+.subul-pd-table th:first-child,
+.subul-pd-table td:first-child {
+    left: 0;
+    min-width: 100px;
+}
+
+.subul-pd-table th:nth-child(2),
+.subul-pd-table td:nth-child(2) {
+    left: 100px; 
+    min-width: 100px;
+}
+*/
+
+/* 고정된 헤더와 셀의 배경색 동기화 - 주석 처리 */
+/*
+.subul-pd-table thead th:first-child,
+.subul-pd-table thead th:nth-child(2) {
+    z-index: 3; 
+}
+*/
+
+/* --- 모바일 반응형 스타일 --- */
+@media (max-width: 768px) {
+    .search-row {
+        flex-direction: row; /* 가로 방향으로 정렬 */
+        flex-wrap: nowrap; /* 한 줄로 표시되도록 줄바꿈 방지 */
+        align-items: center; /* 세로 중앙 정렬 */
+    }
+
+    .search-row input[type="date"],
+    .search-row button {
+        width: auto; /* 너비를 100%가 아닌 자동으로 설정 */
+        flex-grow: 1; /* input 요소가 가능한 공간을 채우도록 함 */
+        min-width: 0; /* flex item이 과도하게 줄어드는 것을 방지 */
+    }
+
+    .search-row button {
+        flex-grow: 0; /* 버튼은 늘어나지 않도록 설정 */
+        padding: 0 10px; /* 버튼의 좌우 여백을 조절 */
+    }
+
+    button {
+        height: 35px !important;
+        font-size: 12px !important;
+    }
+
+    /* --- 모바일 카드 스타일 (subul.css 참조) --- */
+    .mobile-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        background-color: #f7f7f7;
+        padding: 10px 15px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        position: relative; /* 자식 요소의 absolute 포지셔닝을 위한 기준 */
+    }
+
+    .card-content {
+        padding: 15px;
+        display: none; /* 기본적으로 숨김 */
+    }
+
+    .mobile-card.expanded .card-content {
+        display: block; /* 확장 시 보임 */
+    }
+
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .data-item {
+        background-color: #f9f9f9;
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    .data-label {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .data-value {
+        color: #333;
+    }
+    
+    .arrow {
+      transition: transform 0.3s ease;
+    }
+
+    .mobile-card.expanded .arrow {
+      transform: rotate(180deg);
+    }
+    
+    .header-title {
+        /* flex-grow: 1; */ /* 왼쪽 정렬을 위해 특별한 스타일 불필요 */
+    }
+
+    .header-total {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .data-row-pd {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .data-row-pd:last-child {
+        border-bottom: none;
+    }
+
+    .pd-date-label {
+        text-align: left;
+    }
+
+    .pd-value-label {
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .zero-value {
+        color: #aaa; /* 연한 회색 */
+    }
+}

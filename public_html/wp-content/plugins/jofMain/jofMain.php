@@ -21,6 +21,9 @@ function jofMainShortCode()
         'edit' => is_user_logged_in()       // 모든 로그인한 사용자 접근 가능
     );
 
+    // 일일 예측 Cron 작업 로드
+    require_once WP_PLUGIN_DIR . '/jofMain-CntPd/jof-daily-prediction.php';
+
 ?>
     <!DOCTYPE html>
     <html lang="ko">

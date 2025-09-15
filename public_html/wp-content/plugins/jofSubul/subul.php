@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: subul_mgt 수불관리리
+Plugin Name: subul_mgt 수불관리
 Plugin URI: http://joeunfish.online/subul
 Description: 수불관리::B/L# 조회
 Version: 1.0

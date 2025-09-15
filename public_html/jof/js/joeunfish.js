@@ -44,7 +44,11 @@ function getAjax(server, client) {
 
 // progress bar
 function move() {
-  var codes = document.getElementById("loading").children;
+  var loadingElement = document.getElementById("loading");
+  if (!loadingElement) {
+    return; // 'loading' 요소가 없으면 함수를 종료
+  }
+  var codes = loadingElement.children;
   var randomIndex = Math.floor(Math.random() * codes.length);
 
   for (var i = 0; i < codes.length; i++) {
@@ -52,7 +56,7 @@ function move() {
   }
   // 랜덤한 인덱스에 해당하는 div 요소만 보여줌
   codes[randomIndex].style.display = "block";
-  document.getElementById("loading").style.display = "inline"; //"none";= inline
+  loadingElement.style.display = "inline"; //"none";= inline
 }
 
 function openButton(idx) {
