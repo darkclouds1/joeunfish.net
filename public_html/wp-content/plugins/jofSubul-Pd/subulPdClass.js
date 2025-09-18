@@ -3,6 +3,57 @@ class subulPdClass {
     this.data = [];
     this.table1 = null; // 테이블 DOM 요소를 저장할 프로퍼티
     this.platForm = 'computer'; // 기본값 설정
+
+    // 주간 네비게이션 UI 요소
+    this.prevWeekBtn = null;
+    this.nextWeekBtn = null;
+    this.currentWeekEl = null;
+  }
+
+  // ISO 8601 표준에 따른 연간 주차 계산 함수
+  getWeekNumber(d) {
+    // 날짜 객체를 복사하여 원본을 수정하지 않도록 함
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    // 주의 목요일을 기준으로 주차를 계산함 (ISO 8601 표준)
+    // 일요일(0)을 7로 처리하여 계산을 용이하게 함
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    // 연초(1월 1일)를 기준으로 몇 주가 지났는지 계산
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  }
+
+  // 주차 표시 업데이트
+  updateWeekDisplay() {
+    const fromDateEl = document.getElementById('from_date_pd');
+    if (!fromDateEl || !this.currentWeekEl) return;
+
+    const fromDate = new Date(fromDateEl.value);
+    // fromDate는 일요일이므로, 주차 계산의 기준이 되는 월요일로 변경 (+1일)
+    const mondayDate = new Date(fromDate);
+    mondayDate.setUTCDate(mondayDate.getUTCDate() + 1);
+
+    const month = mondayDate.getUTCMonth() + 1;
+    const week = this.getWeekNumber(mondayDate);
+    this.currentWeekEl.textContent = `${month}월 ${week}주`;
+  }
+
+  // 주차 이동
+  navigateWeek(days) {
+    const fromDateEl = document.getElementById('from_date_pd');
+    const toDateEl = document.getElementById('to_date_pd');
+    if (!fromDateEl || !toDateEl) return;
+
+    const fromDate = new Date(fromDateEl.value);
+    fromDate.setUTCDate(fromDate.getUTCDate() + days);
+
+    const newToDate = new Date(fromDate);
+    newToDate.setUTCDate(newToDate.getUTCDate() + 10);
+
+    fromDateEl.value = fromDate.toISOString().slice(0, 10);
+    toDateEl.value = newToDate.toISOString().slice(0, 10);
+
+    this.loadData();
   }
 
   // 데스크톱용 테이블 헤더 생성
@@ -21,19 +72,6 @@ class subulPdClass {
     // 데이터에서 날짜 키를 동적으로 추출하고 정렬
     const dates = Object.keys(this.data[0]).filter(key => key !== '구분' && key !== '합계').sort();
     
-    // ISO 8601 표준에 따른 연간 주차 계산 함수
-    const getWeekNumber = (d) => {
-        // 날짜 객체를 복사하여 원본을 수정하지 않도록 함
-        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-        // 주의 목요일을 기준으로 주차를 계산함 (ISO 8601 표준)
-        // 일요일(0)을 7로 처리하여 계산을 용이하게 함
-        const dayNum = d.getUTCDay() || 7;
-        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-        // 연초(1월 1일)를 기준으로 몇 주가 지났는지 계산
-        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    };
-
     // 열 순서: 비고 (주차 정보), 날짜들, 합계
     const th_remarks = document.createElement("th");
     if (dates.length > 0) {
@@ -44,7 +82,7 @@ class subulPdClass {
         mondayDate.setUTCDate(mondayDate.getUTCDate() + 1);
 
         const month = mondayDate.getUTCMonth() + 1; // 월요일이 속한 월
-        const weekNumber = getWeekNumber(mondayDate); // 월요일 기준 주차
+        const weekNumber = this.getWeekNumber(mondayDate); // 월요일 기준 주차
         th_remarks.textContent = `${month}월 ${weekNumber}주차`;
     } else {
         th_remarks.textContent = "비고";
@@ -128,12 +166,12 @@ class subulPdClass {
 
     // 날짜 목록 생성 (타임존 문제 방지)
     const dateRange = [];
-    let currentDate = new Date(from_date + 'T00:00:00');
-    const endDate = new Date(to_date + 'T00:00:00');
+    let currentDate = new Date(from_date);
+    const endDate = new Date(to_date);
 
     while (currentDate <= endDate) {
       dateRange.push(currentDate.toISOString().slice(0, 10));
-      currentDate.setDate(currentDate.getDate() + 1);
+      currentDate.setUTCDate(currentDate.getUTCDate() + 1);
     }
 
     // 각 카테고리별로 카드 생성
@@ -170,10 +208,10 @@ class subulPdClass {
       dateRange.forEach(date => {
         const value = categoryData[date] !== undefined && categoryData[date] !== null ? categoryData[date] : '0';
         
-        const dateObj = new Date(date + 'T00:00:00');
-        const month = dateObj.getMonth() + 1;
-        const day = dateObj.getDate();
-        const weekDay = ['일', '월', '화', '수', '목', '금', '토'][dateObj.getDay()];
+        const dateObj = new Date(date);
+        const month = dateObj.getUTCMonth() + 1;
+        const day = dateObj.getUTCDate();
+        const weekDay = ['일', '월', '화', '수', '목', '금', '토'][dateObj.getUTCDay()];
         const formattedDate = `${month}/${day}(${weekDay}):`;
 
         const dataRow = document.createElement('div');
@@ -214,8 +252,13 @@ class subulPdClass {
     const toDateEl = document.getElementById('to_date_pd');
     const searchBtn = document.getElementById('searchBtn-pd');
 
-    if (!fromDateEl || !toDateEl || !searchBtn) {
-      console.error('수불추적관리: 필수 UI 요소를 찾을 수 없습니다 (from_date_pd, to_date_pd, searchBtn-pd). HTML 구조를 확인하세요.');
+    // 주간 네비게이션 요소
+    this.prevWeekBtn = document.getElementById('prev-week-pd');
+    this.nextWeekBtn = document.getElementById('next-week-pd');
+    this.currentWeekEl = document.getElementById('current-week-pd');
+
+    if (!fromDateEl || !toDateEl || !searchBtn || !this.prevWeekBtn || !this.nextWeekBtn || !this.currentWeekEl) {
+      console.error('수불추적관리: 필수 UI 요소를 찾을 수 없습니다. HTML 구조를 확인하세요.');
       return;
     }
 
@@ -224,16 +267,16 @@ class subulPdClass {
         const selectedDate = new Date(fromDateEl.value);
         
         // 선택된 날짜의 요일 (0=일요일, 1=월요일, ..., 6=토요일)
-        const dayOfWeek = selectedDate.getDay();
+        const dayOfWeek = selectedDate.getUTCDay();
         
         // 선택된 날짜에서 요일만큼 날짜를 빼서 해당 주의 일요일을 계산
         const sundayOfSelectedWeek = new Date(selectedDate);
-        sundayOfSelectedWeek.setDate(selectedDate.getDate() - dayOfWeek);
+        sundayOfSelectedWeek.setUTCDate(selectedDate.getUTCDate() - dayOfWeek);
 
         // 시작일(일요일)과 종료일(+10일) 계산
         const startDate = sundayOfSelectedWeek;
         const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + 10);
+        endDate.setUTCDate(startDate.getUTCDate() + 10);
         
         // 계산된 날짜를 yyyy-mm-dd 형식으로 변환하여 input 필드에 설정
         fromDateEl.value = startDate.toISOString().slice(0, 10);
@@ -248,6 +291,10 @@ class subulPdClass {
       this.loadData();
     });
     
+    // 주간 네비게이션 버튼 이벤트 리스너
+    this.prevWeekBtn.addEventListener('click', () => this.navigateWeek(-7));
+    this.nextWeekBtn.addEventListener('click', () => this.navigateWeek(7));
+
     // 최초 데이터 로드
     this.loadData();
   }
@@ -265,6 +312,8 @@ class subulPdClass {
       }
       return;
     }
+
+    this.updateWeekDisplay();
 
     move();
 

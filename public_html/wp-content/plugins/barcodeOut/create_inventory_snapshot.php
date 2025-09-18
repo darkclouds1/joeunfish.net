@@ -23,7 +23,7 @@ try {
     error_log("[" . date("Y-m-d H:i:s") . "] 일일 재고 스냅샷 생성을 시작합니다.\n", 3, $logFilePath);
 
     $sql = "
-        REPLACE INTO tbarcodeout_invt (invt_date, cnt_fillets, cnt_fillets_map, cnt_steaks, cnt_steaks_bulk, cnt_wanchul)
+        INSERT INTO tbarcodeout_invt (invt_date, cnt_fillets, cnt_fillets_map, cnt_steaks, cnt_steaks_bulk, cnt_wanchul)
         SELECT
             CURDATE(),
             COALESCE(SUM(CASE WHEN prod_nm = '연어필렛' AND store_code != '002' THEN 1 ELSE 0 END), 0),
@@ -34,7 +34,13 @@ try {
         FROM
             `tbarcodeout`
         WHERE store_code IN ('000','001','002','003','004')
-          AND invoice_yn = 'n';
+          AND invoice_yn = 'n'
+        ON DUPLICATE KEY UPDATE
+            cnt_fillets = VALUES(cnt_fillets),
+            cnt_fillets_map = VALUES(cnt_fillets_map),
+            cnt_steaks = VALUES(cnt_steaks),
+            cnt_steaks_bulk = VALUES(cnt_steaks_bulk),
+            cnt_wanchul = VALUES(cnt_wanchul);
     ";
 
     if ($conn->query($sql) === TRUE) {

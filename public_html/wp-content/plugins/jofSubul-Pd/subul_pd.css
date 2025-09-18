@@ -142,10 +142,21 @@ button:hover {
 
 /* --- 모바일 반응형 스타일 --- */
 @media (max-width: 768px) {
+    /* 전체 폰트 크기 조정 */
+    body {
+        font-size: 13px;
+    }
+
     .search-row {
         flex-direction: row; /* 가로 방향으로 정렬 */
         flex-wrap: nowrap; /* 한 줄로 표시되도록 줄바꿈 방지 */
         align-items: center; /* 세로 중앙 정렬 */
+        font-size: 12px; /* 검색 조건 폰트 크기 축소 */
+    }
+
+    .search-row input[type="date"] {
+        padding: 5px 2px; /* 데이트 피커 내부 여백 축소 */
+        font-size: 12px;
     }
 
     .search-row input[type="date"],
@@ -163,6 +174,10 @@ button:hover {
     button {
         height: 35px !important;
         font-size: 12px !important;
+    }
+
+    .subul-pd-table {
+        font-size: 12px;
     }
 
     /* --- 모바일 카드 스타일 (subul.css 참조) --- */

@@ -48,7 +48,7 @@ function barcodeOutShortCode()
                     <div class="form-row">
                         <select name="category" class="form-field" id="category" placeholder="입력">
                             <option value="1">납기</option>
-                            <option value="2">제조</option>
+                            <option value="2">생산</option>
                         </select>
                         <input type="date" class="form-field" id="createDate" onclick="" onkeydown="if(event.key === 'Enter') { event.preventDefault(); document.getElementById('actionBtn').click(); }">
                         <select class="form-field" id="lcNumber" placeholder="BL#4자" autofocus>

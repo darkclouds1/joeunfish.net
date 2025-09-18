@@ -296,7 +296,8 @@ if ($category === 'origin_store_code') {
         $sql .= "  AND barcode_out = '" . $barcode_out . "'";
     } else {
         if ($store_code !== '') $sql .= "   AND origin_store_code = '$store_code'";
-        if ($increate_dt !== '') $sql .= " AND manu_date = '$increate_dt'";
+        // if ($increate_dt !== '') $sql .= " AND manu_date = '$increate_dt'";
+        if ($increate_dt !== '') $sql .= " AND DATE(create_dt) = '$increate_dt'";
         // BL번호 조회, 색깔, 제품명 조회 
         if ($lc_no !== '') $sql .= "        AND lc_no = '" . $lc_no . "'";
         if ($pack_color !== '') $sql .= "   AND pack_color = '" . $pack_color . "'";

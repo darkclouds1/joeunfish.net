@@ -42,23 +42,6 @@ function getAjax(server, client) {
   xhttp.send(params.toString());
 }
 
-// progress bar
-function move() {
-  var loadingElement = document.getElementById("loading");
-  if (!loadingElement) {
-    return; // 'loading' 요소가 없으면 함수를 종료
-  }
-  var codes = loadingElement.children;
-  var randomIndex = Math.floor(Math.random() * codes.length);
-
-  for (var i = 0; i < codes.length; i++) {
-    codes[i].style.display = "none";
-  }
-  // 랜덤한 인덱스에 해당하는 div 요소만 보여줌
-  codes[randomIndex].style.display = "block";
-  loadingElement.style.display = "inline"; //"none";= inline
-}
-
 function openButton(idx) {
   if (document.getElementById("link" + idx).style.display == "inline") {
     document.getElementById("link" + idx).style.display = "none";

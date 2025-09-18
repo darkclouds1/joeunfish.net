@@ -4,7 +4,7 @@ Plugin Name: 수불추적관리
 Plugin URI: http://joeunfish.in/
 Description: 주문 예측량(torder_predict) 테이블을 포함하여 수불을 추적합니다.
 Version: 1.0
-Author: 먹구름 - by Monolith company
+Author: Monolith - by 먹구름
 Author URI: http://joeunfish.in
 */
 
@@ -41,7 +41,7 @@ function jof_subul_pd_shortcode() {
         $fromDate->modify("-{$dayOfWeek} days");
     }
     // 2. 그 다음, 7일을 빼서 정확히 '지난 주 일요일'을 구합니다.
-    $fromDate->modify('-7 days');
+    // $fromDate->modify('-7 days');
 
 
     // To: fromDate로부터 10일 뒤
@@ -75,7 +75,7 @@ function jof_subul_pd_shortcode() {
     </head>
     <body>
         <div id="contents">
-            <span> ■ 조회조건: 시작일(주)를 선택하면 종료 날짜는 자동으로 10일 후로 설정됩니다.</span>
+            <span> ■ 조회조건: 시작일(주) 선택 시 자동 10일 후로 설정됩니다. (※실제생산=조은점(000), 제외: 원재료, 완출, GS점) </span>
             <div id="jofSubulPd-container">
                 <!-- 조회 조건 -->
                 <div class="search-row">
@@ -87,6 +87,13 @@ function jof_subul_pd_shortcode() {
                 
                 <!-- 결과 테이블 -->
                 <div id="tables-pd"></div>
+
+                <!-- 주간 네비게이션 -->
+                <div id="weekly-nav-pd" style="text-align: center; font-size: 1.2em; user-select: none;">
+                    <span id="prev-week-pd" style="cursor: pointer; padding: 10px; color: red;">◀</span>
+                    <span id="current-week-pd" style="margin: 0 15px; display: inline-block; width: 100px; color: red;"></span>
+                    <span id="next-week-pd" style="cursor: pointer; padding: 10px; color: red;">▶</span>
+                </div>
             </div>
         </div>
         
@@ -99,9 +106,11 @@ function jof_subul_pd_shortcode() {
             window.subul_pd_srv = "<?php echo esc_js(plugins_url('subul_pd_srv.php', __FILE__)); ?>";
 
             function initializeSubulPd() {
-                if (typeof subulPd === 'undefined') {
-                    var subulPd = new subulPdClass();
-                    subulPd.init();
+                if (typeof window.subulPd === 'undefined') {
+                    // 클래스 인스턴스 생성 및 초기화
+                    // 모든 UI 및 이벤트 처리는 subulPdClass 내에서 이루어집니다.
+                    window.subulPd = new subulPdClass();
+                    window.subulPd.init();
                 }
             }
 
