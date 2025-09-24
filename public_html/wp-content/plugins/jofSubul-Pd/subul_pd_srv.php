@@ -468,11 +468,28 @@ function getPdData($from_date, $to_date, $conn)
             if ($saengsanjaego !== null) {
                 $saengsan_stock = $saengsanjaego;
             } else {
-                // 전날 생산재고가 있으면 오늘 생산량과 판매량을 반영하여 계산
-                if (isset($prev_date) && $current_date <= $today_date) {
-                    $prev_silsaeng = $daily_values[$prev_date]['silsaeng'] ?? 0;
-                    $prev_silpan = $daily_values[$prev_date]['silpan'] ?? 0;
-                    $saengsan_stock += $prev_silsaeng - $prev_silpan;
+                if ($current_date === $today_date) {
+                    // 오늘 날짜의 재고는 스냅샷 생성 로직과 동일하게 tbarcodeout에서 직접 계산
+                    $sql_today_stock = "
+                        SELECT COALESCE(SUM(CASE WHEN prod_nm = '연어필렛' AND store_code != '002' THEN 1 ELSE 0 END), 0)
+                        FROM `tbarcodeout`
+                        WHERE store_code IN ('000','001','002','003','004') AND invoice_yn = 'n'
+                    ";
+                    $stmt_today_stock = $conn->prepare($sql_today_stock);
+                    if ($stmt_today_stock) {
+                        $stmt_today_stock->execute();
+                        $result_today_stock = $stmt_today_stock->get_result();
+                        $row_today_stock = $result_today_stock->fetch_row();
+                        $saengsan_stock = $row_today_stock[0] ?? 0;
+                        $stmt_today_stock->close();
+                    }
+                } else {
+                    // DB에 없는 다른 날짜는 전날 재고를 기반으로 계산
+                    if (isset($prev_date) && $current_date < $today_date) {
+                        $prev_silsaeng = $daily_values[$prev_date]['silsaeng'] ?? 0;
+                        $prev_silpan = $daily_values[$prev_date]['silpan'] ?? 0;
+                        $saengsan_stock += $prev_silsaeng - $prev_silpan;
+                    }
                 }
             }
             $result_data['생산재고'][$current_date] = ($current_date > $today_date) ? '-' : round($saengsan_stock, 1);
@@ -481,7 +498,8 @@ function getPdData($from_date, $to_date, $conn)
             // [사용자 요청] 차주 일요일의 통관재고(stock_quantity)를 저장/업데이트
             // 단, 조회된 최초 기준일 데이터는 업데이트하지 않으며, 미래 날짜 데이터는 생성/업데이트하지 않음
             if ($current_date === $next_sunday) {
-                if (($min_stock_date === null || $current_date > $min_stock_date) && $current_date <= $today_date) {
+                // [임시] 2025-09-21 데이터는 수정하지 않음
+                if (($min_stock_date === null || $current_date > $min_stock_date) && $current_date <= $today_date && $current_date !== '2025-09-21') {
                     $stock_to_save = round($tongwan_stock_for_today, 1);
                     $sql_update_stock = "
                         INSERT INTO tbarcodeout_invt (invt_date, stock_quantity)

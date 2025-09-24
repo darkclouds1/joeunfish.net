@@ -76,7 +76,7 @@ if [ -z "$SQL_FILES" ]; then
     exit 1
 fi
 
-# 각 SQL 파일을 webhosting 복원
+# 각 SQL 파일을 webhosting 에 복원
 for FILE in $SQL_FILES; do
     echo "Importing $FILE into webhosting database..."
     
@@ -149,4 +149,3 @@ done
 echo ""
 echo "=== 데이터 동기화 완료 ==="
 echo "모든 SQL 파일이 KVM에서 추출되어 webhosting 데이터베이스로 안전하게 임포트되었습니다."
-echo "기존 데이터는 보존되었으며, 중복 데이터만 무시되었습니다."
