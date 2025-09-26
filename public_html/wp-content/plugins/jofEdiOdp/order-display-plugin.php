@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Order Display Plugin
-Description: (CO) 주문 조회 하단, :: 점포別 :: PO# & 제품 목록 조회
+Description: Display order data based on store and delivery date selection
 Version: 1.0
 Author: darkcloud
 */
@@ -123,11 +123,12 @@ function odp_form_shortcode()
             // AJAX 요청 부분 수정
             $("#odp-form").on("submit", function(e) {
                 e.preventDefault();
+
                 var storeCode = $("#storeNo").val();
                 var supplyDate = $("#supplyDate").val();
                 supplyDate = supplyDate.replace(/-/g, '');
 
-                // console.log("ln89::storeCode=" + storeCode + ", supplyDate=" + supplyDate);
+                console.log("점포코드: " + storeCode + ", 납기일: " + supplyDate);
 
                 if (storeCode && supplyDate) {
                     $.ajax({
@@ -141,13 +142,14 @@ function odp_form_shortcode()
                             displayOrderData(response);
                         },
                         error: function(xhr, status, error) {
-                            console.error("An error occurred: " + error);
+                            console.error("AJAX 오류 발생:", status, error, xhr.responseText);
                             $("#odp-results").html(
                                 "<p>데이터를 불러오는 중 오류가 발생했습니다.</p>"
                             );
                         },
                     });
                 } else {
+                    console.log("점포코드 또는 납기일이 없어 요청 안 함");
                     $("#odp-results").html("<p>점포와 납기일을 모두 선택해주세요.</p>");
                 }
             });
@@ -232,7 +234,7 @@ function odp_form_shortcode()
                             $('<th>').text('납기일자').css('text-align', 'center'),
                             $('<th>').text('상품코드').css('text-align', 'center'),
                             $('<th>').text('상품명').css('text-align', 'center'),
-                            $('<th>').text('수량').css('text-align', 'center'),
+                            $('<th>').text('수량').css({'text-align': 'center', 'width': '80px'}),
                             $('<th>').text('단가').css('text-align', 'center'),
                             $('<th>').text('총 가격').css('text-align', 'center')
                         );
@@ -244,7 +246,7 @@ function odp_form_shortcode()
                                 $('<td>').text(item.supply_dt).css('text-align', 'center'),
                                 $('<td>').text(item.product_code).css('text-align', 'center'),
                                 $('<td>').text(item.product_name),
-                                $('<td>').text(item.quantity).css('text-align', 'right'),
+                                $('<td class="quantity-cell">').text(item.quantity).css('text-align', 'right'),
                                 $('<td>').text(item.unit_price).css('text-align', 'right'),
                                 $('<td>').text(item.total_price).css('text-align', 'right')
                             );
@@ -260,6 +262,82 @@ function odp_form_shortcode()
                         });
 
                         resultsDiv.append(table);
+
+                        // 수량 셀 클릭 시 input으로 변경
+                        resultsDiv.on('click', '.quantity-cell', function(e) {
+                            e.stopPropagation(); // 행 클릭 이벤트 전파 방지
+                            var $cell = $(this);
+
+                            // 이미 input 요소가 있으면 return
+                            if ($cell.find('input').length) {
+                                return;
+                            }
+
+                            var originalQuantity = $cell.text();
+                            var $input = $('<input type="number" style="width: 100%; text-align: right; box-sizing: border-box;">');
+                            $input.val(originalQuantity);
+
+                            $cell.html($input);
+                            $input.focus();
+
+                            // focus out 되면(blur) 값 업데이트
+                            $input.on('blur', function() {
+                                var newQuantity = $(this).val();
+
+                                // 수량이 변경되지 않았으면 서버 호출 안함
+                                if (newQuantity == originalQuantity) {
+                                    $cell.text(newQuantity);
+                                    return;
+                                }
+
+                                var $row = $cell.closest('tr');
+                                var docNo = $row.find('td:eq(0)').text();
+                                var productCode = $row.find('td:eq(3)').text();
+
+                                $.ajax({
+                                    url: '<?php echo plugin_dir_url(__FILE__) . 'get_order_data_srv.php'; ?>',
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: {
+                                        action: "update_qty",
+                                        doc_no: docNo,
+                                        product_code: productCode,
+                                        quantity: newQuantity,
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            var newQuantityVal = parseInt(newQuantity, 10);
+                                            $cell.text(newQuantityVal.toLocaleString('en-US'));
+
+                                            // 총 가격 실시간 업데이트
+                                            var unitPriceText = $row.find('td:eq(6)').text();
+                                            var unitPrice = parseFloat(unitPriceText.replace(/,/g, ''));
+                                            
+                                            if (!isNaN(unitPrice)) {
+                                                var newTotalPrice = unitPrice * newQuantityVal;
+                                                $row.find('td:eq(7)').text(newTotalPrice.toLocaleString('en-US'));
+                                            }
+                                            console.log("수량이 성공적으로 업데이트되었습니다.");
+                                        } else {
+                                            alert("수량 업데이트 실패: " + (response.data ? response.data.message : '알 수 없는 오류'));
+                                            $cell.text(originalQuantity); // 실패 시 원래 값으로 복원
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error("An error occurred: " + error);
+                                        alert("서버 통신 오류로 업데이트에 실패했습니다.");
+                                        $cell.text(originalQuantity); // 실패 시 원래 값으로 복원
+                                    },
+                                });
+                            });
+
+                            // Enter 키를 누르면 blur 처리
+                            $input.on('keypress', function(e) {
+                                if (e.which === 13) {
+                                    $(this).blur();
+                                }
+                            });
+                        });
                     }
                 } else {
                     resultsDiv.text("데이터가 없거나 올바르지 않은 형식입니다.");
