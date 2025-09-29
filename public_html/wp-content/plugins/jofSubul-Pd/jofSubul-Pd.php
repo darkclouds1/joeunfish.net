@@ -46,7 +46,7 @@ function jof_subul_pd_shortcode() {
 
     // To: fromDate로부터 10일 뒤
     $toDate = clone $fromDate;
-    $toDate->modify('+10 days');
+    $toDate->modify('+6 days');
 
     $defaultFromDate = $fromDate->format('Y-m-d');
     $defaultToDate = $toDate->format('Y-m-d');
@@ -86,14 +86,75 @@ function jof_subul_pd_shortcode() {
                 </div>
                 
                 <!-- 결과 테이블 -->
-                <div id="tables-pd"></div>
+                <div id="tables-pd">
+                    <!-- 데스크톱용 테이블 컨테이너 -->
+                    <div class="table-container"></div>
+                    <!-- 모바일용 카드 컨테이너 -->
+                    <div class="mobile-card-container"></div>
+                </div>
 
                 <!-- 주간 네비게이션 -->
-                <div id="weekly-nav-pd" style="text-align: center; font-size: 1.2em; user-select: none;">
+                <div id="weekly-nav-pd" style="text-align: center; font-size: 1.2em; user-select: none; margin: 0px 0px 20px;">
                     <span id="prev-week-pd" style="cursor: pointer; padding: 10px; color: red;">◀</span>
                     <span id="current-week-pd" style="margin: 0 15px; display: inline-block; width: 100px; color: red;"></span>
                     <span id="next-week-pd" style="cursor: pointer; padding: 10px; color: red;">▶</span>
                 </div>
+
+                <!-- 예측 조건 - 데스크톱용 -->
+                <div class="prediction-row desktop-prediction">
+                    <div class="search-row">
+                        <span class="prediction-sector">
+                            <label for="predict-weeks">예측 기준:</label>
+                            <input type="number" id="predict-weeks" value="12" min="1">
+                            <label for="predict-weeks">주</label>
+                        </span>
+                        
+                        <span class="prediction-sector">
+                            <label for="safety-stock-days">안전 재고:</label>
+                            <input type="number" id="safety-stock-days" value="1" min="0">
+                            <label for="safety-stock-days">일</label>
+                        </span>
+
+                        <span class="prediction-sector">
+                            <label for="next-week-import-plan">차주 통관 계획:</label>
+                            <input type="number" id="next-week-import-plan" value="0" min="0">
+                            <label for="next-week-import-plan">Box</label>
+                        </span>
+
+                        <button id="predictBtn-pd">예측 실행</button>
+                    </div>
+                </div>
+
+                <!-- 예측 조건 - 모바일용 -->
+                <div class="mobile-prediction">
+                    <div class="mobile-prediction-header">
+                        <h3>수입량 예측 설정</h3>
+                    </div>
+                    
+                    <div class="mobile-prediction-content">
+                        <div class="mobile-prediction-item">
+                            <label for="predict-weeks-mobile">예측 기준</label>
+                            <input type="number" id="predict-weeks-mobile" value="12" min="1" class="mobile-input" placeholder="주">
+                        </div>
+                        
+                        <div class="mobile-prediction-item">
+                            <label for="safety-stock-days-mobile">안전 재고</label>
+                            <input type="number" id="safety-stock-days-mobile" value="1" min="0" class="mobile-input" placeholder="일">
+                        </div>
+
+                        <div class="mobile-prediction-item">
+                            <label for="next-week-import-plan-mobile">차주 통관 계획</label>
+                            <input type="number" id="next-week-import-plan-mobile" value="0" min="0" class="mobile-input" placeholder="Box">
+                        </div>
+
+                        <div class="mobile-prediction-button">
+                            <button id="predictBtn-pd-mobile" class="mobile-predict-btn">예측 실행</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 예측 결과 -->
+                <div id="prediction-result" class="prediction-result" style="display: none;"></div>
             </div>
         </div>
         

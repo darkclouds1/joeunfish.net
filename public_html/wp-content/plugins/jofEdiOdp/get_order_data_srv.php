@@ -33,12 +33,26 @@ if ($action === 'update_qty') {
     }
 
     $table_name = 'torderproducts';
+    
+    // 현재 날짜와 사용자 로그인명 가져오기
+    $current_date = current_time('Y-m-d H:i:s');
+    $current_user = wp_get_current_user();
+    $user_login = $current_user->user_login;
+    
+    // 로그인하지 않은 사용자의 경우 기본값 설정
+    if (empty($user_login)) {
+        $user_login = 'system'; // 또는 다른 기본값
+    }
 
     $result = $wpdb->update(
         $table_name,
-        ['quantity' => $quantity],
+        [
+            'quantity' => $quantity,
+            'modify_dt' => $current_date,
+            'modify_id' => $user_login
+        ],
         ['doc_no' => $doc_no, 'product_code' => $product_code],
-        ['%d'], // data format
+        ['%d', '%s', '%s'], // data format
         ['%s', '%s'] // where format
     );
 

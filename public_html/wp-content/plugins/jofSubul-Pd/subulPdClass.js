@@ -48,7 +48,7 @@ class subulPdClass {
     fromDate.setUTCDate(fromDate.getUTCDate() + days);
 
     const newToDate = new Date(fromDate);
-    newToDate.setUTCDate(newToDate.getUTCDate() + 10);
+    newToDate.setUTCDate(newToDate.getUTCDate() + 6);
 
     fromDateEl.value = fromDate.toISOString().slice(0, 10);
     toDateEl.value = newToDate.toISOString().slice(0, 10);
@@ -132,11 +132,25 @@ class subulPdClass {
       cellGuBun.textContent = rowData['구분'];
 
       // 2. 날짜별 데이터
-      dates.forEach(date => {
+      dates.forEach((date, index) => {
         const cell = row.insertCell();
         const value = rowData[date];
-        cell.textContent = Number(value) ? Number(value).toLocaleString() : '-';
+        const isNumeric = value !== null && value !== undefined && !isNaN(value) && String(value).trim() !== '' && value !== '-';
+        
+        cell.textContent = isNumeric ? Number(value).toLocaleString() : '-';
         cell.style.textAlign = 'right';
+
+        // '생산재고' 행의 숫자 셀에만 편집 기능 추가
+        if (rowData['구분'] === '생산재고' && isNumeric) {
+          cell.classList.add('editable'); // 스타일링을 위한 클래스
+          cell.addEventListener('click', () => this.makeCellEditable(cell, date, 'saengsan'));
+        }
+
+        // '통관재고' 행의 일요일(첫번째) 숫자 셀에만 편집 기능 추가
+        if (rowData['구분'] === '통관재고' && isNumeric && index === 0) {
+            cell.classList.add('editable');
+            cell.addEventListener('click', () => this.makeCellEditable(cell, date, 'tongwan'));
+        }
       });
 
       // 3. 합계
@@ -175,7 +189,7 @@ class subulPdClass {
     }
 
     // 각 카테고리별로 카드 생성
-    datas.forEach(categoryData => {
+    datas.forEach((categoryData, index) => {
       const category = categoryData['구분'];
       const card = document.createElement('div');
       // 카드를 기본적으로 접힌 상태로 설정 (expanded 클래스 제거)
@@ -205,8 +219,8 @@ class subulPdClass {
       const content = document.createElement('div');
       content.className = 'card-content';
       
-      dateRange.forEach(date => {
-        const value = categoryData[date] !== undefined && categoryData[date] !== null ? categoryData[date] : '0';
+      dateRange.forEach((date, index) => {
+        const value = categoryData[date] !== undefined && categoryData[date] !== null ? categoryData[date] : 0;
         
         const dateObj = new Date(date);
         const month = dateObj.getUTCMonth() + 1;
@@ -217,16 +231,31 @@ class subulPdClass {
         const dataRow = document.createElement('div');
         dataRow.className = 'data-row-pd';
         
-        // 숫자 0과 문자 '0'을 모두 처리하기 위해 느슨한 비교(==) 사용
-        const valueClass = value == '0' ? 'pd-value-label zero-value' : 'pd-value-label';
+        // 0이거나 NaN인 경우 '-'로 표시
+        const isZeroOrNaN = value === 0 || value === '0' || isNaN(value) || value === null || value === undefined;
+        const valueClass = isZeroOrNaN ? 'pd-value-label zero-value' : 'pd-value-label';
+        const formattedValue = isZeroOrNaN ? '-' : new Intl.NumberFormat('ko-KR').format(value);
 
-        // 숫자에 콤마 추가
-        const formattedValue = new Intl.NumberFormat('ko-KR').format(value);
+        const valueSpan = document.createElement('span');
+        valueSpan.className = valueClass;
+        valueSpan.textContent = formattedValue;
 
-        dataRow.innerHTML = `
-            <span class="pd-date-label">${formattedDate}</span>
-            <span class="${valueClass}">${formattedValue}</span>
-        `;
+        dataRow.innerHTML = `<span class="pd-date-label">${formattedDate}</span>`;
+        dataRow.appendChild(valueSpan);
+
+        // '생산재고' 항목의 숫자 값에만 편집 기능 추가
+        const isNumeric = !isZeroOrNaN && value !== '-' && !isNaN(value) && String(value).trim() !== '';
+        if (category === '생산재고' && isNumeric) {
+          dataRow.classList.add('editable'); // 스타일링을 위한 클래스
+          valueSpan.addEventListener('click', () => this.makeCellEditable(valueSpan, date, 'saengsan'));
+        }
+        
+        // '통관재고' 항목의 일요일(첫번째) 숫자 값에만 편집 기능 추가
+        if (category === '통관재고' && isNumeric && index === 0) {
+            dataRow.classList.add('editable');
+            valueSpan.addEventListener('click', () => this.makeCellEditable(valueSpan, date, 'tongwan'));
+        }
+
         content.appendChild(dataRow);
       });
 
@@ -247,10 +276,118 @@ class subulPdClass {
     });
   }
 
+  // 셀을 편집 가능한 input으로 변경하는 함수
+  makeCellEditable(cell, date, stockType) {
+    if (cell.querySelector('input')) {
+        return; // 이미 편집 중이면 중복 실행 방지
+    }
+
+    const originalValue = cell.textContent.replace(/,/g, '');
+    cell.innerHTML = ''; // 셀 내용 초기화
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = originalValue;
+    input.className = 'editable-input'; // 스타일링을 위한 클래스
+
+    const saveOrRevert = () => {
+      const newValue = input.value;
+      if (newValue !== originalValue && newValue.trim() !== '') {
+        if (stockType === 'saengsan') {
+            this.updateStock(date, newValue); // 값이 변경되었으면 저장
+        } else if (stockType === 'tongwan') {
+            this.updateTongwanStock(date, newValue);
+        }
+      } else {
+        cell.textContent = Number(originalValue).toLocaleString(); // 아니면 원래 값으로 복원
+      }
+    };
+
+    input.addEventListener('blur', saveOrRevert);
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            input.blur(); // Enter 키 입력 시 저장
+        } else if (e.key === 'Escape') {
+            input.removeEventListener('blur', saveOrRevert); // Escape 키 입력 시 blur 이벤트 없이 복원
+            cell.textContent = Number(originalValue).toLocaleString();
+        }
+    });
+
+    cell.appendChild(input);
+    input.focus();
+  }
+
+  // 서버로 통관재고 데이터를 업데이트하는 함수
+  updateTongwanStock(date, value) {
+      move(); // 로딩 시작
+
+      const url = `${window.subul_pd_srv}`;
+      const params = new URLSearchParams({
+          category: 'update_tongwan_stock',
+          invt_date: date,
+          stock_quantity: value
+      });
+
+      fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: params
+      })
+      .then(response => response.json())
+      .then(result => {
+          if (result.status !== 'success') {
+              alert('통관재고 업데이트 실패: ' + result.message);
+          }
+          this.loadData(); // 성공/실패 여부와 관계없이 최신 데이터로 화면 갱신
+      })
+      .catch(error => {
+          console.error('Error updating tongwan stock:', error);
+          alert('통관재고 업데이트 중 오류 발생');
+          this.loadData(); // 오류 발생 시에도 최신 데이터로 화면 갱신
+      });
+  }
+
+  // 서버로 생산재고 데이터를 업데이트하는 함수
+  updateStock(date, value) {
+    move(); // 로딩 시작
+
+    const url = `${window.subul_pd_srv}`;
+    const params = new URLSearchParams({
+        category: 'update_saengsan_stock',
+        invt_date: date,
+        cnt_fillets: value
+    });
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status !== 'success') {
+            alert('재고 업데이트 실패: ' + result.message);
+        }
+        this.loadData(); // 성공/실패 여부와 관계없이 최신 데이터로 화면 갱신
+    })
+    .catch(error => {
+        console.error('Error updating stock:', error);
+        alert('재고 업데이트 중 오류 발생');
+        this.loadData(); // 오류 발생 시에도 최신 데이터로 화면 갱신
+    });
+  }
+
   init() {
     const fromDateEl = document.getElementById('from_date_pd');
     const toDateEl = document.getElementById('to_date_pd');
     const searchBtn = document.getElementById('searchBtn-pd');
+    const predictBtn = document.getElementById('predictBtn-pd');
+    const predictBtnMobile = document.getElementById('predictBtn-pd-mobile');
 
     // 주간 네비게이션 요소
     this.prevWeekBtn = document.getElementById('prev-week-pd');
@@ -276,7 +413,7 @@ class subulPdClass {
         // 시작일(일요일)과 종료일(+10일) 계산
         const startDate = sundayOfSelectedWeek;
         const endDate = new Date(startDate);
-        endDate.setUTCDate(startDate.getUTCDate() + 10);
+        endDate.setUTCDate(startDate.getUTCDate() + 6);
         
         // 계산된 날짜를 yyyy-mm-dd 형식으로 변환하여 input 필드에 설정
         fromDateEl.value = startDate.toISOString().slice(0, 10);
@@ -291,12 +428,150 @@ class subulPdClass {
       this.loadData();
     });
     
+    // 예측 실행 버튼 이벤트 리스너 (데스크톱)
+    if (predictBtn) {
+        predictBtn.addEventListener('click', () => {
+            this.runPrediction();
+        });
+    }
+    
+    // 예측 실행 버튼 이벤트 리스너 (모바일)
+    if (predictBtnMobile) {
+        predictBtnMobile.addEventListener('click', () => {
+            this.runPredictionMobile();
+        });
+    }
+
     // 주간 네비게이션 버튼 이벤트 리스너
     this.prevWeekBtn.addEventListener('click', () => this.navigateWeek(-7));
     this.nextWeekBtn.addEventListener('click', () => this.navigateWeek(7));
 
     // 최초 데이터 로드
     this.loadData();
+  }
+
+  // 수입량 예측 실행 (데스크톱)
+  runPrediction() {
+    const weeks = document.getElementById('predict-weeks').value;
+    const days = document.getElementById('safety-stock-days').value;
+    const nextWeekImportPlan = document.getElementById('next-week-import-plan').value;
+    const resultDiv = document.getElementById('prediction-result');
+    
+    this.executePrediction(weeks, days, nextWeekImportPlan, resultDiv);
+  }
+
+  // 수입량 예측 실행 (모바일)
+  runPredictionMobile() {
+    const weeks = document.getElementById('predict-weeks-mobile').value;
+    const days = document.getElementById('safety-stock-days-mobile').value;
+    const nextWeekImportPlan = document.getElementById('next-week-import-plan-mobile').value;
+    const resultDiv = document.getElementById('prediction-result');
+    
+    this.executePrediction(weeks, days, nextWeekImportPlan, resultDiv);
+  }
+
+  // 공통 예측 실행 로직
+  executePrediction(weeks, days, nextWeekImportPlan, resultDiv) {
+
+    if (!weeks || !days || parseInt(weeks, 10) <= 0) {
+        alert('유효한 예측 기준(주)과 안전 재고(일)를 입력하세요.');
+        return;
+    }
+
+    move(); // 로딩 시작
+    resultDiv.style.display = 'none'; // 이전 결과 숨기기
+
+    const url = `${window.subul_pd_srv}`;
+    const params = new URLSearchParams({
+        category: 'run_prediction',
+        predict_weeks: weeks,
+        safety_stock_days: days,
+        next_week_import_plan: nextWeekImportPlan || 0
+    });
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            const data = result.data;
+
+            const surplusText = (data.surplus_stock && data.surplus_stock > 0)
+                ? `<span style="color: blue; font-weight: normal; font-size: 0.9em; margin-left: 10px;">
+                       (예상 초과 재고: ${data.surplus_stock.toLocaleString()} Box)
+                   </span>`
+                : '';
+
+            const formulaText = `
+                <span style="font-weight: normal; font-size: 0.9em; margin-left: 10px;">
+                    (계산식: G - F)
+                </span>`;
+
+            const resultTitle = `
+                <div style="background-color: #eef7ff; border-left: 5px solid #007bff; padding: 15px; margin-bottom: 10px; border-radius: 4px;">
+                    <span style="font-size: 1.1em; color: #333; display: block;"><strong>차차주::수입 발주 권장량</strong></span>
+                    <span style="font-size: 2.2em; color: #0056b3; font-weight: 900; line-height: 1.2;">
+                        ${data.predicted_import_needed.toLocaleString()} <span style="font-size: 0.5em; font-weight: normal; color: #555;">Box</span>
+                    </span>
+                    <div style="margin-top: 5px;">
+                        ${surplusText}
+                        ${formulaText}
+                    </div>
+                </div>`;
+
+            const summaryText = `
+                <p style="font-size: 0.9em; margin-top: 5px; color: #555; margin-bottom: 15px;">
+                    요약: 차차주에 필요한 물량(G)을 확보하기 위해, 차주 말에 남을 것으로 예상되는 재고량(F)을 제외한 권장 발주량입니다. (G)는 주간 평균 사용량과 안전재고를 더한 값이며, (F)는 (C)지난 주말 통관재고와 금주/차주 통관 계획량에서 2주치 사용량을 뺀 값입니다.
+                </p>
+            `;
+
+            resultDiv.innerHTML = `
+                ${resultTitle}
+                ${summaryText}
+                <ul>
+                    <li>(A) ${weeks}주 평균 주간 실제작업량: ${data.avg_weekly_workload.toLocaleString()} Box</li>
+                    <li>(B) ${days}일 안전 재고: ${data.safety_stock.toLocaleString()} Box <span style="font-size: 0.8em; color: #777; margin-left: 5px;">(A의 일평균 작업량)</span></li>
+                    <li>(C) 지난 주말 통관재고: ${data.stock_at_end_of_last_week.toLocaleString()} Box</li>
+                    <li>(D) 금주 통관 계획량: ${data.incoming_this_week.toLocaleString()} Box</li>
+                    <li>(E) 차주 통관 계획량: ${data.incoming_next_week.toLocaleString()} Box</li>
+                    <li style="border-top: 1px solid #ccc; padding-top: 8px; margin-top: 8px;">(F) 차주 말 예상 재고 (C+D+E - 2*A): ${data.projected_stock_end_of_next_week.toLocaleString()} Box</li>
+                    <li>(G) 주간 총 필요량 (A+B): ${data.total_needed_for_week_after_next.toLocaleString()} Box</li>
+                </ul>
+            `;
+            resultDiv.style.display = 'block';
+            
+            // DB에서 조회한 차주 통관 계획량을 input 필드에 표시
+            this.updateNextWeekImportPlanInput(data.incoming_next_week_db);
+        } else {
+            alert('예측 실패: ' + result.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error running prediction:', error);
+        alert('예측 실행 중 오류 발생');
+    })
+    .finally(() => {
+        move_stop();
+    });
+  }
+
+  // DB에서 조회한 차주 통관 계획량을 input 필드에 업데이트
+  updateNextWeekImportPlanInput(dbValue) {
+    const desktopInput = document.getElementById('next-week-import-plan');
+    const mobileInput = document.getElementById('next-week-import-plan-mobile');
+    
+    if (desktopInput && dbValue > 0) {
+      desktopInput.value = dbValue;
+    }
+    
+    if (mobileInput && dbValue > 0) {
+      mobileInput.value = dbValue;
+    }
   }
 
   // 서버에서 데이터 로드

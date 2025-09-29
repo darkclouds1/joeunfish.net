@@ -37,7 +37,427 @@ if ($category === "search_pd") {
     exit;
 }
 
+// 생산재고 업데이트
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['category'] ?? '') === 'update_saengsan_stock') {
+    $invt_date = $_POST['invt_date'] ?? '';
+    $cnt_fillets = $_POST['cnt_fillets'] ?? '';
+
+    if (empty($invt_date) || !isset($cnt_fillets)) {
+        echo json_encode(['status' => 'error', 'message' => '날짜 또는 재고 값이 없습니다.']);
+        exit;
+    }
+
+    $sql = "UPDATE tbarcodeout_invt SET cnt_fillets = ? WHERE invt_date = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        echo json_encode(['status' => 'error', 'message' => 'SQL prepare 실패: ' . $conn->error]);
+        exit;
+    }
+
+    $stmt->bind_param("is", $cnt_fillets, $invt_date);
+    $success = $stmt->execute();
+
+    if ($success) {
+        if ($stmt->affected_rows > 0) {
+            echo json_encode(['status' => 'success', 'message' => '생산재고가 업데이트되었습니다.']);
+        } else {
+            // 해당 날짜에 데이터가 없는 경우 INSERT 실행
+            $sql_insert = "INSERT INTO tbarcodeout_invt (invt_date, cnt_fillets) VALUES (?, ?)";
+            $stmt_insert = $conn->prepare($sql_insert);
+            if($stmt_insert) {
+                $stmt_insert->bind_param("si", $invt_date, $cnt_fillets);
+                $success_insert = $stmt_insert->execute();
+                if ($success_insert && $stmt_insert->affected_rows > 0) {
+                     echo json_encode(['status' => 'success', 'message' => '생산재고가 추가되었습니다.']);
+                } else {
+                     echo json_encode(['status' => 'error', 'message' => '생산재고 추가에 실패했습니다.', 'error' => $stmt_insert->error]);
+                }
+                $stmt_insert->close();
+            } else {
+                 echo json_encode(['status' => 'error', 'message' => 'INSERT SQL prepare 실패: ' . $conn->error]);
+            }
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => '데이터베이스 업데이트 실패: ' . $stmt->error]);
+    }
+    
+    $stmt->close();
+    exit;
+}
+
+// 공통 재고 계산 함수 (전역 위치로 이동)
+function calculate_stock($target_date, $product_spec, $conn, $sql_part_silje) {
+    $closing_stock_data = null;
+    $sql_closing = "SELECT invt_date, stock_quantity FROM tbarcodeout_invt WHERE invt_date <= ? AND stock_quantity IS NOT NULL ORDER BY invt_date DESC LIMIT 1";
+    $stmt_closing = $conn->prepare($sql_closing);
+    $stmt_closing->bind_param("s", $target_date);
+    $stmt_closing->execute();
+    $closing_stock_data = $stmt_closing->get_result()->fetch_assoc();
+    $stmt_closing->close();
+
+    $base_stock = 0;
+    $calc_start_date = '1970-01-01'; // 기본값
+
+    if ($closing_stock_data) {
+        $base_stock = (int)$closing_stock_data['stock_quantity'];
+        $calc_start_date = date('Y-m-d', strtotime($closing_stock_data['invt_date'] . ' +1 day'));
+    }
+
+    $deltas_tongwan = 0;
+    $deltas_silje = 0;
+
+    if ($calc_start_date <= $target_date) {
+        // [수정] 통관량과 실제 작업량 계산을 별도 쿼리로 분리하여 안정성 확보
+
+        // 1. 기간 내 통관량 합계 계산
+        $sql_tongwan = "SELECT COALESCE(SUM(p.vol), 0) FROM tpurchase_imp p WHERE p.import_dt BETWEEN ? AND ? AND TRIM(REPLACE(REPLACE(p.spec, '\r', ''), '\n', '')) = ?";
+        $stmt_tongwan = $conn->prepare($sql_tongwan);
+        if ($stmt_tongwan) {
+            $stmt_tongwan->bind_param("sss", $calc_start_date, $target_date, $product_spec);
+            $stmt_tongwan->execute();
+            $deltas_tongwan = $stmt_tongwan->get_result()->fetch_row()[0] ?? 0;
+            $stmt_tongwan->close();
+        }
+
+        // 2. 기간 내 실제 작업량 합계 계산
+        $sql_silje = "SELECT {$sql_part_silje}";
+        $stmt_silje = $conn->prepare($sql_silje);
+        if ($stmt_silje) {
+            // $sql_part_silje 내부의 placeholder는 4개
+            $stmt_silje->bind_param("ssss", $calc_start_date, $calc_start_date, $target_date, $product_spec);
+            $stmt_silje->execute();
+            $deltas_silje = $stmt_silje->get_result()->fetch_row()[0] ?? 0;
+            $stmt_silje->close();
+        }
+    }
+    return $base_stock + $deltas_tongwan - $deltas_silje;
+}
+
+// 통관재고 업데이트
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['category'] ?? '') === 'update_tongwan_stock') {
+    $invt_date = $_POST['invt_date'] ?? '';
+    $stock_quantity = $_POST['stock_quantity'] ?? '';
+
+    if (empty($invt_date) || !isset($stock_quantity)) {
+        echo json_encode(['status' => 'error', 'message' => '날짜 또는 재고 값이 없습니다.']);
+        exit;
+    }
+
+    $sql = "UPDATE tbarcodeout_invt SET stock_quantity = ? WHERE invt_date = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        echo json_encode(['status' => 'error', 'message' => 'SQL prepare 실패: ' . $conn->error]);
+        exit;
+    }
+
+    $stmt->bind_param("is", $stock_quantity, $invt_date);
+    $success = $stmt->execute();
+
+    if ($success) {
+        if ($stmt->affected_rows > 0) {
+            echo json_encode(['status' => 'success', 'message' => '통관재고가 업데이트되었습니다.']);
+        } else {
+            // 해당 날짜에 데이터가 없는 경우 INSERT 실행
+            $sql_insert = "INSERT INTO tbarcodeout_invt (invt_date, stock_quantity) VALUES (?, ?)";
+            $stmt_insert = $conn->prepare($sql_insert);
+            if($stmt_insert) {
+                $stmt_insert->bind_param("si", $invt_date, $stock_quantity);
+                $success_insert = $stmt_insert->execute();
+                if ($success_insert && $stmt_insert->affected_rows > 0) {
+                     echo json_encode(['status' => 'success', 'message' => '통관재고가 추가되었습니다.']);
+                } else {
+                     echo json_encode(['status' => 'error', 'message' => '통관재고 추가에 실패했습니다.', 'error' => $stmt_insert->error]);
+                }
+                $stmt_insert->close();
+            } else {
+                 echo json_encode(['status' => 'error', 'message' => 'INSERT SQL prepare 실패: ' . $conn->error]);
+            }
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => '데이터베이스 업데이트 실패: ' . $stmt->error]);
+    }
+
+    $stmt->close();
+    exit;
+}
+
+// 수입량 예측 실행
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['category'] ?? '') === 'run_prediction') {
+    $predict_weeks = (int)($_POST['predict_weeks'] ?? 12);
+    $safety_stock_days = (int)($_POST['safety_stock_days'] ?? 1);
+    $next_week_import_plan = (int)($_POST['next_week_import_plan'] ?? 0); // 차주 통관 계획량
+
+    try {
+        $product_spec = 'Salmon Trim E BB';
+
+        // --- (A) N주 평균 주간 실제작업량 계산 ---
+        $end_date_a = date('Y-m-d');
+        $start_date_a = date('Y-m-d', strtotime("-$predict_weeks weeks"));
+        
+        $sql_a = "
+            SELECT SUM(export_vol) AS total_workload
+            FROM (
+                SELECT
+                    CASE
+                        WHEN COUNT(1) = 1 AND ri.spec != 'Salmon Trim B BB' AND LENGTH(a.lc_no) = 4 THEN ri.vol
+                        ELSE COUNT(1)
+                    END AS export_vol
+                FROM tbarcodein a
+                LEFT JOIN (
+                    SELECT 
+                        awb_suffix AS bl_no, 
+                        MAX(spec) AS spec, 
+                        MAX(import_dt) AS import_dt,
+                        MAX(awb) AS awb,
+                        MAX(vol) AS vol,
+                        MAX(weight) AS weight
+                    FROM tpurchase_imp
+                    WHERE import_dt >= DATE_SUB(?, INTERVAL 1 MONTH)
+                    GROUP BY awb_suffix
+                ) ri ON ri.bl_no = LEFT(a.lc_no, 4)
+                WHERE DATE(a.increate_dt) BETWEEN ? AND ?
+                  AND ri.import_dt IS NOT NULL
+                  AND ri.import_dt >= DATE_SUB(DATE(a.increate_dt), INTERVAL 1 MONTH)
+                  AND TRIM(REPLACE(REPLACE(ri.spec, '\r', ''), '\n', '')) = ?
+                GROUP BY a.lc_no, a.increate_dt, ri.import_dt, ri.spec, ri.awb, ri.vol, ri.weight
+            ) AS daily_workload
+        ";
+
+        $stmt_a = $conn->prepare($sql_a);
+        $stmt_a->bind_param("ssss", $start_date_a, $start_date_a, $end_date_a, $product_spec);
+        $stmt_a->execute();
+        $result_a = $stmt_a->get_result();
+        $row_a = $result_a->fetch_assoc();
+        $total_workload = $row_a['total_workload'] ?? 0;
+        $avg_weekly_workload = ($predict_weeks > 0) ? round($total_workload / $predict_weeks) : 0;
+        $stmt_a->close();
+
+        // --- (B) 안전 재고 계산 ---
+        $avg_daily_workload = ($predict_weeks * 7 > 0) ? $total_workload / ($predict_weeks * 7) : 0;
+        $safety_stock = round($avg_daily_workload * $safety_stock_days);
+
+        // --- (C) 지난 주말 통관재고 및 현재 통관재고 계산 ---
+        $today_dt = new DateTime();
+        $day_of_week = (int)$today_dt->format('w'); // 0:일, 6:토
+        $today = $today_dt->format('Y-m-d');
+
+        // 지난 주 토요일(W-1) 계산
+        $end_of_last_week = (clone $today_dt)->modify('-' . ($day_of_week + 1) . ' days')->format('Y-m-d');
+
+        // 계산에 필요한 공통 SQL 쿼리 (실제 작업량)
+        $sql_part_silje = "
+            (SELECT SUM(export_vol) FROM (
+                SELECT
+                    CASE
+                        WHEN COUNT(1) = 1 AND ri.spec != 'Salmon Trim B BB' AND LENGTH(a.lc_no) = 4 THEN ri.vol
+                        ELSE COUNT(1)
+                    END AS export_vol
+                FROM tbarcodein a
+                LEFT JOIN (
+                    SELECT 
+                        awb_suffix AS bl_no, MAX(spec) AS spec, MAX(import_dt) AS import_dt,
+                        MAX(awb) AS awb, MAX(vol) AS vol, MAX(weight) AS weight
+                    FROM tpurchase_imp
+                    WHERE import_dt >= DATE_SUB(?, INTERVAL 1 MONTH)
+                    GROUP BY awb_suffix
+                ) ri ON ri.bl_no = LEFT(a.lc_no, 4)
+                WHERE DATE(a.increate_dt) BETWEEN ? AND ?
+                  AND ri.import_dt IS NOT NULL
+                  AND ri.import_dt >= DATE_SUB(DATE(a.increate_dt), INTERVAL 1 MONTH)
+                  AND TRIM(REPLACE(REPLACE(ri.spec, '\r', ''), '\n', '')) = ?
+                GROUP BY a.lc_no, a.increate_dt, ri.import_dt, ri.spec, ri.awb, ri.vol, ri.weight
+            ) AS daily_silje)
+        ";
+        
+        // 지난 주말(W-1) 재고 계산: 9/21(일) 기준으로 순차 계산하여 9/27(토) 재고 구하기
+        $stock_at_end_of_last_week = calculate_sequential_stock($end_of_last_week, $product_spec, $conn);
+        $current_tongwan_stock = calculate_sequential_stock($today, $product_spec, $conn);
+
+        // --- (D) 금주 입고 예정량 계산 ---
+        $start_of_week = (clone $today_dt)->modify("-$day_of_week days")->format('Y-m-d');
+        $end_of_week = (clone $today_dt)->modify("+" . (6 - $day_of_week) . " days")->format('Y-m-d');
+
+        $incoming_this_week = 0;
+        $sql_d = "SELECT COALESCE(SUM(vol), 0) AS incoming FROM tpurchase_imp WHERE import_dt BETWEEN ? AND ? AND TRIM(REPLACE(REPLACE(spec, '\r', ''), '\n', '')) = ?";
+        $stmt_d = $conn->prepare($sql_d);
+        $stmt_d->bind_param("sss", $start_of_week, $end_of_week, $product_spec);
+        $stmt_d->execute();
+        $incoming_this_week = (int)$stmt_d->get_result()->fetch_assoc()['incoming'];
+        $stmt_d->close();
+        
+        // --- (E) 차주 입고 예정량 계산 ---
+        $start_of_next_week = (clone $today_dt)->modify("+" . (7 - $day_of_week) . " days")->format('Y-m-d');
+        $end_of_next_week = (clone $today_dt)->modify("+" . (13 - $day_of_week) . " days")->format('Y-m-d');
+        
+        // 차주 통관 계획량: DB 조회값 + 사용자 입력값
+        $incoming_next_week_db = 0;
+        $sql_e = "SELECT COALESCE(SUM(vol), 0) AS incoming FROM tpurchase_imp WHERE import_dt BETWEEN ? AND ? AND TRIM(REPLACE(REPLACE(spec, '\r', ''), '\n', '')) = ?";
+        $stmt_e = $conn->prepare($sql_e);
+        $stmt_e->bind_param("sss", $start_of_next_week, $end_of_next_week, $product_spec);
+        $stmt_e->execute();
+        $incoming_next_week_db = (int)$stmt_e->get_result()->fetch_assoc()['incoming'];
+        $stmt_e->close();
+        
+        $incoming_next_week = $incoming_next_week_db + $next_week_import_plan;
+
+        // --- 최종 예측 계산 (수정된 로직) ---
+        // (F) 차주 말 예상 재고 = (W-1 주말재고) + (D)금주입고 + (E)차주입고 - (2주치 예상 소모량)
+        $projected_stock_end_of_next_week = $stock_at_end_of_last_week + $incoming_this_week + $incoming_next_week - (2 * $avg_weekly_workload);
+        
+        // (G) 차차주 필요량 = (A)주간평균 + (B)안전재고
+        $total_needed_for_week_after_next = $avg_weekly_workload + $safety_stock;
+        
+        // 최종 예측치 = (G) - (F)
+        $predicted_import_needed_raw = $total_needed_for_week_after_next - $projected_stock_end_of_next_week;
+        $predicted_import_needed = round($predicted_import_needed_raw);
+
+        // 결과 반환
+        $response_data = [
+            'avg_weekly_workload' => $avg_weekly_workload,
+            'safety_stock' => $safety_stock,
+            'current_tongwan_stock' => round($current_tongwan_stock),
+            'stock_at_end_of_last_week' => round($stock_at_end_of_last_week),
+            'incoming_this_week' => $incoming_this_week,
+            'incoming_next_week_db' => $incoming_next_week_db, // DB에서 조회한 차주 통관 계획량
+            'incoming_next_week_input' => $next_week_import_plan, // 사용자 입력 차주 통관 계획량
+            'incoming_next_week' => $incoming_next_week, // 총 차주 통관 계획량
+            'projected_stock_end_of_next_week' => round($projected_stock_end_of_next_week),
+            'total_needed_for_week_after_next' => round($total_needed_for_week_after_next),
+            'predicted_import_needed' => max(0, $predicted_import_needed), // 음수 값은 0으로 처리
+            'surplus_stock' => max(0, -$predicted_import_needed) // 초과 재고량
+        ];
+
+        echo json_encode(['status' => 'success', 'data' => $response_data]);
+
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => '예측 계산 중 오류 발생: ' . $e->getMessage()]);
+    }
+    exit;
+}
+
 $conn->close();
+
+// [신규] 통관재고 계산 최적화 함수
+function calculate_stock_with_deltas($target_date, $conn, $all_deltas) {
+    global $logFilePath;
+    
+    // 1. 먼저 대상 날짜에 직접 재고가 있는지 확인
+    $direct_stock_data = null;
+    $sql_direct = "SELECT stock_quantity FROM tbarcodeout_invt WHERE invt_date = ? AND stock_quantity IS NOT NULL";
+    $stmt_direct = $conn->prepare($sql_direct);
+    $stmt_direct->bind_param("s", $target_date);
+    $stmt_direct->execute();
+    $direct_stock_data = $stmt_direct->get_result()->fetch_assoc();
+    $stmt_direct->close();
+    
+    // 대상 날짜에 직접 재고가 있으면 그 값을 반환
+    if ($direct_stock_data) {
+        return (int)$direct_stock_data['stock_quantity'];
+    }
+    
+    // 2. 대상 날짜 이전의 가장 가까운 마감 재고를 조회 (대상 날짜 포함)
+    $closing_stock_data = null;
+    $sql_closing = "SELECT invt_date, stock_quantity FROM tbarcodeout_invt WHERE invt_date <= ? AND stock_quantity IS NOT NULL ORDER BY invt_date DESC LIMIT 1";
+    $stmt_closing = $conn->prepare($sql_closing);
+    $stmt_closing->bind_param("s", $target_date);
+    $stmt_closing->execute();
+    $closing_stock_data = $stmt_closing->get_result()->fetch_assoc();
+    $stmt_closing->close();
+
+    $base_stock = 0;
+    // 변동분 계산 시작일. 마감 재고가 있으면 그 다음날, 없으면 아주 먼 과거.
+    $calc_start_date = '1970-01-01'; 
+
+    if ($closing_stock_data) {
+        $base_stock = (int)$closing_stock_data['stock_quantity'];
+        // 마감 재고가 있는 날짜가 대상 날짜와 같으면 변동분 계산하지 않음
+        if ($closing_stock_data['invt_date'] === $target_date) {
+            $calc_start_date = date('Y-m-d', strtotime($target_date . ' +1 day')); // 다음날로 설정하여 변동분 계산 안함
+        } else {
+            // 마감 재고가 있는 날짜의 다음날부터 변동분 계산
+            $calc_start_date = date('Y-m-d', strtotime($closing_stock_data['invt_date'] . ' +1 day'));
+        }
+    }
+
+    // 2. 마감 재고일 다음날부터 대상 날짜까지의 변동분(통관량 - 실제작업량)을 미리 계산된 배열에서 합산
+    $deltas_sum = 0;
+    if ($calc_start_date <= $target_date) {
+        $period = new DatePeriod(
+            new DateTime($calc_start_date),
+            new DateInterval('P1D'),
+            (new DateTime($target_date))->modify('+1 day')
+        );
+
+        foreach ($period as $day) {
+            $d_str = $day->format('Y-m-d');
+            if (isset($all_deltas[$d_str])) {
+                $deltas_sum += ($all_deltas[$d_str]['tongwan'] - $all_deltas[$d_str]['silje']);
+            }
+        }
+    }
+
+    return $base_stock + $deltas_sum;
+}
+
+// [신규] 순차적 재고 계산 함수 (예측 실행용)
+function calculate_sequential_stock($target_date, $product_spec, $conn) {
+    // 1. 9/21(일) 기준 재고 조회
+    $base_date = '2025-09-21';
+    $sql_base = "SELECT stock_quantity FROM tbarcodeout_invt WHERE invt_date = ? AND stock_quantity IS NOT NULL";
+    $stmt_base = $conn->prepare($sql_base);
+    $stmt_base->bind_param("s", $base_date);
+    $stmt_base->execute();
+    $base_stock_data = $stmt_base->get_result()->fetch_assoc();
+    $stmt_base->close();
+    
+    $base_stock = $base_stock_data ? (int)$base_stock_data['stock_quantity'] : 0;
+    
+    // 2. 9/22부터 대상 날짜까지의 변동분 계산
+    $start_date = '2025-09-22';
+    if ($start_date > $target_date) {
+        return $base_stock;
+    }
+    
+    // 통관량과 실제작업량 조회
+    $sql_tongwan = "SELECT COALESCE(SUM(vol), 0) FROM tpurchase_imp WHERE import_dt BETWEEN ? AND ? AND TRIM(REPLACE(REPLACE(spec, '\r', ''), '\n', '')) = ?";
+    $stmt_tongwan = $conn->prepare($sql_tongwan);
+    $stmt_tongwan->bind_param("sss", $start_date, $target_date, $product_spec);
+    $stmt_tongwan->execute();
+    $tongwan_total = $stmt_tongwan->get_result()->fetch_row()[0] ?? 0;
+    $stmt_tongwan->close();
+    
+    // 실제작업량 계산 (기존 로직과 동일)
+    $sql_silje = "
+        SELECT SUM(export_vol) FROM (
+            SELECT
+                CASE
+                    WHEN COUNT(1) = 1 AND ri.spec != 'Salmon Trim B BB' AND LENGTH(a.lc_no) = 4 THEN ri.vol
+                    ELSE COUNT(1)
+                END AS export_vol
+            FROM tbarcodein a
+            LEFT JOIN (
+                SELECT 
+                    awb_suffix AS bl_no, MAX(spec) AS spec, MAX(import_dt) AS import_dt,
+                    MAX(awb) AS awb, MAX(vol) AS vol, MAX(weight) AS weight
+                FROM tpurchase_imp
+                WHERE import_dt >= DATE_SUB(?, INTERVAL 1 MONTH)
+                GROUP BY awb_suffix
+            ) ri ON ri.bl_no = LEFT(a.lc_no, 4)
+            WHERE DATE(a.increate_dt) BETWEEN ? AND ?
+              AND ri.import_dt IS NOT NULL
+              AND ri.import_dt >= DATE_SUB(DATE(a.increate_dt), INTERVAL 1 MONTH)
+              AND TRIM(REPLACE(REPLACE(ri.spec, '\r', ''), '\n', '')) = ?
+            GROUP BY a.lc_no, a.increate_dt, ri.import_dt, ri.spec, ri.awb, ri.vol, ri.weight
+        ) AS daily_silje
+    ";
+    $stmt_silje = $conn->prepare($sql_silje);
+    $stmt_silje->bind_param("ssss", $start_date, $start_date, $target_date, $product_spec);
+    $stmt_silje->execute();
+    $silje_total = $stmt_silje->get_result()->fetch_row()[0] ?? 0;
+    $stmt_silje->close();
+    
+    return $base_stock + $tongwan_total - $silje_total;
+}
 
 function getPdData($from_date, $to_date, $conn)
 {
@@ -65,21 +485,35 @@ function getPdData($from_date, $to_date, $conn)
             throw new Exception("임시 테이블 생성 실패: " . $conn->error);
         }
         
-        // [추가] SQL 로깅
-        $params_temp = [$product_spec];
-        $completed_sql_temp = preg_replace_callback(
-            '/\?/',
-            function ($matches) use (&$params_temp, $conn) {
-                $param = array_shift($params_temp);
-                return "'" . $conn->real_escape_string($param) . "'";
-            },
-            $sql_temp_table
-        );
-        error_log("[subul_pd_srv.php] Create Temp Table SQL: " . $completed_sql_temp, 3, $logFilePath);
 
         $stmt_temp->bind_param("s", $product_spec);
         $stmt_temp->execute();
         $stmt_temp->close();
+
+        // [신규] 'calculate_stock' 함수에서 사용할 공통 SQL 쿼리 (실제 작업량)
+        $sql_part_silje = "
+            (SELECT SUM(export_vol) FROM (
+                SELECT
+                    CASE
+                        WHEN COUNT(1) = 1 AND ri.spec != 'Salmon Trim B BB' AND LENGTH(a.lc_no) = 4 THEN ri.vol
+                        ELSE COUNT(1)
+                    END AS export_vol
+                FROM tbarcodein a
+                LEFT JOIN (
+                    SELECT 
+                        awb_suffix AS bl_no, MAX(spec) AS spec, MAX(import_dt) AS import_dt,
+                        MAX(awb) AS awb, MAX(vol) AS vol, MAX(weight) AS weight
+                    FROM tpurchase_imp
+                    WHERE import_dt >= DATE_SUB(?, INTERVAL 1 MONTH)
+                    GROUP BY awb_suffix
+                ) ri ON ri.bl_no = LEFT(a.lc_no, 4)
+                WHERE DATE(a.increate_dt) BETWEEN ? AND ?
+                  AND ri.import_dt IS NOT NULL
+                  AND ri.import_dt >= DATE_SUB(DATE(a.increate_dt), INTERVAL 1 MONTH)
+                  AND TRIM(REPLACE(REPLACE(ri.spec, '\r', ''), '\n', '')) = ?
+                GROUP BY a.lc_no, a.increate_dt, ri.import_dt, ri.spec, ri.awb, ri.vol, ri.weight
+            ) AS daily_silje)
+        ";
 
         // [수정] 2. 슬라이딩 윈도우 계산을 위해 조회 기간을 'from_date - 1개월'로 확장하여 '일별 변동분' 조회
         $extended_from_date = date('Y-m-d', strtotime($from_date . ' -1 month'));
@@ -161,21 +595,6 @@ function getPdData($from_date, $to_date, $conn)
             throw new Exception("통관/실적 데이터 SQL prepare 실패: " . $conn->error);
         }
 
-        // [추가] SQL 로깅
-        $params_tongwan_silje = [
-            $extended_from_date, $extended_from_date, $to_date, // Calendar
-            $product_spec, $extended_from_date, $to_date, // DailyTongwan
-            $extended_from_date, $extended_from_date, $to_date, $product_spec // DailySilje (RawImport + RawExportLogic)
-        ];
-        $completed_sql_tongwan_silje = preg_replace_callback(
-            '/\?/',
-            function ($matches) use (&$params_tongwan_silje, $conn) {
-                $param = array_shift($params_tongwan_silje);
-                return "'" . $conn->real_escape_string($param) . "'";
-            },
-            $sql_tongwan_silje_deltas
-        );
-        error_log("[subul_pd_srv.php] Tongwan/Silje Deltas SQL: " . $completed_sql_tongwan_silje, 3, $logFilePath);
         
         // [수정] 최적화로 인해 파라미터 개수가 9개에서 10개로 변경
         $stmt_tongwan_silje->bind_param("ssssssssss",
@@ -233,22 +652,6 @@ function getPdData($from_date, $to_date, $conn)
             throw new Exception("일별 데이터 SQL prepare 실패: " . $conn->error);
         }
         
-        // [추가] SQL 로깅
-        $params_daily = [
-            $from_date, $to_date,
-            $product_name, $from_date, $to_date,
-            $from_date, $to_date,
-            $from_date, $to_date
-        ];
-        $completed_sql_daily = preg_replace_callback(
-            '/\?/',
-            function ($matches) use (&$params_daily, $conn) {
-                $param = array_shift($params_daily);
-                return "'" . $conn->real_escape_string($param) . "'";
-            },
-            $sql_daily
-        );
-        error_log("[subul_pd_srv.php] Daily Data SQL: " . $completed_sql_daily, 3, $logFilePath);
 
         $stmt_daily->bind_param("sssssssss", 
             $from_date, $to_date,
@@ -431,6 +834,9 @@ function getPdData($from_date, $to_date, $conn)
         $next_sunday = date('Y-m-d', strtotime($from_date . ' +7 days')); // 차주 일요일 계산
         $today_date = date('Y-m-d'); // 오늘 날짜
 
+        // [신규] 순차적 재고 계산을 위한 누적 재고 변수
+        $cumulative_tongwan_stock = $base_stock; // 기준 재고로 초기화
+        
         // 날짜별로 반복하면서 데이터 취합
         foreach ($period as $date) {
             $current_date = $date->format('Y-m-d');
@@ -439,16 +845,11 @@ function getPdData($from_date, $to_date, $conn)
             $tongwan = $tongwan_data[$current_date]['tongwan'] ?? 0;
             $silje = $tongwan_data[$current_date]['silje'] ?? 0;
 
-            if ($is_first_day) {
-                // [신규] 첫날은 미리 계산한 초기 재고를 할당
-                $tongwan_stock_for_today = $initial_stock;
-                $is_first_day = false;
-            } else {
-                // [신규] 둘째날부터는 어제 재고에 오늘 변동분을 더함
-                if ($current_date <= $today_date) {
-                    $tongwan_stock_for_today += ($tongwan - $silje);
-                }
+            // [수정] 순차적 재고 계산: 기준일 이후부터만 변동분 반영
+            if ($current_date > $closing_date_str) {
+                $cumulative_tongwan_stock += $tongwan - $silje;
             }
+            $tongwan_stock_for_today = $cumulative_tongwan_stock;
 
             $yesangsaeng = round($silje * 1.7);
             $silsaeng = $daily_values[$current_date]['silsaeng'] ?? 0;
@@ -456,14 +857,14 @@ function getPdData($from_date, $to_date, $conn)
             $yesangpan = $daily_values[$current_date]['yesangpan'] ?? 0;
             $saengsanjaego = $daily_values[$current_date]['saengsanjaego'] ?? null;
 
-            // 일별 데이터 저장
-            $result_data['통관계획'][$current_date] = round($tongwan, 1);
-            $result_data['실제작업'][$current_date] = round($silje, 1);
-            $result_data['통관재고'][$current_date] = ($current_date > $today_date) ? '-' : round($tongwan_stock_for_today, 1);
-            $result_data['예상생산'][$current_date] = round($yesangsaeng, 1);
-            $result_data['실제생산'][$current_date] = round($silsaeng, 1);
-            $result_data['예상판매'][$current_date] = round($yesangpan, 1);
-            $result_data['실제판매'][$current_date] = round($silpan, 1);
+            // 일별 데이터 저장 (0 값은 '-'로 표시)
+            $result_data['통관계획'][$current_date] = ($tongwan == 0) ? '-' : round($tongwan, 1);
+            $result_data['실제작업'][$current_date] = ($silje == 0) ? '-' : round($silje, 1);
+            $result_data['통관재고'][$current_date] = ($current_date > $today_date) ? '-' : (($tongwan_stock_for_today == 0) ? '-' : round($tongwan_stock_for_today, 1));
+            $result_data['예상생산'][$current_date] = ($yesangsaeng == 0) ? '-' : round($yesangsaeng, 1);
+            $result_data['실제생산'][$current_date] = ($silsaeng == 0) ? '-' : round($silsaeng, 1);
+            $result_data['예상판매'][$current_date] = ($yesangpan == 0) ? '-' : round($yesangpan, 1);
+            $result_data['실제판매'][$current_date] = ($silpan == 0) ? '-' : round($silpan, 1);
 
             if ($saengsanjaego !== null) {
                 $saengsan_stock = $saengsanjaego;

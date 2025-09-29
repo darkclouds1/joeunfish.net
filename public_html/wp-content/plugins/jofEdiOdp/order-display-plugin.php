@@ -280,7 +280,7 @@ function odp_form_shortcode()
                             $cell.html($input);
                             $input.focus();
 
-                            // focus out 되면(blur) 값 업데이트
+                            // blur 이벤트로 수량 업데이트 (확인창 없이 바로 저장)
                             $input.on('blur', function() {
                                 var newQuantity = $(this).val();
 
@@ -290,45 +290,8 @@ function odp_form_shortcode()
                                     return;
                                 }
 
-                                var $row = $cell.closest('tr');
-                                var docNo = $row.find('td:eq(0)').text();
-                                var productCode = $row.find('td:eq(3)').text();
-
-                                $.ajax({
-                                    url: '<?php echo plugin_dir_url(__FILE__) . 'get_order_data_srv.php'; ?>',
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        action: "update_qty",
-                                        doc_no: docNo,
-                                        product_code: productCode,
-                                        quantity: newQuantity,
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            var newQuantityVal = parseInt(newQuantity, 10);
-                                            $cell.text(newQuantityVal.toLocaleString('en-US'));
-
-                                            // 총 가격 실시간 업데이트
-                                            var unitPriceText = $row.find('td:eq(6)').text();
-                                            var unitPrice = parseFloat(unitPriceText.replace(/,/g, ''));
-                                            
-                                            if (!isNaN(unitPrice)) {
-                                                var newTotalPrice = unitPrice * newQuantityVal;
-                                                $row.find('td:eq(7)').text(newTotalPrice.toLocaleString('en-US'));
-                                            }
-                                            console.log("수량이 성공적으로 업데이트되었습니다.");
-                                        } else {
-                                            alert("수량 업데이트 실패: " + (response.data ? response.data.message : '알 수 없는 오류'));
-                                            $cell.text(originalQuantity); // 실패 시 원래 값으로 복원
-                                        }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.error("An error occurred: " + error);
-                                        alert("서버 통신 오류로 업데이트에 실패했습니다.");
-                                        $cell.text(originalQuantity); // 실패 시 원래 값으로 복원
-                                    },
-                                });
+                                // 바로 수량 업데이트
+                                updateQuantity($cell, originalQuantity, newQuantity);
                             });
 
                             // Enter 키를 누르면 blur 처리
@@ -342,7 +305,49 @@ function odp_form_shortcode()
                 } else {
                     resultsDiv.text("데이터가 없거나 올바르지 않은 형식입니다.");
                 }
+            }
 
+            // 수량 업데이트 함수를 전역 스코프로 이동
+            function updateQuantity($cell, originalQuantity, newQuantity) {
+                var $row = $cell.closest('tr');
+                var docNo = $row.find('td:eq(0)').text();
+                var productCode = $row.find('td:eq(3)').text();
+
+                $.ajax({
+                    url: '<?php echo plugin_dir_url(__FILE__) . 'get_order_data_srv.php'; ?>',
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        action: "update_qty",
+                        doc_no: docNo,
+                        product_code: productCode,
+                        quantity: newQuantity,
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var newQuantityVal = parseInt(newQuantity, 10);
+                            $cell.text(newQuantityVal.toLocaleString('en-US'));
+
+                            // 총 가격 실시간 업데이트
+                            var unitPriceText = $row.find('td:eq(6)').text();
+                            var unitPrice = parseFloat(unitPriceText.replace(/,/g, ''));
+                            
+                            if (!isNaN(unitPrice)) {
+                                var newTotalPrice = unitPrice * newQuantityVal;
+                                $row.find('td:eq(7)').text(newTotalPrice.toLocaleString('en-US'));
+                            }
+                            console.log("수량이 성공적으로 업데이트되었습니다.");
+                        } else {
+                            alert("수량 업데이트 실패: " + (response.data ? response.data.message : '알 수 없는 오류'));
+                            $cell.text(originalQuantity); // 실패 시 원래 값으로 복원
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred: " + error);
+                        alert("서버 통신 오류로 업데이트에 실패했습니다.");
+                        $cell.text(originalQuantity); // 실패 시 원래 값으로 복원
+                    },
+                });
             }
         });
     </script>

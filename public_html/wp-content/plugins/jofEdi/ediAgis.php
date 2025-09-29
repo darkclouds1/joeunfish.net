@@ -493,7 +493,7 @@ function ediAgis()
                                         } else {
                                             color = rowColor ? 'white' : '#f2f2f2';
                                         }
-                                        output += `<tr style="background-color: ${color}">`;
+                                        output += `<tr style="background-color: ${color}; height: 25px;">`;
 
                                         Object.keys(item).forEach(key => {
 
