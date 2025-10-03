@@ -130,23 +130,24 @@ if ($category === 'getStoreCd') {
 // -----------------
 if ($category === 'search-imp') {
     try {
-        $sql = "SELECT ROW_NUMBER() OVER (ORDER BY IMP.serial_no DESC) as row_num,
+        $sql = "SELECT ROW_NUMBER() OVER (ORDER BY IMP.import_dt DESC) as row_num,
                 IMP.*,
                 COALESCE(wpu.display_name, '') as modify_name
                 FROM tpurchase_imp AS IMP
                 LEFT JOIN wp_users wpu
                     ON IMP.modify_id = wpu.user_login 
                 WHERE IMP.import_dt BETWEEN ? AND ?
-                ORDER BY IMP.serial_no DESC";
+                ORDER BY IMP.import_dt DESC, IMP.awb ASC";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$start_date, $end_date]);
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+        
         echo json_encode([
             'success' => true,
             'data' => $data
         ], JSON_UNESCAPED_UNICODE);
+
     } catch (Exception $e) {
         echo json_encode([
             'success' => false,
@@ -672,8 +673,12 @@ if ($category === 'upload-imp') {
     try {
         // 요청 데이터 파싱
         $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$input || !isset($input['importData'])) {
+            throw new Exception("입력 데이터가 올바르지 않습니다.");
+        }
+        
         $importData = $input['importData'];
-        // error_log("[ln579]data=" . json_encode($importData), 3, $logFilePath);
 
         // 트랜잭션 시작
         $pdo->beginTransaction();
@@ -681,8 +686,10 @@ if ($category === 'upload-imp') {
         $stmt = $pdo->prepare("INSERT INTO tpurchase_imp 
                                 (import_dt, spec, vol, airline, awb, prod_date, create_id, modify_id) 
                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        foreach ($importData as $row) {
-            $stmt->execute([
+        
+        $insertCount = 0;
+        foreach ($importData as $index => $row) {
+            $result = $stmt->execute([
                 $row['import_dt'],
                 $row['spec'],
                 $row['vol'],
@@ -693,12 +700,25 @@ if ($category === 'upload-imp') {
                 $user_id,
                 $user_id
             ]);
+            
+            if ($result) {
+                $insertCount++;
+            } else {
+                error_log("[upload-imp] 행 " . ($index + 1) . " 삽입 실패: " . json_encode($stmt->errorInfo()), 3, $logFilePath);
+            }
         }
 
         $pdo->commit();
-        echo json_encode(['success' => true]);
+        
+        echo json_encode([
+            'success' => true, 
+            'message' => '총 ' . $insertCount . '개 데이터가 성공적으로 저장되었습니다.',
+            'inserted_count' => $insertCount
+        ]);
+        
     } catch (Exception $e) {
         $pdo->rollBack();
+        error_log("[upload-imp] 예외 발생: " . $e->getMessage(), 3, $logFilePath);
 
         echo json_encode([
             'success' => false,
@@ -911,7 +931,7 @@ if ($category === 'search-event') {
                 ORDER BY TEVENT.increate_dt, TEVENT.serial_no DESC
                 ";
 
-        error_log("\n[ln646]sql=" . $sql, 3, $logFilePath);
+        // error_log("\n[ln646]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$start_date, $end_date]);
@@ -969,7 +989,7 @@ if ($category === 'save-event') {
         ]);
 
         // error_log("[ln710]sql=" . $sql, 3, $logFilePath);
-        error_log("[ln909]data=" . json_encode($data), 3, $logFilePath);
+        // error_log("[ln909]data=" . json_encode($data), 3, $logFilePath);
 
         echo json_encode(['success' => true]);
 
@@ -1005,7 +1025,7 @@ if ($category === 'update-event') {
                     serial_no = ?         -- 일련번호로 레코드 식별
                 ";
 
-        error_log("[ln946]sql=" . $sql, 3, $logFilePath);
+        // error_log("[ln946]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -1046,7 +1066,7 @@ if ($category === 'delete-event') {
         $placeholders = str_repeat('?,', count($serial_nos) - 1) . '?';
         $sql = "DELETE FROM tevent WHERE serial_no IN ($placeholders)";
 
-        error_log("\n[ln770]sql=" . $sql, 3, $logFilePath);
+        // error_log("\n[ln770]sql=" . $sql, 3, $logFilePath);
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($serial_nos);
@@ -1067,7 +1087,7 @@ if ($category === 'delete-event') {
 if ($category === 'getEventCode') {
     // 파라미터: code (000=대분류, 그 외 소분류 코드)
     $code = $_GET['code'];
-    error_log("\n[ln1009]code=" . $code, 3, $logFilePath);
+    // error_log("\n[ln1009]code=" . $code, 3, $logFilePath);
 
     if ($code === '000') { // 대분류 조회
         $sql = "SELECT DISTINCT major_code AS code, major_nm AS code_nm 
@@ -1084,7 +1104,7 @@ if ($category === 'getEventCode') {
     }
     $result = $conn->query($sql);
 
-    error_log("[ln1025]sql=" . $sql, 3, $logFilePath);
+    // error_log("[ln1025]sql=" . $sql, 3, $logFilePath);
 
     $data = array();
     if ($result->num_rows > 0) {
@@ -1114,7 +1134,7 @@ if ($category === 'getEventProdList') {
             ORDER BY store_code";    
     $result = $conn->query($sql);
 
-    error_log("[ln1057]sql=" . $sql, 3, $logFilePath);
+    // error_log("[ln1057]sql=" . $sql, 3, $logFilePath);
     $data = array();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {

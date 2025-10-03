@@ -151,6 +151,12 @@ class subulPdClass {
             cell.classList.add('editable');
             cell.addEventListener('click', () => this.makeCellEditable(cell, date, 'tongwan'));
         }
+
+        // '원료판매' 행의 모든 셀에 편집 기능 추가 (숫자이거나 '-'인 경우)
+        if (rowData['구분'] === '원료판매') {
+            cell.classList.add('editable');
+            cell.addEventListener('click', () => this.makeCellEditable(cell, date, 'rowsale'));
+        }
       });
 
       // 3. 합계
@@ -256,6 +262,12 @@ class subulPdClass {
             valueSpan.addEventListener('click', () => this.makeCellEditable(valueSpan, date, 'tongwan'));
         }
 
+        // '원료판매' 항목의 모든 값에 편집 기능 추가 (숫자이거나 0인 경우)
+        if (category === '원료판매') {
+            dataRow.classList.add('editable');
+            valueSpan.addEventListener('click', () => this.makeCellEditable(valueSpan, date, 'rowsale'));
+        }
+
         content.appendChild(dataRow);
       });
 
@@ -282,24 +294,27 @@ class subulPdClass {
         return; // 이미 편집 중이면 중복 실행 방지
     }
 
-    const originalValue = cell.textContent.replace(/,/g, '');
+    const originalValue = cell.textContent.replace(/,/g, '').trim();
+    const numValue = originalValue === '-' ? '0' : originalValue;
     cell.innerHTML = ''; // 셀 내용 초기화
 
     const input = document.createElement('input');
     input.type = 'number';
-    input.value = originalValue;
+    input.value = numValue;
     input.className = 'editable-input'; // 스타일링을 위한 클래스
 
     const saveOrRevert = () => {
       const newValue = input.value;
-      if (newValue !== originalValue && newValue.trim() !== '') {
+      if (newValue !== numValue && newValue.trim() !== '') {
         if (stockType === 'saengsan') {
             this.updateStock(date, newValue); // 값이 변경되었으면 저장
         } else if (stockType === 'tongwan') {
             this.updateTongwanStock(date, newValue);
+        } else if (stockType === 'rowsale') {
+            this.updateRowSale(date, newValue);
         }
       } else {
-        cell.textContent = Number(originalValue).toLocaleString(); // 아니면 원래 값으로 복원
+        cell.textContent = numValue === '0' ? '-' : Number(numValue).toLocaleString(); // 아니면 원래 값으로 복원
       }
     };
 
@@ -310,7 +325,7 @@ class subulPdClass {
             input.blur(); // Enter 키 입력 시 저장
         } else if (e.key === 'Escape') {
             input.removeEventListener('blur', saveOrRevert); // Escape 키 입력 시 blur 이벤트 없이 복원
-            cell.textContent = Number(originalValue).toLocaleString();
+            cell.textContent = numValue === '0' ? '-' : Number(numValue).toLocaleString();
         }
     });
 
@@ -378,6 +393,38 @@ class subulPdClass {
     .catch(error => {
         console.error('Error updating stock:', error);
         alert('재고 업데이트 중 오류 발생');
+        this.loadData(); // 오류 발생 시에도 최신 데이터로 화면 갱신
+    });
+  }
+
+  // 서버로 원료판매 데이터를 업데이트하는 함수
+  updateRowSale(date, value) {
+    move(); // 로딩 시작
+
+    const url = `${window.subul_pd_srv}`;
+    const params = new URLSearchParams({
+        category: 'update_row_sale',
+        invt_date: date,
+        row_sale: value
+    });
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status !== 'success') {
+            alert('원료판매 업데이트 실패: ' + result.message);
+        }
+        this.loadData(); // 성공/실패 여부와 관계없이 최신 데이터로 화면 갱신
+    })
+    .catch(error => {
+        console.error('Error updating row sale:', error);
+        alert('원료판매 업데이트 중 오류 발생');
         this.loadData(); // 오류 발생 시에도 최신 데이터로 화면 갱신
     });
   }

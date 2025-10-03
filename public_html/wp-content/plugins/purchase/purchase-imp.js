@@ -621,64 +621,64 @@ window.purchaseImpClass = new PurchaseImpClass();
 // 엑셀 업로드::통관매입 
 // ----------------------
 function handleExcelUpload() {
-   const file = document.getElementById('excelFile').files[0];
-   const reader = new FileReader();
+  const file = document.getElementById('excelFile').files[0];
+  const reader = new FileReader();
 
-   reader.onload = (e) => { // 화살표 함수로 변경하여 this 컨텍스트 유지
-       const data = new Uint8Array(e.target.result);
-       const workbook = XLSX.read(data, {type: 'array'});
-       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+  reader.onload = (e) => { // 화살표 함수로 변경하여 this 컨텍스트 유지
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, {type: 'array'});
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      
+      let importData = [];
+      let rowNum = 2; // 헤더를 제외하고 2번째 행부터 시작
+
+     while (worksheet['B' + rowNum] || getMergedCellValue(worksheet, 'B' + rowNum)) {
+         
+       const importDtValue = getMergedCellValue(worksheet, 'B' + rowNum);
+       const prodDateValue = getMergedCellValue(worksheet, 'I' + rowNum);
        
-       let importData = [];
-       let rowNum = 2; // 헤더를 제외하고 2번째 행부터 시작
+       console.log(`Row ${rowNum}: import_dt = ${importDtValue}, prod_date = ${prodDateValue}`); // 디버깅 로그 추가
 
-      while (worksheet['B' + rowNum] || getMergedCellValue(worksheet, 'B' + rowNum)) {
-          
-        const importDtValue = getMergedCellValue(worksheet, 'B' + rowNum);
-        const prodDateValue = getMergedCellValue(worksheet, 'I' + rowNum);
-        
-        console.log(`Row ${rowNum}: import_dt = ${importDtValue}, prod_date = ${prodDateValue}`); // 디버깅 로그 추가
+       importData.push({
+             import_dt: excelDateToJSDate(importDtValue), 
+             spec: getMergedCellValue(worksheet, 'D' + rowNum) || '',
+             vol: getMergedCellValue(worksheet, 'E' + rowNum) || '',
+             airline: getMergedCellValue(worksheet, 'F' + rowNum) || '',
+             awb: getMergedCellValue(worksheet, 'G' + rowNum) || '',
+             prod_date: excelDateToJSDate(prodDateValue)
+         });
+         rowNum++;
+     }
 
-        importData.push({
-              import_dt: excelDateToJSDate(importDtValue), 
-              spec: getMergedCellValue(worksheet, 'D' + rowNum) || '',
-              vol: getMergedCellValue(worksheet, 'E' + rowNum) || '',
-              airline: getMergedCellValue(worksheet, 'F' + rowNum) || '',
-              awb: getMergedCellValue(worksheet, 'G' + rowNum) || '',
-              prod_date: excelDateToJSDate(prodDateValue)
-          });
-          rowNum++;
-      }
+     const url = this.purchase_srv + '?category=upload-imp&user_id=' + user_id;
+     console.log(url);
+     fetch(url, {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({ importData: importData })
+     })
+     .then(response => response.json())
+     .then(data => {
+         if (data.success) {
+           alert('데이터가 성공적으로 업로드되었습니다.');
+           window.location.reload();
 
-      const url = this.purchase_srv + '?category=upload-imp&user_id=' + user_id;
-      console.log(url);
-      fetch(url, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ importData: importData })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-            alert('데이터가 성공적으로 업로드되었습니다.');
-            window.location.reload();
+           // 조회 버튼을 프로그래밍적으로 클릭
+           // const searchButton = document.getElementById('search-btn-imp');
+           // if (searchButton) {
+           //     // 조회 버튼을 프로그래밍적으로 클릭
+           //     searchButton.click();
+           // }
 
-            // 조회 버튼을 프로그래밍적으로 클릭
-            // const searchButton = document.getElementById('search-btn-imp');
-            // if (searchButton) {
-            //     // 조회 버튼을 프로그래밍적으로 클릭
-            //     searchButton.click();
-            // }
-
-          } else {
-              alert('업로드 중 오류가 발생했습니다: ' + data.error);
-          }
-      });
-   };
-  reader.readAsArrayBuffer(file);
-   
+         } else {
+             alert('업로드 중 오류가 발생했습니다: ' + data.error);
+         }
+     });
+  };
+ reader.readAsArrayBuffer(file);
+  
 }
 
 function getMergedCellValue(worksheet, address) {

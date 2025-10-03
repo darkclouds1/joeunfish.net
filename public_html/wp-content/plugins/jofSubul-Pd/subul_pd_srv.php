@@ -181,6 +181,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['category'] ?? '') === 'upd
     exit;
 }
 
+// 원료판매 업데이트
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['category'] ?? '') === 'update_row_sale') {
+    $invt_date = $_POST['invt_date'] ?? '';
+    $row_sale = $_POST['row_sale'] ?? '';
+
+    if (empty($invt_date) || !isset($row_sale)) {
+        echo json_encode(['status' => 'error', 'message' => '날짜 또는 원료판매 값이 없습니다.']);
+        exit;
+    }
+
+    $sql = "UPDATE tbarcodeout_invt SET row_sale = ? WHERE invt_date = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        echo json_encode(['status' => 'error', 'message' => 'SQL prepare 실패: ' . $conn->error]);
+        exit;
+    }
+
+    $stmt->bind_param("is", $row_sale, $invt_date);
+    $success = $stmt->execute();
+
+    if ($success) {
+        if ($stmt->affected_rows > 0) {
+            echo json_encode(['status' => 'success', 'message' => '원료판매가 업데이트되었습니다.']);
+        } else {
+            // 해당 날짜에 데이터가 없는 경우 INSERT 실행
+            $sql_insert = "INSERT INTO tbarcodeout_invt (invt_date, row_sale) VALUES (?, ?)";
+            $stmt_insert = $conn->prepare($sql_insert);
+            if($stmt_insert) {
+                $stmt_insert->bind_param("si", $invt_date, $row_sale);
+                $success_insert = $stmt_insert->execute();
+                if ($success_insert && $stmt_insert->affected_rows > 0) {
+                     echo json_encode(['status' => 'success', 'message' => '원료판매가 추가되었습니다.']);
+                } else {
+                     echo json_encode(['status' => 'error', 'message' => '원료판매 추가에 실패했습니다.', 'error' => $stmt_insert->error]);
+                }
+                $stmt_insert->close();
+            } else {
+                 echo json_encode(['status' => 'error', 'message' => 'INSERT SQL prepare 실패: ' . $conn->error]);
+            }
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => '데이터베이스 업데이트 실패: ' . $stmt->error]);
+    }
+    
+    $stmt->close();
+    exit;
+}
+
 // 수입량 예측 실행
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['category'] ?? '') === 'run_prediction') {
     $predict_weeks = (int)($_POST['predict_weeks'] ?? 12);
@@ -643,6 +691,12 @@ function getPdData($from_date, $to_date, $conn)
             SELECT invt_date AS `date`, 'saengsanjaego' AS `type`, cnt_fillets AS `value`
             FROM tbarcodeout_invt
             WHERE invt_date BETWEEN ? AND ?
+            UNION ALL
+
+            -- 원료판매
+            SELECT invt_date AS `date`, 'rowsale' AS `type`, row_sale AS `value`
+            FROM tbarcodeout_invt
+            WHERE invt_date BETWEEN ? AND ?
 
         ) AS daily_data GROUP BY DATE(`date`), `type`
     ";
@@ -653,9 +707,10 @@ function getPdData($from_date, $to_date, $conn)
         }
         
 
-        $stmt_daily->bind_param("sssssssss", 
+        $stmt_daily->bind_param("sssssssssss", 
             $from_date, $to_date,
             $product_name, $from_date, $to_date,
+            $from_date, $to_date,
             $from_date, $to_date,
             $from_date, $to_date
         );
@@ -674,7 +729,7 @@ function getPdData($from_date, $to_date, $conn)
         
         // 4. [수정] 최종 데이터 가공 (마감재고 기반 초기재고 계산 + 일별 누적 방식)
         $result_data = [];
-        $categories = ['통관계획', '실제작업', '예상생산', '실제생산', '예상판매', '실제판매', '생산재고', '통관재고'];
+        $categories = ['통관계획', '실제작업', '원료판매', '예상생산', '실제생산', '예상판매', '실제판매', '생산재고', '통관재고'];
         foreach ($categories as $cat) {
             $result_data[$cat] = ['구분' => $cat, '합계' => 0];
         }
@@ -844,10 +899,11 @@ function getPdData($from_date, $to_date, $conn)
             // 당일 데이터 가져오기
             $tongwan = $tongwan_data[$current_date]['tongwan'] ?? 0;
             $silje = $tongwan_data[$current_date]['silje'] ?? 0;
+            $rowsale = $daily_values[$current_date]['rowsale'] ?? 0;
 
-            // [수정] 순차적 재고 계산: 기준일 이후부터만 변동분 반영
+            // [수정] 순차적 재고 계산: 기준일 이후부터만 변동분 반영 (원료판매 차감 추가)
             if ($current_date > $closing_date_str) {
-                $cumulative_tongwan_stock += $tongwan - $silje;
+                $cumulative_tongwan_stock += $tongwan - $silje - $rowsale;
             }
             $tongwan_stock_for_today = $cumulative_tongwan_stock;
 
@@ -860,6 +916,7 @@ function getPdData($from_date, $to_date, $conn)
             // 일별 데이터 저장 (0 값은 '-'로 표시)
             $result_data['통관계획'][$current_date] = ($tongwan == 0) ? '-' : round($tongwan, 1);
             $result_data['실제작업'][$current_date] = ($silje == 0) ? '-' : round($silje, 1);
+            $result_data['원료판매'][$current_date] = ($rowsale == 0) ? '-' : round($rowsale, 1);
             $result_data['통관재고'][$current_date] = ($current_date > $today_date) ? '-' : (($tongwan_stock_for_today == 0) ? '-' : round($tongwan_stock_for_today, 1));
             $result_data['예상생산'][$current_date] = ($yesangsaeng == 0) ? '-' : round($yesangsaeng, 1);
             $result_data['실제생산'][$current_date] = ($silsaeng == 0) ? '-' : round($silsaeng, 1);
@@ -924,6 +981,7 @@ function getPdData($from_date, $to_date, $conn)
             // 합계 누적
             $result_data['통관계획']['합계'] += $tongwan;
             $result_data['실제작업']['합계'] += $silje;
+            $result_data['원료판매']['합계'] += $rowsale;
             $result_data['예상생산']['합계'] += $yesangsaeng;
             $result_data['실제생산']['합계'] += $silsaeng;
             $result_data['예상판매']['합계'] += $yesangpan;
