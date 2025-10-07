@@ -84,7 +84,7 @@ fi
 
 # 각 SQL 파일을 webhosting 에 복원
 for FILE in $SQL_FILES; do
-    echo "Importing $FILE into webhosting database..."
+    # echo "Importing $FILE into webhosting database..."
     
     # EVENT, TRIGGER 관련 권한 문제 및 불완전한 SQL 구문 제거
     TEMP_FILE="${FILE}.temp"

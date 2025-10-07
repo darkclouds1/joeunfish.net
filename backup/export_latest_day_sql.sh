@@ -22,7 +22,7 @@ TARGET_HOST="45.130.228.170"
 # START_DATE_FORMAT="20250715"
 
 START_DATE=$(date -d "-1 days" +%Y-%m-%d)
-START_DATE_FORMAT=$(date -d "-2 days" +%Y%m%d)
+START_DATE_FORMAT=$(date -d "-1 days" +%Y%m%d)
 
 # 백업 디렉토리 설정
 BACKUP_DIR="/home/joeunfish.net/backup/net_backup_${START_DATE_FORMAT}"
@@ -202,18 +202,64 @@ RESTORE_FAILED=0
 
 # 각 백업 파일을 타겟 DB에 복원
 for FILE in $BACKUP_FILES; do
-    TABLE_NAME=$(basename "$FILE" | cut -d'_' -f1)
-    echo "복원 중: $(basename "$FILE")"
+    # 파일명에서 테이블명 추출 (날짜 부분 제거)
+    FILENAME=$(basename "$FILE" .sql)
+    TABLE_NAME=${FILENAME%_${START_DATE_FORMAT}}
+    
+    echo "복원 중: $(basename "$FILE") => 테이블: $TABLE_NAME"
+    
+    # 테이블별 DELETE 조건을 다시 설정
+    DELETE_CONDITION=""
+    
+    case $TABLE_NAME in
+        tascinvt|tascinvt3|tbarcodein|tbarcodeinv|tbarcodeinv_m|tbarcodeout|tbarcodeout_invt|tdayprod|tdayprod_lot|tevent|tgscodeout|tgscodeout_invent|tpurchase_in)
+            DELETE_CONDITION="date(increate_dt) >= '$START_DATE'"
+            ;;
+        tdayprod_mst|tdayprodmat_mst|torderproducts|torderproducts_add)
+            DELETE_CONDITION="date(create_dt) >= '$START_DATE'"
+            ;;
+        tprodinvt)
+            DELETE_CONDITION="date(invt_dt) >= '$START_DATE'"
+            ;;
+        tpurchase_imp)
+            DELETE_CONDITION="date(import_dt) >= '$START_DATE'"
+            ;;
+        tcomcode|tcomcodegs|tcodebook|tasks)
+            # 코드 테이블은 전체 복원
+            DELETE_CONDITION=""
+            ;;
+        torders)
+            DELETE_CONDITION="order_dt >= '$START_DATE_FORMAT'"
+            ;;
+        tpurchase)
+            DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
+            ;;
+        toctopus_invt)
+            DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
+            ;;
+        *)
+            # 날짜 컬럼이 없는 테이블은 전체 복원
+            DELETE_CONDITION=""
+            ;;
+    esac
     
     # 타겟 DB에서 시작일자 이후 데이터 삭제
     if [ -n "$DELETE_CONDITION" ]; then
-        echo "  🗑️  $TABLE_NAME 테이블에서 시작일자 이후 데이터 삭제 중..."
-        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" \
-            -e "DELETE FROM $TABLE_NAME WHERE $DELETE_CONDITION" 2>/dev/null
+        echo "  🗑️  $TABLE_NAME 테이블에서 시작일자 이후 데이터 삭제 중... (WHERE $DELETE_CONDITION)"
+        DELETE_RESULT=$(mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" \
+            -e "DELETE FROM $TABLE_NAME WHERE $DELETE_CONDITION" 2>&1)
+        DELETE_STATUS=$?
+        if [ $DELETE_STATUS -ne 0 ]; then
+            echo "  ⚠️  DELETE 오류: $DELETE_RESULT"
+        fi
     else
         echo "  🗑️  $TABLE_NAME 테이블 전체 데이터 삭제 중..."
-        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" \
-            -e "DELETE FROM $TABLE_NAME" 2>/dev/null
+        DELETE_RESULT=$(mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" \
+            -e "DELETE FROM $TABLE_NAME" 2>&1)
+        DELETE_STATUS=$?
+        if [ $DELETE_STATUS -ne 0 ]; then
+            echo "  ⚠️  DELETE 오류: $DELETE_RESULT"
+        fi
     fi
     
     # 복원 전: 트리거와 외래키 제약조건 비활성화
@@ -221,19 +267,21 @@ for FILE in $BACKUP_FILES; do
         -e "SET FOREIGN_KEY_CHECKS = 0; SET UNIQUE_CHECKS = 0; SET AUTOCOMMIT = 0;" 2>/dev/null
     
     # 백업 파일을 타겟 DB에 복원
-    mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$FILE"
+    RESTORE_RESULT=$(mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$FILE" 2>&1)
+    RESTORE_STATUS=$?
     
     # 복원 후: 설정 복원
     mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" \
         -e "SET FOREIGN_KEY_CHECKS = 1; SET UNIQUE_CHECKS = 1; COMMIT;" 2>/dev/null
     
-    if [ $? -eq 0 ]; then
+    if [ $RESTORE_STATUS -eq 0 ]; then
         echo "  ✅ $(basename "$FILE") 복원 완료"
         log_to_db "backup_${TABLE_NAME}" "$(basename "$FILE"): 복원 성공"
         ((RESTORE_SUCCESS++))
     else
         echo "  ❌ $(basename "$FILE") 복원 실패"
-        log_to_db "backup_${TABLE_NAME}" "$(basename "$FILE"): 복원 실패"
+        echo "  오류 메시지: $RESTORE_RESULT"
+        log_to_db "backup_${TABLE_NAME}" "$(basename "$FILE"): 복원 실패 - $RESTORE_RESULT"
         ((RESTORE_FAILED++))
     fi
 done

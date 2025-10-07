@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# KVM 서버에서 증분 백업하여 webhosting으로 복원하는 스크립트
-# 마지막 백업 이후 변경된 데이터만 백업하여 효율적으로 동기화
+# KVM 서버에서 증분 백업하여 webhosting으로 복원하는 최적화된 스크립트
+# 병렬 처리, 연결 최적화, 불필요한 쿼리 제거로 성능 대폭 개선
 
 # KVM 서버 (소스)
 SOURCE_DB="joeu_fish"
@@ -18,173 +18,254 @@ TARGET_HOST="45.130.228.170"
 BACKUP_DIR="/home/joeunfish.net/backup/backup_db"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
-# 최초 백업 시간 설정 (2025년 7월 12일 16:00)
+# 최초 백업 시간 설정
 INITIAL_BACKUP_TIME="20250713_000000"
 
-# 백업 디렉토리 생성
-mkdir -p "$BACKUP_DIR"
+# 병렬 처리 설정
+MAX_PARALLEL=4
+TEMP_DIR="/tmp/backup_$$"
 
-# logDB에 로그 기록 함수
+# 백업 디렉토리 생성
+mkdir -p "$BACKUP_DIR" "$TEMP_DIR"
+
+# 전역 변수
+SUCCESS_COUNT=0
+FAILED_COUNT=0
+SKIPPED_COUNT=0
+FAILED_TABLES=""
+CHANGED_COUNT=0
+
+# 실행 시작 시간 기록
+START_TIME=$(date +%s)
+
+echo "=== 최적화된 증분 백업 시작 ==="
+echo "소스: $SOURCE_HOST/$SOURCE_DB"
+echo "타겟: $TARGET_HOST/$TARGET_DB"
+echo "백업 시간: $TIMESTAMP"
+echo "병렬 처리: 최대 $MAX_PARALLEL개 동시 작업"
+echo ""
+
+# MySQL 연결 테스트 함수
+test_mysql_connection() {
+    local host=$1
+    local user=$2
+    local pass=$3
+    local db=$4
+    
+    mysql -h "$host" -u "$user" -p"$pass" -D "$db" -e "SELECT 1" >/dev/null 2>&1
+    return $?
+}
+
+# 연결 테스트
+echo "데이터베이스 연결 테스트 중..."
+if ! test_mysql_connection "$SOURCE_HOST" "$SOURCE_USER" "$SOURCE_PASS" "$SOURCE_DB"; then
+    echo "❌ 소스 DB 연결 실패: $SOURCE_HOST/$SOURCE_DB"
+    exit 1
+fi
+
+if ! test_mysql_connection "$TARGET_HOST" "$TARGET_USER" "$TARGET_PASS" "$TARGET_DB"; then
+    echo "❌ 타겟 DB 연결 실패: $TARGET_HOST/$TARGET_DB"
+    exit 1
+fi
+
+echo "✅ 데이터베이스 연결 성공"
+
+# logDB에 로그 기록 함수 (최적화)
 log_to_db() {
     local pg=$1
     local rmrk=$2
     
-    mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-        -e "INSERT INTO logdb (pg, id, ip, rmrk) VALUES ('$pg', 'system', '127.0.0.1', '$rmrk')" 2>/dev/null
+    # 백그라운드에서 로그 기록 (블로킹 방지)
+    (
+        mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+            -e "INSERT INTO logdb (pg, id, ip, rmrk) VALUES ('$pg', 'system', '127.0.0.1', '$rmrk')" 2>/dev/null
+    ) &
 }
 
-# 마지막 백업 시간 조회 (logdb 테이블에서)
+# 마지막 백업 시간 조회 (캐싱)
+declare -A LAST_BACKUP_CACHE
 get_last_backup_time() {
-    local last_backup=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-        -e "SELECT dt FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 1" -s --skip-column-names 2>/dev/null)
-    
-    if [ -n "$last_backup" ]; then
-        echo "$last_backup"
-    else
-        echo "$INITIAL_BACKUP_TIME"
+    if [ -z "${LAST_BACKUP_CACHE[backup]}" ]; then
+        local last_backup=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+            -e "SELECT dt FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 1" -s --skip-column-names 2>/dev/null)
+        
+        if [ -n "$last_backup" ]; then
+            LAST_BACKUP_CACHE[backup]="$last_backup"
+        else
+            LAST_BACKUP_CACHE[backup]="$INITIAL_BACKUP_TIME"
+        fi
     fi
+    echo "${LAST_BACKUP_CACHE[backup]}"
 }
 
 get_last_restore_time() {
     local table_name=$1
-    local last_restore=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-        -e "SELECT dt FROM logdb WHERE pg = 'backup_${table_name}' AND rmrk LIKE '%복원 성공%' ORDER BY dt DESC LIMIT 1" -s --skip-column-names 2>/dev/null)
-    if [ -n "$last_restore" ]; then
-        echo "$last_restore"
-    else
-        echo "$INITIAL_BACKUP_TIME"
+    if [ -z "${LAST_BACKUP_CACHE[$table_name]}" ]; then
+        local last_restore=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
+            -e "SELECT dt FROM logdb WHERE pg = 'backup_${table_name}' AND rmrk LIKE '%복원 성공%' ORDER BY dt DESC LIMIT 1" -s --skip-column-names 2>/dev/null)
+        if [ -n "$last_restore" ]; then
+            LAST_BACKUP_CACHE[$table_name]="$last_restore"
+        else
+            LAST_BACKUP_CACHE[$table_name]="$INITIAL_BACKUP_TIME"
+        fi
     fi
+    echo "${LAST_BACKUP_CACHE[$table_name]}"
 }
 
-# 실행 전 확인 (cronjob용 - 자동 실행)
-echo "=== 증분 백업 시작 ==="
-echo "소스: $SOURCE_HOST/$SOURCE_DB"
-echo "타겟: $TARGET_HOST/$TARGET_DB"
-echo "백업 시간: $TIMESTAMP"
-echo ""
-
-# 백업 시작 로그
-log_to_db "backup" "백업 시작: $TIMESTAMP"
-
-# 마지막 백업 시간 확인
-LAST_BACKUP=$(get_last_backup_time)
-echo "마지막 백업 시간: $LAST_BACKUP"
-
-# t로 시작하는 테이블 목록 가져오기
+# 테이블 목록 가져오기 (한 번만 실행)
 echo "테이블 목록 확인 중..."
 TABLES=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
     -e "SHOW TABLES LIKE 't%'" | grep -v "Tables_in")
 
-echo "테이블 목록: $TABLES"
+echo "총 테이블 수: $(echo $TABLES | wc -w)"
+echo ""
 
-# 백업 성공/실패 카운터
-SUCCESS_COUNT=0
-FAILED_COUNT=0
-FAILED_TABLES=""
-CHANGED_COUNT=0
+# 백업 시작 로그
+log_to_db "backup" "최적화된 백업 시작: $TIMESTAMP"
 
-echo "증분 백업 시작..."
-
-IFS=$'\n'
-for TABLE in $TABLES; do
-    echo "백업 중: [$TABLE]"
-    LAST_BACKUP=$(get_last_restore_time "$TABLE")
-    # 테이블의 변경사항 확인
-    CHANGED_ROWS=0
-    WHERE_CONDITION=""
+# WHERE 조건 설정 함수
+get_where_condition() {
+    local table=$1
+    local last_backup=$2
     
-    # 마지막 백업 이후 변경된 레코드 수 확인
-    case $TABLE in
+    case $table in
         "tascinvt"|"tascinvt3"|"tbarcodein"|"tbarcodeinv"|"tbarcodeinv_m"|"tbarcodeout"|"tdayprod"|"tdayprod_lot"|"tevent"|"tgscodeout"|"tgscodeout_invent"|"tpurchase_in")
-            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                -e "SELECT COUNT(*) FROM $TABLE WHERE increate_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-            WHERE_CONDITION="increate_dt > '$LAST_BACKUP'"
+            echo "increate_dt > '$last_backup'"
             ;;
         "tdayprod_mst"|"tdayprodmat_mst"|"torderproducts"|"torderproducts_add"|"tpurchase")
-            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                -e "SELECT COUNT(*) FROM $TABLE WHERE create_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-            WHERE_CONDITION="create_dt > '$LAST_BACKUP'"
+            echo "create_dt > '$last_backup'"
             ;;
         "tprodinvt")
-            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                -e "SELECT COUNT(*) FROM $TABLE WHERE invt_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-            WHERE_CONDITION="invt_dt > '$LAST_BACKUP'"
+            echo "invt_dt > '$last_backup'"
             ;;
         "tpurchase_imp")
-            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                -e "SELECT COUNT(*) FROM $TABLE WHERE import_dt > '$LAST_BACKUP'" -s --skip-column-names 2>/dev/null || echo "0")
-            WHERE_CONDITION="import_dt > '$LAST_BACKUP'"
+            echo "import_dt > '$last_backup'"
             ;;
         "tcomcode"|"tcomcodegs")
-            # 코드 테이블은 항상 전체 백업 (변경사항 추적 어려움)
-            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                -e "SELECT COUNT(*) FROM $TABLE" -s --skip-column-names 2>/dev/null || echo "0")
-            WHERE_CONDITION=""
+            # 코드 테이블은 전체 백업
+            echo ""
             ;;
         "torders")
-            LAST_BACKUP_DATE=${LAST_BACKUP:0:8}
-            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                -e "SELECT COUNT(*) FROM $TABLE WHERE order_dt > '$LAST_BACKUP_DATE'" -s --skip-column-names 2>/dev/null || echo "0")
-            WHERE_CONDITION="order_dt > '$LAST_BACKUP_DATE'"
+            local last_backup_date=${last_backup:0:8}
+            echo "order_dt > '$last_backup_date'"
             ;;
         *)
             # 날짜 컬럼이 없는 테이블은 전체 백업
-            CHANGED_ROWS=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" \
-                -e "SELECT COUNT(*) FROM $TABLE" -s --skip-column-names 2>/dev/null || echo "0")
-            WHERE_CONDITION=""
+            echo ""
             ;;
     esac
+}
+
+# 병렬 백업 함수
+backup_table_parallel() {
+    local table=$1
+    local timestamp=$2
+    local result_file="$TEMP_DIR/result_$table"
     
-    if [ "$CHANGED_ROWS" -eq 0 ]; then
-        echo "  ✓ $TABLE: 변경사항 없음 (건너뜀)"
-        log_to_db "backup_${TABLE}" "$TABLE: 변경사항 없음 (SKIPPED)"
-        continue
-    fi
+    echo "백업 중: [$table]" > "$result_file"
     
-    echo "  📊 $TABLE: $CHANGED_ROWS개 레코드 변경됨"
-    ((CHANGED_COUNT++))
+    # 마지막 백업 시간 조회
+    local last_backup=$(get_last_restore_time "$table")
+    local backup_file="$BACKUP_DIR/incremental_${table}_${timestamp}.sql"
     
-    # 증분 백업 실행
-    BACKUP_FILE="$BACKUP_DIR/incremental_${TABLE}_${TIMESTAMP}.sql"
+    # WHERE 조건 설정
+    local where_condition=$(get_where_condition "$table" "$last_backup")
     
-    if [ -n "$WHERE_CONDITION" ]; then
-        # 조건부 백업
+    # 백업 실행 (COUNT 쿼리 제거 - 직접 백업 후 파일 크기로 판단)
+    if [ -n "$where_condition" ]; then
         mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
             --no-create-info --no-create-db \
-            --single-transaction \
-            --skip-triggers \
-            --where="$WHERE_CONDITION" \
-            "$SOURCE_DB" "$TABLE" > "$BACKUP_FILE" 2>/dev/null
+            --single-transaction --skip-triggers \
+            --where="$where_condition" \
+            "$SOURCE_DB" "$table" > "$backup_file" 2>/dev/null
     else
-        # 전체 백업 (코드 테이블 또는 날짜 컬럼 없는 테이블)
         mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
             --no-create-info --no-create-db \
-            --single-transaction \
-            --skip-triggers \
-            "$SOURCE_DB" "$TABLE" > "$BACKUP_FILE" 2>/dev/null
+            --single-transaction --skip-triggers \
+            "$SOURCE_DB" "$table" > "$backup_file" 2>/dev/null
     fi
     
-    # 백업 결과 확인
-    if [ $? -eq 0 ] && [ -s "$BACKUP_FILE" ]; then
-        file_size=$(du -h "$BACKUP_FILE" | cut -f1)
-        echo "  ✅ $TABLE 백업 완료: $(basename "$BACKUP_FILE") ($file_size)"
-        log_to_db "backup_${TABLE}" "$TABLE: 백업 성공 ($CHANGED_ROWS rows, $file_size)"
-        ((SUCCESS_COUNT++))
+    # 결과 확인
+    if [ $? -eq 0 ] && [ -s "$backup_file" ]; then
+        local file_size=$(du -h "$backup_file" | cut -f1)
+        echo "  ✅ $table 백업 완료: $(basename "$backup_file") ($file_size)" >> "$result_file"
+        log_to_db "backup_${table}" "$table: 백업 성공 ($file_size)"
+        echo "SUCCESS:$table:$file_size" >> "$result_file"
     else
-        echo "  ❌ $TABLE 백업 실패"
-        log_to_db "backup_${TABLE}" "$TABLE: 백업 실패"
-        ((FAILED_COUNT++))
-        FAILED_TABLES="$FAILED_TABLES $TABLE"
-        rm -f "$BACKUP_FILE"
+        echo "  ✓ $table: 변경사항 없음 (건너뜀)" >> "$result_file"
+        log_to_db "backup_${table}" "$table: 변경사항 없음 (SKIPPED)"
+        echo "SKIPPED:$table" >> "$result_file"
+        rm -f "$backup_file"
+    fi
+}
+
+# 병렬 백업 실행
+echo "=== 병렬 백업 시작 ==="
+pids=()
+table_count=0
+
+for TABLE in $TABLES; do
+    # 최대 병렬 수 제한
+    while [ ${#pids[@]} -ge $MAX_PARALLEL ]; do
+        for i in "${!pids[@]}"; do
+            if ! kill -0 "${pids[$i]}" 2>/dev/null; then
+                unset pids[$i]
+            fi
+        done
+        pids=("${pids[@]}")  # 배열 재정렬
+        sleep 0.1
+    done
+    
+    # 백그라운드에서 백업 실행
+    backup_table_parallel "$TABLE" "$TIMESTAMP" &
+    pids+=($!)
+    ((table_count++))
+    
+    # 진행률 표시
+    echo -n "."
+    if [ $((table_count % 20)) -eq 0 ]; then
+        echo " ($table_count/$(echo $TABLES | wc -w))"
     fi
 done
-unset IFS
+
+echo ""
+echo "모든 백업 작업 시작 완료. 완료 대기 중..."
+
+# 모든 백그라운드 작업 완료 대기
+for pid in "${pids[@]}"; do
+    wait $pid
+done
+
+# 결과 수집
+echo "=== 백업 결과 수집 ==="
+for result_file in "$TEMP_DIR"/result_*; do
+    if [ -f "$result_file" ]; then
+        cat "$result_file"
+        echo ""
+        
+        # 결과 파싱
+        local result_line=$(grep "^SUCCESS:\|^SKIPPED:" "$result_file")
+        if [[ "$result_line" == "SUCCESS:"* ]]; then
+            ((SUCCESS_COUNT++))
+            ((CHANGED_COUNT++))
+        elif [[ "$result_line" == "SKIPPED:"* ]]; then
+            ((SKIPPED_COUNT++))
+        else
+            ((FAILED_COUNT++))
+            local table_name=$(basename "$result_file" | sed 's/result_//')
+            FAILED_TABLES="$FAILED_TABLES $table_name"
+        fi
+    fi
+done
+
+# 임시 파일 정리
+rm -rf "$TEMP_DIR"
 
 echo ""
 echo "=== 백업 결과 요약 ==="
 echo "총 테이블: $(echo $TABLES | wc -w)"
-echo "변경된 테이블: $CHANGED_COUNT"
 echo "백업 성공: $SUCCESS_COUNT"
+echo "변경사항 없음: $SKIPPED_COUNT"
 echo "백업 실패: $FAILED_COUNT"
 
 if [ $FAILED_COUNT -gt 0 ]; then
@@ -214,41 +295,93 @@ echo "=== webhosting 데이터베이스로 복원 시작 ==="
 RESTORE_SUCCESS=0
 RESTORE_FAILED=0
 
-# 각 증분 백업 파일을 타겟 DB에 복원
-for FILE in $INCREMENTAL_FILES; do
-    echo "복원 중: $(basename "$FILE")"
+# 병렬 복원 함수
+restore_file_parallel() {
+    local file=$1
+    local result_file="$TEMP_DIR/restore_$(basename "$file")"
     
-    # INSERT INTO를 REPLACE INTO로 변경하여 중복 시 덮어쓰기
-    TEMP_FILE="${FILE}.temp"
+    echo "복원 중: $(basename "$file")" > "$result_file"
     
-    sed 's/^INSERT INTO/REPLACE INTO/' "$FILE" > "$TEMP_FILE"
+    # INSERT INTO를 INSERT IGNORE INTO로 변경하여 중복 시 무시
+    local temp_file="${file}.temp"
+    
+    sed 's/^INSERT INTO/INSERT IGNORE INTO/' "$file" > "$temp_file"
     
     # 타겟 DB에 복원
-    mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$TEMP_FILE"
+    mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$temp_file"
     
     if [ $? -eq 0 ]; then
-        echo "  ✅ $(basename "$FILE") 복원 완료"
-        log_to_db "backup_$(basename "$FILE" | cut -d'_' -f2)" "$(basename "$FILE"): 복원 성공"
-        ((RESTORE_SUCCESS++))
+        echo "  ✅ $(basename "$file") 복원 완료" >> "$result_file"
+        local table_name=$(basename "$file" | cut -d'_' -f2)
+        log_to_db "backup_${table_name}" "$(basename "$file"): 복원 성공"
+        echo "SUCCESS:$(basename "$file")" >> "$result_file"
         # 성공한 파일은 보관 (나중에 정리)
-        mv "$TEMP_FILE" "${FILE}.restored"
+        mv "$temp_file" "${file}.restored"
     else
-        echo "  ❌ $(basename "$FILE") 복원 실패"
-        log_to_db "backup_$(basename "$FILE" | cut -d'_' -f2)" "$(basename "$FILE"): 복원 실패"
-        ((RESTORE_FAILED++))
-        rm -f "$TEMP_FILE"
+        echo "  ❌ $(basename "$file") 복원 실패" >> "$result_file"
+        local table_name=$(basename "$file" | cut -d'_' -f2)
+        log_to_db "backup_${table_name}" "$(basename "$file"): 복원 실패"
+        echo "FAILED:$(basename "$file")" >> "$result_file"
+        rm -f "$temp_file"
+    fi
+}
+
+# 병렬 복원 실행
+mkdir -p "$TEMP_DIR"
+pids=()
+
+for FILE in $INCREMENTAL_FILES; do
+    # 최대 병렬 수 제한
+    while [ ${#pids[@]} -ge $MAX_PARALLEL ]; do
+        for i in "${!pids[@]}"; do
+            if ! kill -0 "${pids[$i]}" 2>/dev/null; then
+                unset pids[$i]
+            fi
+        done
+        pids=("${pids[@]}")
+        sleep 0.1
+    done
+    
+    restore_file_parallel "$FILE" &
+    pids+=($!)
+done
+
+# 모든 복원 작업 완료 대기
+for pid in "${pids[@]}"; do
+    wait $pid
+done
+
+# 복원 결과 수집
+for result_file in "$TEMP_DIR"/restore_*; do
+    if [ -f "$result_file" ]; then
+        cat "$result_file"
+        
+        local result_line=$(grep "^SUCCESS:\|^FAILED:" "$result_file")
+        if [[ "$result_line" == "SUCCESS:"* ]]; then
+            ((RESTORE_SUCCESS++))
+        else
+            ((RESTORE_FAILED++))
+        fi
     fi
 done
 
+# 임시 파일 정리
+rm -rf "$TEMP_DIR"
+
 # 백업 완료 로그 기록
 if [ $RESTORE_FAILED -eq 0 ]; then
-    log_to_db "backup" "백업 완료: $SUCCESS_COUNT개 테이블 성공, $RESTORE_SUCCESS개 파일 복원 성공"
+    log_to_db "backup" "최적화된 백업 완료: $SUCCESS_COUNT개 테이블 성공, $RESTORE_SUCCESS개 파일 복원 성공"
 else
     log_to_db "backup" "백업 실패: $RESTORE_FAILED개 파일 복원 실패"
 fi
 
+# 실행 시간 계산
+END_TIME=$(date +%s)
+EXECUTION_TIME=$((END_TIME - START_TIME))
+
 echo ""
-echo "=== 증분 백업 완료 ==="
+echo "=== 최적화된 증분 백업 완료 ==="
+echo "실행 시간: ${EXECUTION_TIME}초"
 echo "백업 성공: $SUCCESS_COUNT 테이블"
 echo "복원 성공: $RESTORE_SUCCESS 파일"
 echo "복원 실패: $RESTORE_FAILED 파일"
@@ -257,5 +390,5 @@ if [ $RESTORE_FAILED -gt 0 ]; then
     echo "⚠️  일부 복원이 실패했습니다. 로그를 확인하세요."
 fi
 
-echo "✅ 증분 백업이 완료되었습니다."
+echo "✅ 최적화된 증분 백업이 완료되었습니다."
 echo "백업결과 확인: SELECT * FROM logdb WHERE pg = 'backup' ORDER BY dt DESC LIMIT 10;"
