@@ -41,8 +41,18 @@ function barcodeOutShortCode()
     </head>
 
     <body>
+
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
             <div class="form-container">
+                <div class="form-menu">
+                    <div id="entry-title">3층생산</div>
+                </div>
                 <form action="" name="myForm" id="myForm" method="get">
                     <!-- 첫 번째 행 -->
                     <div class="form-row">
@@ -94,7 +104,7 @@ function barcodeOutShortCode()
                     </div>
                 </form>
 
-                <div class="button-container" id="confirmBtn">
+                <div class="button-container search-row" id="confirmBtn" style="display: flex; justify-content: center; align-items: center; position: relative; gap: 10px; flex-wrap: wrap;">
                     <!-- 날짜/BL# 조건 조회 버튼 및 BL# 별 총중량 및 건수를 확인하는 버튼  -->
                     <button id="actionBtn">조회</button>
                     <button id="totalDel">전체삭제</button>
@@ -104,7 +114,7 @@ function barcodeOutShortCode()
                     <?php } ?>
                     <!-- 완출재고 조회 버튼 -->
                     <button id="invt002Btn">완출재고</button>
-
+                    <div class="search-row-menu-space" style="min-width: 95px; flex-shrink: 0;"></div>
                 </div>
 
                 <div id="Explain">
@@ -623,8 +633,17 @@ function barcodeOutShortCode()
             }
             console.log("[searchOut_srv]" + server);
 
-            if (category == 2) move(); // 조회 일 때 loding...
-            getAjax(server, recvOutData);
+            move(); // 조회 시 항상 loding 표시
+            
+            getAjax(server, function(data) {
+                try {
+                    recvOutData(data);
+                } catch(err) {
+                    console.error("[에러] 데이터 처리 실패:", err);
+                    move_stop(); // 에러 발생 시 로딩 중지
+                    alert("데이터 처리 중 오류가 발생했습니다: " + err.message);
+                }
+            });
         }
 
         //  재고조회, 완출점까지
@@ -634,7 +653,15 @@ function barcodeOutShortCode()
             console.log("[searchOut_srv]" + server);
 
             move(); // 조회 일 때 loding...
-            getAjax(server, recvOutData);
+            getAjax(server, function(data) {
+                try {
+                    recvOutData(data);
+                } catch(err) {
+                    console.error("[에러] 데이터 처리 실패:", err);
+                    move_stop();
+                    alert("데이터 처리 중 오류가 발생했습니다: " + err.message);
+                }
+            });
         }
 
         //  재고조회, 완출점(002)
@@ -643,11 +670,24 @@ function barcodeOutShortCode()
             console.log("[searchOut_srv]" + server);
 
             move(); // 조회 일 때 loding...
-            getAjax(server, recvOutData);
+            getAjax(server, function(data) {
+                try {
+                    recvOutData(data);
+                } catch(err) {
+                    console.error("[에러] 데이터 처리 실패:", err);
+                    move_stop();
+                    alert("데이터 처리 중 오류가 발생했습니다: " + err.message);
+                }
+            });
         }
 
         function recvOutData(data) {
-            move_stop();
+            // 로딩 중지
+            if (typeof move_stop === 'function') {
+                move_stop();
+            } else {
+                console.error("[에러] move_stop 함수가 정의되지 않았습니다!");
+            }
 
             try {
                 // 헤더정보
@@ -695,7 +735,16 @@ function barcodeOutShortCode()
                         // category == 2::모바일 조회 데이터
                         codeOutClass.makeTableHead();
                         codeOutClass.makeTabletr(data);
-                        if (table1.rows.length > 2) setSort();
+                        
+                        // setSort 비활성화 (500개 이상 데이터에서 심각한 렉 발생)
+                        if (table1.rows.length > 2 && table1.rows.length < 500) {
+                            try {
+                                setSort();
+                            } catch (sortError) {
+                                console.error("[에러] setSort 실패:", sortError.message);
+                            }
+                        }
+                        // 500개 이상은 정렬 기능 비활성화 (성능 최적화)
                     }
                 } else {
                     // category == 2::모바일 조회 데이터
@@ -705,6 +754,7 @@ function barcodeOutShortCode()
                 document.getElementById("totalrec").innerHTML =
                     '<font size="3em">[' + platForm + "]total record=" + idx;
             } catch (e) {
+                console.error("[에러] 조회결과 처리 실패:", e);
                 alert(
                     "ln587::시스템 장애 입니다. 잠시 후 재시도 하시기 바랍니다." + e.message
                 );

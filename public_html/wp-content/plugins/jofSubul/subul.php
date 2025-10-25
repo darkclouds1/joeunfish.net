@@ -50,11 +50,18 @@ function subulShortCode()
      </head>
 
      <body>
+
+          <?php   
+               // 공통 네비게이션 메뉴 포함
+               require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+               renderJofNavigation();
+          ?>
+
           <div class="form-container">
                <div class="container">
-                    <div class="form-menu">
-                         <div id="entry-title" style="float: left;">&nbsp;&nbsp;수불관리:CO::</div>
-                         <div>
+                    <div class="form-menu" style="display: grid; grid-template-columns: auto 1fr; align-items: center;">
+                         <div id="entry-title">&nbsp;&nbsp;수불관리</div>
+                         <div style="text-align: center;">
                               <span style="color: white; cursor: pointer;" onclick="showSubulCo()">CO</span> |
                               <span style="color: white; cursor: pointer;" onclick="showSubulBl()">BL</span> |
                               <span style="color: white; cursor: pointer;" onclick="showSubulImp()">통관</span> |
@@ -66,7 +73,7 @@ function subulShortCode()
                     <!-- CO생산 및 납품 내역 조회 -->
                     <div id="subulCoView" style="display: block; clear: both; align-items: center;">
                          <!-- 1번째 줄: 조회 영역 -->
-                         <div class="input-container search-row">
+                         <div class="input-container search-row" style="display: flex; justify-content: flex-start; align-items: center; position: relative; gap: 5px; flex-wrap: wrap;">
                               <input type="date" id="startDate-co" value="<?php echo date('Y-m-d'); ?>">
                               <button id="searchBtn-co">조회</button>
                               <?php if ($platForm === 'computer') { ?>
@@ -75,6 +82,7 @@ function subulShortCode()
                                    <button id="excel-day">일지</button>
                                    <button id="excel-form">양식</button>
                               <?php } ?>
+                              <div style="min-width: 95px; flex-shrink: 0;"></div>
                          </div>
                          <!-- 2번째 줄: 테이블 컨테이너 -->
                          <div id="tables-co" style="display: block; clear: both; align-items: center;">

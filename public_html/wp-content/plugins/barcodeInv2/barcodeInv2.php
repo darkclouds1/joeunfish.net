@@ -43,8 +43,18 @@ function barcodeInv2ShortCode()
     </head>
 
     <body>
+
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
             <div class="form-container">
+                <div class="form-menu">
+                    <div id="entry-title">(CO)상품출고</div>
+                </div>
                 <form action="" name="myForm" id="myForm" method="get">
                     <!-- 첫 번째 행 -->
                     <div class="form-row">
@@ -59,7 +69,7 @@ function barcodeInv2ShortCode()
                     </div>
                 </form>
 
-                <div class="button-container" id="confirmBtn">
+                <div class="button-container search-row" id="confirmBtn" style="display: flex; justify-content: center; align-items: center; position: relative; gap: 10px; flex-wrap: wrap;">
                     <button id="actionBtn" style="width: 50px;">조회</button>
                     <?php if ($platForm == 'computer') {    ?>
                         <!-- 송장출력 -->
@@ -69,6 +79,7 @@ function barcodeInv2ShortCode()
                         <button id="toExcel" onclick="tableToExcelInv()">엑셀다운</button>
                     <?php } ?>
                     <button id="manual">사용법</button>
+                    <div style="min-width: 95px; flex-shrink: 0;"></div>
                 </div>
 
 

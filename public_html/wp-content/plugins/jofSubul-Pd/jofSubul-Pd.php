@@ -16,6 +16,14 @@ if (!defined('ABSPATH')) {
 add_shortcode('jof_subul_pd', 'jof_subul_pd_shortcode');
 
 function jof_subul_pd_shortcode() {
+    // 공통 네비게이션 메뉴 포함 (shortcode 밖에서 렌더링)
+    static $navigation_rendered = false;
+    if (!$navigation_rendered) {
+        require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+        renderJofNavigation();
+        $navigation_rendered = true;
+    }
+    
     // 파일 수정 시간을 기반으로 버전 관리 (Cache Busting)
     $pd_css_ver = file_exists(__DIR__ . '/subul_pd.css') ? filemtime(__DIR__ . '/subul_pd.css') : time();
     $common_ver = file_exists($_SERVER['DOCUMENT_ROOT'] . '/jof/js/common.js') ? filemtime($_SERVER['DOCUMENT_ROOT'] . '/jof/js/common.js') : time();
@@ -75,14 +83,18 @@ function jof_subul_pd_shortcode() {
     </head>
     <body>
         <div id="contents">
-            <span> ■ 조회조건: 시작일(주) 선택 시 자동 10일 후로 설정됩니다. (※실제생산=조은점(000), 제외: 원재료, 완출, GS점) </span>
+            <div class="form-menu">
+                <div id="entry-title">추적(연어필렛)</div>
+            </div>
+            <span style="display: block; padding: 10px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; margin-bottom: 10px;"> ■ 조회조건: 시작일(주) 선택 시 자동 10일 후로 설정됩니다. (※실제생산=조은점(000), 제외: 원재료, 완출, GS점) </span>
             <div id="jofSubulPd-container">
                 <!-- 조회 조건 -->
-                <div class="search-row">
+                <div class="search-row" style="display: flex; justify-content: flex-start; align-items: center; position: relative; gap: 5px; flex-wrap: wrap;">
                     <input type="date" id="from_date_pd" value="<?php echo esc_attr($defaultFromDate); ?>">
                     <label for="to_date_pd">~</label>
                     <input type="date" id="to_date_pd" value="<?php echo esc_attr($defaultToDate); ?>" readonly>
-                    <button id="searchBtn-pd">조회</button> 
+                    <button id="searchBtn-pd">조회</button>
+                    <div style="min-width: 95px; flex-shrink: 0;"></div>
                 </div>
                 
                 <!-- 결과 테이블 -->

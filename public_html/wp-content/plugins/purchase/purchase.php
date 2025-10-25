@@ -46,27 +46,37 @@ function purchaseShortCode()
     </head>
 
     <body>
+
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div class="form-container">
             <div class="container">
-                <div class="form-menu">
-                    <div id="entry-title" style="float: left;">&nbsp;&nbsp;수입::</div>
-                    <div>
+                <div class="form-menu" style="display: grid; grid-template-columns: auto 1fr; align-items: center;">
+                    <div id="entry-title">&nbsp;&nbsp;수입::</div>
+                    <div style="text-align: center;">
                         <span style="color: white; cursor: pointer;" onclick="showImport()">수입</span> |
                         <span style="color: white; cursor: pointer;" onclick="showPurchase()">매입 </span> |
                         <span style="color: white; cursor: pointer;" onclick="showPurchaseIn()">자재 </span> |
                         <!-- <span style="color: white; cursor: pointer;" onclick="showPurchaseOut()">판매 </span> | -->
-                        <span style="color: white; cursor: pointer;" onclick="showPurchaseEvent()">행사 &nbsp;&nbsp; </span>
+                        <span style="color: white; cursor: pointer;" onclick="showPurchaseEvent()">행사</span>
                     </div>
                 </div>
 
                 <!-- 수입 -->
                 <div id="importView" style="display: block; clear: both; align-items: center;">
                     <!-- 1번째 줄: 조회 영역 -->
-                    <div class="purchase-input-container search-row">
-                        <input type="date" id="start-date-imp" name="start-date-imp" value="<?php echo date('Y-m-d', strtotime('-1 month')); ?>">
-                        <label for="end-date-imp">~</label>
-                        <input type="date" id="end-date-imp" name="end-date-imp" value="<?php echo date('Y-m-d'); ?>">
-                        <button id="search-btn-imp">조회</button>
+                    <div class="purchase-input-container search-row" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="date" id="start-date-imp" name="start-date-imp" value="<?php echo date('Y-m-d', strtotime('-1 month')); ?>">
+                            <label for="end-date-imp">~</label>
+                            <input type="date" id="end-date-imp" name="end-date-imp" value="<?php echo date('Y-m-d'); ?>">
+                            <button id="search-btn-imp">조회</button>
+                        </div>
+                        <div class="search-row-menu-space" style="min-width: 95px; flex-shrink: 0;"></div>
                     </div>
 
                     <div class="purchase-input-container input-row">

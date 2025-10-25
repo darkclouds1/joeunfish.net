@@ -434,16 +434,14 @@ button:hover {
   .button-container button {
     height: 35px !important;
     margin-right: 3px;
-    flex: 1; /* 버튼들이 컨테이너의 공간을 균등하게 나누어 가짐 */
-    min-width: 0; /* 버튼이 너무 작아지는 것을 방지 */
+    width: 25%; /* 고정 너비 사용 - 메뉴 공간의 영향을 받지 않음 */
   }
 
   .button-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     height: 100%;
-    flex-wrap: nowrap; /* 버튼들이 절대 줄바꿈되지 않도록 설정 */
   }
 
   /* 목록 표시 */

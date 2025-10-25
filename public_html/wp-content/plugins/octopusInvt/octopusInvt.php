@@ -70,11 +70,18 @@ function octopusInvtShortCode()
     </head>
 
     <body>
+
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
             <div class="form-container">
-                <div class="form-menu">
-                    <div id="entry-title" style="float: left;">&nbsp;&nbsp;냉동재고::</div>
-                    <div>
+                <div class="form-menu" style="display: grid; grid-template-columns: auto 1fr; align-items: center;">
+                    <div id="entry-title">&nbsp;&nbsp;냉동재고</div>
+                    <div style="text-align: center;">
                         <span style="color: white; cursor: pointer;" onclick="showFrozenView()">냉동재고</span> |
                         <span style="color: white; cursor: pointer;" onclick="showOctopusView()">문어재고</span> 
                     </div>
@@ -82,7 +89,7 @@ function octopusInvtShortCode()
 
                 <!-- 냉동재고 -->
                 <div id="frozenView" style="display: block; clear: both; align-items: center;">
-                    <div class="frozen-input-container search-row" style="height: 50px !important;">
+                    <div class="frozen-input-container search-row" style="height: 50px !important; display: flex; justify-content: flex-start; align-items: center; position: relative; gap: 5px; flex-wrap: wrap;">
                         <select id="mat-cd-frozen" name="mat-cd-frozen" class="form-field" style="width: 200px !important; height: 40px !important;">
                             <option value="">전체</option>
                             <?php foreach ($frozen_materials as $material): ?>
@@ -92,6 +99,7 @@ function octopusInvtShortCode()
                             <?php endforeach; ?>
                         </select>
                         <button id="search-btn-frozen">조회</button>
+                        <div style="min-width: 95px; flex-shrink: 0;"></div>
                     </div>
                 </div>
 

@@ -31,6 +31,7 @@ function barcodeInShortCode()
 
         <!-- css -->
         <link rel="stylesheet" type="text/css" href="/wp-content/plugins/barcodeInv/joeunfishInv.css" />
+        
         <!-- js -->
         <script rel="preload" src="/wp-content/plugins/barcodeIn/CodeInClass.js"></script>
         <script rel="preload" src="/jof/js/joeunfish.js"></script>
@@ -40,8 +41,18 @@ function barcodeInShortCode()
     </head>
 
     <body>
+
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
             <div class="form-container">
+                <div class="form-menu">
+                    <div id="entry-title">1층입고</div>
+                </div>
                 <form action="" name="myForm" id="myForm" method="get">
                     <!-- 첫 번째 행 -->
                     <div class="form-row">
@@ -69,7 +80,7 @@ function barcodeInShortCode()
                     </div>
                 </form>
 
-                <div class="button-container" id="confirmBtn">
+                <div class="button-container search-row" id="confirmBtn" style="display: flex; justify-content: center; align-items: center; position: relative; gap: 10px;">
                     <!-- 날짜/BL# 조건 조회 버튼 및 BL# 별 총중량 및 건수를 확인하는 버튼  -->
                     <button id="actionBtn">BL#조회</button>
                     <button id="insertBtn">수기입력</button>
@@ -77,6 +88,7 @@ function barcodeInShortCode()
                     <?php if ($platForm == 'computer') {    ?>
                         <button id="toExcel" onclick="tableToExcel()">엑셀다운</button>
                     <?php } ?>
+                    <div style="min-width: 95px; flex-shrink: 0;"></div>
                 </div>
 
                 <div id="Explain">

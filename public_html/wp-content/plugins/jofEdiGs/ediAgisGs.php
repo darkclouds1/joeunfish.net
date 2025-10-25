@@ -38,24 +38,31 @@ function ediAgisGs()
     </head>
 
     <body>
+
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
 
-            <div class="form-menu">
-                <div style="float: left;">
-                    &nbsp;&nbsp;주문관리::
+            <div class="form-menu" style="display: grid; grid-template-columns: auto 1fr; align-items: center;">
+                <div id="entry-title">&nbsp;&nbsp;(GS)주문관리</div>
+                <div style="text-align: center;">
+                    <span style="color: white; cursor: pointer;" onclick="showOrders(); return false;">(주)지에스리테일</span> |
+                    <span style="color: white; cursor: pointer;" onclick="showOrdersGSCT04(); fetchOrdersGSCT04(); return false;">GS25물류센터</span> |
+                    <span style="color: white; cursor: pointer;" onclick="showCodeManagement(); return false;" class="desktop-only">코드조회</span>
                 </div>
-                <span style="text-decoration: underline; color: white; cursor: pointer;" onclick="showOrders(); return false;">(주)지에스리테일</span> |
-                <!-- <span style="text-decoration: underline; color: white; cursor: pointer;" onclick="showOrdersGSCT04(); return false;">GS25물류센터</span> -->
-                <span style="text-decoration: underline; color: white; cursor: pointer;" onclick="showOrdersGSCT04(); fetchOrdersGSCT04(); return false;">GS25물류센터</span> |
-                 <span style="text-decoration: underline; color: white; cursor: pointer;" onclick="showCodeManagement(); return false;" class="desktop-only"> 코드조회</span>
             </div>
 
             <div id="orderView" style="display: none;">
-                <div class="search-row">
+                <div class="search-row" style="display: flex; justify-content: flex-start; align-items: center; position: relative; gap: 5px; flex-wrap: wrap;">
                     <label for="arrivalDate">입고일자:</label>
                     <input type="date" id="arrivalDate" name="arrivalDate" onchange="fetchOrders()" onkeypress="if(event.keyCode==13) fetchOrders();">
                     <button onclick="fetchOrders()">조회</button>
                     <button id="excelDownBtn" onclick="downloadExcel()" class="desktop-only" style="height: 40px;">엑셀다운</button>
+                    <div style="min-width: 95px; flex-shrink: 0;"></div>
                 </div>
                 <div id="orderList" style="margin-bottom: 15px; font-weight: bold; font-size: 20px;">주문목록</div>
                 <script>

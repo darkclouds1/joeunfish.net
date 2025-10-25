@@ -43,8 +43,18 @@ function barcodeInv2GsShortCode()
     </head>
 
     <body>
+
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
             <div class="form-container">
+                <div class="form-menu">
+                    <div id="entry-title">(GS)상품출고</div>
+                </div>
                 <form action="" name="myForm" id="myForm" method="get">
                     <!-- 첫 번째 행 -->
                     <div class="form-row">
@@ -59,7 +69,7 @@ function barcodeInv2GsShortCode()
                     </div>
                 </form>
 
-                <div class="button-container" id="confirmBtn">
+                <div class="button-container search-row" id="confirmBtn" style="display: flex; justify-content: center; align-items: center; position: relative; gap: 10px; flex-wrap: wrap;">
                     <!-- 날짜/BL# 조건 조회 버튼 및 BL# 별 총중량 및 건수를 확인하는 버튼  -->
                     <button id="actionBtn">조회</button>
                     <?php if ($platForm == 'computer') {    ?>
@@ -68,6 +78,7 @@ function barcodeInv2GsShortCode()
                         <button id="ordPrint">주문출력</button>
                     <?php } ?>
                     <button id="manual">사용법</button>
+                    <div style="min-width: 95px; flex-shrink: 0;"></div>
                 </div>
 
                 <div id="Explain">

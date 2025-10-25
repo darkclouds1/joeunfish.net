@@ -138,17 +138,23 @@ function ediAgis()
 
     <body>
 
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
-            <div class="form-menu">
-                <div style="float: left;"> 
-                    &nbsp;&nbsp; CostCo 주문관리
+            <div class="form-menu" style="display: grid; grid-template-columns: auto 1fr; align-items: center;">
+                <div id="entry-title">&nbsp;&nbsp;(CO)주문관리</div>
+                <div style="text-align: center;">
+                    <span style="color: white; cursor: pointer;" onclick="showOrders(); return false;">주문조회 </span> |
+                    <span style="color: white; cursor: pointer;" onclick="showCodeManagement(); return false;">코드조회</span>
                 </div>
-                <span style="color: white; cursor: pointer;" onclick="showOrders(); return false;">주문조회 </span> |
-                <span style="color: white; cursor: pointer;" onclick="showCodeManagement(); return false;">코드조회 &nbsp;&nbsp; </span>
             </div>
 
             <div id="orderView" style="display: block;">
-                <div class="search-row">
+                <div class="search-row" style="display: flex; justify-content: flex-start; align-items: center; position: relative; gap: 5px; flex-wrap: wrap;">
                     <label for="arrivalDate" style="margin-left: 10px; margin-right: 10px;">입고일자:</label>
                     <input type="date" id="arrivalDate" name="arrivalDate" style="margin-bottom: 0px; height: 40px; width: 130px;" onchange="fetchOrders()" onkeypress="if(event.keyCode==13) fetchOrders();">
                     <button onclick="fetchOrders()" style="height: 40px; width: 100px;">조회</button>
@@ -162,6 +168,7 @@ function ediAgis()
                         <input type="file" id="excel-upload-input" accept=".xls,.xlsx" style="display:none;">
                         <button onclick="run_uplus_script_callback()" id="UplusBtn">U+전자수발주</button>
                     <?php } ?>
+                    <div style="min-width: 95px; flex-shrink: 0;"></div>
                 </div>
                 <div id="orderList" style="margin-top: 10px; margin-bottom: 10px; font-weight: bold; font-size: 20px;">주문목록</div>
                 <div id="resultsContainer" class="type10"></div>

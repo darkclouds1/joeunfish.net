@@ -45,26 +45,30 @@ function dayProdShortCode()
 
     <body>
 
+        <?php   
+            // 공통 네비게이션 메뉴 포함
+            require_once(WP_PLUGIN_DIR . '/jofMain/jofNavigation.php');
+            renderJofNavigation();
+        ?>
+
         <div id="contents">
 
             <div class="form-container">
 
-                <?php if ($platForm == 'computer') { ?>
-                    <div class="form-menu">
-                        <div id="title" style="float: left;">
-                            &nbsp;&nbsp; 생산일지::
-                        </div>
-                        <span style="text-decoration: underline; color: white; cursor: pointer;" onclick="showDayProd(); return false;">일일생산</span> |
+                <div class="form-menu" style="display: grid; grid-template-columns: auto 1fr; align-items: center;">
+                    <div id="entry-title">&nbsp;&nbsp;일일생산</div>
+                    <div style="text-align: center;">
+                        <span style="color: white; cursor: pointer;" onclick="showDayProd(); return false;">일일생산</span>
                         <?php if (current_user_can('editor') || current_user_can('administrator')) { ?>
-                            <span style="text-decoration: underline; color: white; cursor: pointer;" onclick="showTMst(); return false;">제품마스터</span> |
-                            <span style="text-decoration: underline; color: white; cursor: pointer;" onclick="showTMat_Mst(); return false;">자재마스터</span>
+                            | <span style="color: white; cursor: pointer;" onclick="showTMst(); return false;">제품마스터</span> |
+                            <span style="color: white; cursor: pointer;" onclick="showTMat_Mst(); return false;">자재마스터</span>
                         <?php } ?>
                     </div>
-                <?php } ?>
+                </div>
 
                 <!-- 생산일지 폼 -->
                 <div id="dayProdView" style="display: block; clear: both; align-items: center;">
-                    <div class="button-container">
+                    <div class="button-container search-row" style="display: flex; justify-content: center; align-items: center; position: relative; gap: 10px; flex-wrap: wrap;">
                         <?php if ($platForm == 'computer'): ?>
                             <label for="createDate" style="width: 70px; text-align: center;">생산일:</label>
                         <?php endif; ?>
@@ -76,7 +80,7 @@ function dayProdShortCode()
                             <button id="finBtn" class="prod-button" style="width: 150px; height: 40px; font-size: 16px; margin-right: 10px;">생산확정</button>
                             <button id="finCancelBtn" class="prod-button" style="width: 150px; height: 40px; font-size: 16px; margin-right: 10px;">확정취소</button>
                         <?php endif; ?>
-
+                        <div style="min-width: 95px; flex-shrink: 0;"></div>
                     </div>
 
                     <!-- 알림 메시지 -->
