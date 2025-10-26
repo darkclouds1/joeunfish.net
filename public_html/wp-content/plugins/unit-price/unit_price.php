@@ -40,7 +40,7 @@ function upc_shortcode()
         <div class="form-menu">
             <div id="entry-title">단가확인</div>
         </div>
-        <div class="button-group search-row" style="display: flex; justify-content: center; align-items: center; position: relative; gap: 10px; flex-wrap: wrap; padding: 10px; background-color: #f0f7ff; border-radius: 8px; margin-bottom: 10px;">
+        <div class="button-container search-row" style="display: flex; justify-content: center; align-items: center; position: relative; gap: 10px; flex-wrap: wrap;">
             <button id="check-unit-price" class="grid-toggle-btn" data-grid="unit-price-grid">단가확인</button>
             <button id="check-material" class="grid-toggle-btn" data-grid="material-grid">재료단가</button>
             <div style="min-width: 95px; flex-shrink: 0;"></div>

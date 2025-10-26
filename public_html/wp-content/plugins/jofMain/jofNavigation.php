@@ -59,9 +59,9 @@ function renderJofNavigation() {
                 <div class="jof-menu-item" onclick="location.href='/barcodeinv2/'">
                     <span class="menu-text">(CO)상품출고</span>
                 </div>
-                <div class="jof-menu-item" onclick="location.href='/orderSummary-month/'">
+                <!-- <div class="jof-menu-item" onclick="location.href='/orderSummary-month/'">
                     <span class="menu-text">(CO)납기통계</span>
-                </div>
+                </div> -->
             </div>
 
             <!-- GS 그룹 -->
@@ -73,9 +73,9 @@ function renderJofNavigation() {
                 <div class="jof-menu-item" onclick="location.href='/barcodeinv2gs/'">
                     <span class="menu-text">(GS)상품출고</span>
                 </div>
-                <div class="jof-menu-item" onclick="location.href='/orderSummary-month-gs/'">
+                <!-- <div class="jof-menu-item" onclick="location.href='/orderSummary-month-gs/'">
                     <span class="menu-text">(GS)납기통계</span>
-                </div>
+                </div> -->
             </div>
 
             <!-- 재고 그룹 -->
@@ -99,7 +99,7 @@ function renderJofNavigation() {
             </div>
 
             <!-- 통계/분석 그룹 -->
-            <div class="jof-menu-group">
+            <!-- <div class="jof-menu-group">
                 <div class="jof-menu-group-title">📈 통계/분석</div>
                 <div class="jof-menu-item" onclick="location.href='/orderSummary/'">
                     <span class="menu-text">주문통계</span>
@@ -107,10 +107,10 @@ function renderJofNavigation() {
                 <div class="jof-menu-item" onclick="location.href='/predicinv/'">
                     <span class="menu-text">주문예측</span>
                 </div>
-                <!-- <div class="jof-menu-item" onclick="location.href='/dashboard/'">
+                <div class="jof-menu-item" onclick="location.href='/dashboard/'">
                     <span class="menu-text">📊 대시보드</span>
-                </div> -->
-            </div>
+                </div>
+            </div> -->
 
             <!-- 수불 그룹 -->
             <div class="jof-menu-group">
@@ -274,18 +274,18 @@ function renderJofNavigation() {
         .jof-slide-menu {
             position: fixed;
             top: 0;
-            left: -320px;
+            right: -320px;
             width: 300px;
             height: 100vh;
             background: white;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
             z-index: 9999;
             overflow-y: auto;
-            transition: left 0.3s ease;
+            transition: right 0.3s ease;
         }
 
         .jof-slide-menu.active {
-            left: 0;
+            right: 0;
         }
 
         /* 메뉴 헤더 */
@@ -375,18 +375,40 @@ function renderJofNavigation() {
         }
 
         .jof-menu-item:hover {
-            background: #f8f9fa;
-            border-left-color: #3498db;
+            background: #fffde7;
+            border-left-color: #fbc02d;
             padding-left: 38px;  /* 40px -> 38px */
         }
 
         .jof-menu-item:hover::before {
-            color: #3498db;
+            color: #f57f17;
             left: 21px;  /* 22px -> 21px */
+        }
+        
+        .jof-menu-item:hover .menu-text {
+            color: #f57f17;
+            font-weight: 600;
         }
 
         .jof-menu-item:active {
             background: #e9ecef;
+        }
+
+        /* 현재 활성화된 메뉴 - 노란색 강조 */
+        .jof-menu-item.active {
+            background: #fff9c4 !important;
+            border-left-color: #fbc02d !important;
+            border-left-width: 4px !important;
+        }
+
+        .jof-menu-item.active::before {
+            color: #f57f17 !important;
+            font-weight: bold;
+        }
+
+        .jof-menu-item.active .menu-text {
+            color: #f57f17 !important;
+            font-weight: 700 !important;
         }
 
         .menu-icon {
@@ -453,11 +475,11 @@ function renderJofNavigation() {
             .jof-slide-menu {
                 width: 85vw;
                 max-width: 320px;
-                left: -100%;
+                right: -100%;
             }
 
             .jof-slide-menu.active {
-                left: 0;
+                right: 0;
             }
         }
 
@@ -533,6 +555,33 @@ function renderJofNavigation() {
                 slideMenu.classList.add('active');
                 overlay.classList.add('active');
                 document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+                
+                // 현재 페이지 감지 및 메뉴 강조
+                highlightCurrentMenu();
+            }
+            
+            // 현재 페이지에 해당하는 메뉴를 노란색으로 강조
+            function highlightCurrentMenu() {
+                const currentPath = window.location.pathname;
+                const menuItems = document.querySelectorAll('.jof-menu-item');
+                
+                menuItems.forEach(item => {
+                    // 기존 active 클래스 제거
+                    item.classList.remove('active');
+                    
+                    // onclick 속성에서 URL 추출
+                    const onclickAttr = item.getAttribute('onclick');
+                    if (onclickAttr) {
+                        const urlMatch = onclickAttr.match(/location\.href=['"]([^'"]+)['"]/);
+                        if (urlMatch) {
+                            const menuPath = urlMatch[1];
+                            // 현재 경로와 메뉴 경로가 일치하면 active 클래스 추가
+                            if (currentPath === menuPath || currentPath.startsWith(menuPath)) {
+                                item.classList.add('active');
+                            }
+                        }
+                    }
+                });
             }
 
             function closeMenu() {
