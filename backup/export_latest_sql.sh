@@ -123,16 +123,33 @@ echo ""
 # 백업 시작 로그
 log_to_db "backup" "최적화된 백업 시작: $TIMESTAMP"
 
+# 파티셔닝된 테이블 목록 (최근 마지막 달만 백업)
+PARTITIONED_TABLES=("torders" "torderproducts" "tbarcodein" "tbarcodeinv" "tbarcodeout")
+
+# 현재 달의 시작일과 다음 달의 시작일 계산 (전역 변수로 한 번만 계산)
+CURRENT_MONTH_START=$(date +"%Y-%m-01 00:00:00")
+NEXT_MONTH_START=$(date -d "$(date +%Y-%m-01) +1 month" +"%Y-%m-01 00:00:00")
+
 # WHERE 조건 설정 함수
 get_where_condition() {
     local table=$1
     local last_backup=$2
     
+    # 파티셔닝된 테이블인지 확인
+    for PT in "${PARTITIONED_TABLES[@]}"; do
+        if [ "$table" == "$PT" ]; then
+            # 파티셔닝된 테이블: 최근 마지막 달만 + 증분 조건 결합
+            echo "create_dt >= '$CURRENT_MONTH_START' AND create_dt < '$NEXT_MONTH_START' AND create_dt > '$last_backup'"
+            return
+        fi
+    done
+    
+    # 일반 테이블의 기존 로직
     case $table in
-        "tascinvt"|"tascinvt3"|"tbarcodein"|"tbarcodeinv"|"tbarcodeinv_m"|"tbarcodeout"|"tdayprod"|"tdayprod_lot"|"tevent"|"tgscodeout"|"tgscodeout_invent"|"tpurchase_in")
+        "tascinvt"|"tascinvt3"|"tbarcodeinv_m"|"tdayprod"|"tdayprod_lot"|"tevent"|"tgscodeout"|"tgscodeout_invent"|"tpurchase_in")
             echo "increate_dt > '$last_backup'"
             ;;
-        "tdayprod_mst"|"tdayprodmat_mst"|"torderproducts"|"torderproducts_add"|"tpurchase")
+        "tdayprod_mst"|"tdayprodmat_mst"|"torderproducts_add"|"tpurchase")
             echo "create_dt > '$last_backup'"
             ;;
         "tprodinvt")
@@ -144,10 +161,6 @@ get_where_condition() {
         "tcomcode"|"tcomcodegs")
             # 코드 테이블은 전체 백업
             echo ""
-            ;;
-        "torders")
-            local last_backup_date=${last_backup:0:8}
-            echo "order_dt > '$last_backup_date'"
             ;;
         *)
             # 날짜 컬럼이 없는 테이블은 전체 백업

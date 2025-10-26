@@ -79,32 +79,30 @@ class CodeOutClass {
           chkid +
           "')\">";
 
-      // 소트 sort  문자 안보이게
-      switch (i) {
-        case 1: //
-          break;
-        default:
-      }
-
-        // 첫 번째 열에는 정렬 링크를 추가하지 않음
-      if (i === 0 || i === 1 || i === 2 ) {
+      // 정렬 버튼 추가 (첫 3개 열은 제외)
+      if (i === 0 || i === 1 || i === 2) {
         th.innerHTML = this.col[i];
       } else {
         th.innerHTML = this.col[i] + '<a onclick="sortTD (' + i +')">▲</a><a onclick="reverseTD (' + i + ')">▼</a>';
       }
-
+      
       th.setAttribute("style", "width:" + this.colw[i] + ";");
       tr.appendChild(th);
     }
 
     if ((document.getElementById("tables").innerHTML = "")) {
-      document.getElementById("tables").innerHTML = table1.outerHTML;
-      idx = 0;
+      // ★ CRITICAL FIX: 테이블 헤더도 requestAnimationFrame으로 추가
+      requestAnimationFrame(() => {
+        document.getElementById("tables").innerHTML = table1.outerHTML;
+        idx = 0;
+      });
     }
   }
 
   // 생산 바코드출고 makeTable
   makeTabletr(datas) {
+    console.time('⚡ 테이블 렌더링 시간'); // 성능 측정 시작
+    
     // ADD JSON DATA TO THE TABLE AS ROWS.
     let data = JSON.parse(datas);
     items = data.response.body.items;
@@ -116,10 +114,29 @@ class CodeOutClass {
       return rtnCnt;
     }
 
+    console.log(`📊 데이터 ${items.length}건 렌더링 시작...`);
+
     // 총중량(kg) 계산
     totalWeight = 0;
 
     let tbody = table1.createTBody();
+    let selectedRow = null; // 선택된 행을 변수로 저장 (DOM 검색 제거)
+    
+    // ★ 완전히 단순화된 row 선택 (렉 방지)
+    tbody.addEventListener('click', function(e) {
+      const clickedRow = e.target.closest('tr');
+      if (!clickedRow) return;
+      
+      // 이전 선택 해제 (inline style로 직접 변경)
+      if (selectedRow) {
+        selectedRow.style.backgroundColor = '';
+      }
+      
+      // 현재 행 선택 (inline style로 직접 변경)
+      clickedRow.style.backgroundColor = '#90EE90';
+      selectedRow = clickedRow;
+    });
+    
     for (let i = 0; i < items.length; i++) {
       try {
         idx = idx + 1;
@@ -132,17 +149,6 @@ class CodeOutClass {
         tabCells.setAttribute("style", "text-align:center;");
         for (let j = 1; j < this.col.length; j++) {
           let tabCell = tr.insertCell(-1);
-
-          // 클릭 이벤트 처리:: row 선택 색깔 초록색
-          tr.onclick = function() {
-            // 이전에 선택된 행의 스타일 제거
-            const selectedRows = tbody.getElementsByClassName('selected-row');
-            for (let row of selectedRows) {
-              row.classList.remove('selected-row');
-            }
-            // 현재 클릭된 행에 스타일 적용
-            this.classList.add('selected-row');
-          };
 
           // 데이터표시
           tabCell.innerHTML = items[i][this.col2[j]];
@@ -212,20 +218,28 @@ class CodeOutClass {
       // totalWeight += parseFloat(items[i]["weight"]).toFixed(1);
     }
 
-    // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
-    let divContainer = document.getElementById("tables");
-    //divContainer.innerHTML = "";
-    divContainer.appendChild(table1);
+    console.timeEnd('⚡ 테이블 렌더링 시간'); // 성능 측정 종료
+    
+    // ★ CRITICAL FIX: requestAnimationFrame으로 DOM 업데이트를 다음 프레임으로 연기
+    // 브라우저가 reflow를 완료한 후 테이블을 추가하여 렉 방지
+    requestAnimationFrame(() => {
+      // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+      let divContainer = document.getElementById("tables");
+      //divContainer.innerHTML = "";
+      divContainer.appendChild(table1);
 
-    // 갯수(Box), 총중량(kg)표시
-    document.getElementById("count").value = items.length + " (Box)";
-    // ${items[i]["weight"]} => 합계
+      // 갯수(Box), 총중량(kg)표시
+      document.getElementById("count").value = items.length + " (Box)";
+      // ${items[i]["weight"]} => 합계
 
-    // totalWeight 값을 숫자로 강제 변환하기
-    var totalWeightNum = Number(totalWeight);
-    // 숫자로 변환된 값에 toFixed() 적용하기
-    document.getElementById("total-weight").value =
-      totalWeightNum.toFixed(1) + " (kg)";
+      // totalWeight 값을 숫자로 강제 변환하기
+      var totalWeightNum = Number(totalWeight);
+      // 숫자로 변환된 값에 toFixed() 적용하기
+      document.getElementById("total-weight").value =
+        totalWeightNum.toFixed(1) + " (kg)";
+      
+      console.log('✅ 테이블 DOM 추가 완료! row 클릭 가능합니다.');
+    });
 
     return rtnCnt;
   }

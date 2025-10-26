@@ -12,15 +12,13 @@ jQuery(document).ready(function ($) {
 
   $("#check-material").on("click", function () {
     $grid.hide();
-    loadMatPrices();
     $matGrid.show();
+    loadMatPrices();
   });
 
   // 단가 관리
   function loadUnitPrices() {
-    setTimeout(function() {
-        move();
-    }, 200);
+    move(); // 로딩 시작
 
     var url =
       "/wp-content/plugins/unit-price/unit_price_srv.php?category=price";
@@ -40,16 +38,17 @@ jQuery(document).ready(function ($) {
       error: function () {
         alert("서버 오류가 발생했습니다.");
       },
+      complete: function() {
+        move_stop(); // 성공/실패 관계없이 항상 로딩 중지
+        console.log("[loadUnitPrices] 로딩 완료");
+      }
     });
-
-    setTimeout(() => {
-        move_stop();
-    }, 0);
 
   }
 
   // 재료 단가 관리
   function loadMatPrices() {
+    move(); // 로딩 시작
 
     var url =
       "/wp-content/plugins/unit-price/unit_price_srv.php?category=matprice";
@@ -69,6 +68,10 @@ jQuery(document).ready(function ($) {
       error: function () {
         alert("서버 오류가 발생했습니다.");
       },
+      complete: function() {
+        move_stop(); // 성공/실패 관계없이 항상 로딩 중지
+        console.log("[loadMatPrices] 로딩 완료");
+      }
     });
 
   }
@@ -107,13 +110,22 @@ jQuery(document).ready(function ($) {
       $.each(data, function (i, item) {
         var rowColor = "";
         var yellowBoxCodes = ["0200000651343", "2000000560770", '2000000668592'];
+        
+        // 우선순위 1: 특정 제품코드 (노란색) - 가장 우선
         if (yellowBoxCodes.includes(item["제품코드"])) {
           rowColor = "background-color: yellow;";
         } 
-
-        // Add this condition to check if the product code starts with "88"
-        if (item["제품코드"].startsWith("88")) {
-          rowColor = "background-color: #f7e18aff;";
+        // 우선순위 2: 생연어 제품 (매우 연한 핑크색)
+        else if (item["제품명"] && item["제품명"].includes("생연어")) {
+          rowColor = "background-color: #FFF5F5;";
+        }
+        // 우선순위 3: 스테이크 제품 (매우 연한 피치색)
+        else if (item["제품명"] && item["제품명"].includes("스테이크")) {
+          rowColor = "background-color: #FFF8F0;";
+        }
+        // 우선순위 4: 제품코드가 "88"로 시작 (매우 연한 노란색)
+        else if (item["제품코드"].startsWith("88")) {
+          rowColor = "background-color: #FFFEF0;";
         }
 
         html +=
@@ -161,18 +173,27 @@ jQuery(document).ready(function ($) {
       $.each(data, function (i, item) {
         var baseColor = i % 2 === 0 ? '#ffffff' : '#f0f0f0';  // 기본 줄무늬 색상
         var rowColor = baseColor;
-
-        // 특수 조건 (노란색 박스, 지난 날짜) 처리
         var yellowBoxCodes = ["0200000651343", "2000000560770", '2000000668592'];
+
+        // 우선순위 1: 특정 제품코드 (노란색) - 가장 우선
         if (yellowBoxCodes.includes(item["제품코드"])) {
             rowColor = "yellow";
-        } else if (item["공급일"] < today) {
-            rowColor = "#f0f0f0";
+        } 
+        // 우선순위 2: 생연어 제품 (매우 연한 핑크색)
+        else if (item["제품명"] && item["제품명"].includes("생연어")) {
+            rowColor = "#FFF5F5";
         }
-
-        // Add this condition to check if the product code starts with "88"
-        if (item["제품코드"].startsWith("88")) {
-          rowColor = "background-color: #f7e18aff;";
+        // 우선순위 3: 스테이크 제품 (매우 연한 피치색)
+        else if (item["제품명"] && item["제품명"].includes("스테이크")) {
+            rowColor = "#FFF8F0";
+        }
+        // 우선순위 4: 제품코드가 "88"로 시작 (매우 연한 노란색)
+        else if (item["제품코드"].startsWith("88")) {
+            rowColor = "#FFFEF0";
+        }
+        // 우선순위 5: 지난 날짜
+        else if (item["공급일"] < today) {
+            rowColor = "#f0f0f0";
         }
 
         html += `<div class='product-box clickable-row' 
@@ -457,7 +478,9 @@ jQuery(document).ready(function ($) {
     if (x === null || x === undefined) {
         return ''; // null 또는 undefined인 경우 빈 문자열 반환
     }
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // 소수점 제거하고 정수로 변환
+    var intValue = Math.round(parseFloat(x));
+    return intValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   // 납품 단가 클릭 이벤트 리스너 추가 함수

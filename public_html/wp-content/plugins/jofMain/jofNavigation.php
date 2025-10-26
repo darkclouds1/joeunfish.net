@@ -253,7 +253,7 @@ function renderJofNavigation() {
             backdrop-filter: blur(5px) !important;
             -webkit-backdrop-filter: blur(5px) !important;
             border-color: rgba(255, 255, 255, 0.4) !important;
-            transform: translateY(-2px) !important;
+            /* transform 제거 - 렉 현상 방지 */
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
             color: white !important;
             width: fit-content !important;
@@ -264,7 +264,7 @@ function renderJofNavigation() {
             background: rgba(44, 128, 207, 0.8) !important;
             backdrop-filter: blur(4px) !important;
             -webkit-backdrop-filter: blur(4px) !important;
-            transform: translateY(0) !important;
+            /* transform 제거 - 렉 현상 방지 */
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
             color: white !important;
             width: fit-content !important;
@@ -281,7 +281,8 @@ function renderJofNavigation() {
             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
             z-index: 9999;
             overflow-y: auto;
-            transition: right 0.3s ease;
+            /* transition 단축으로 성능 향상 */
+            transition: right 0.25s ease-out;
         }
 
         .jof-slide-menu.active {
@@ -322,13 +323,12 @@ function renderJofNavigation() {
             align-items: center;
             justify-content: center;
             border-radius: 6px;
-            transition: all 0.2s;
             font-weight: 300;
+            /* transition 제거 - 렉 방지 */
         }
 
         .jof-close-btn:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
         }
 
         /* 메뉴 컨텐츠 */
@@ -354,14 +354,14 @@ function renderJofNavigation() {
 
         /* 메뉴 아이템 */
         .jof-menu-item {
-            padding: 10px 20px 10px 35px;  /* 13px -> 10px로 줄임 */
+            padding: 10px 20px 10px 35px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.2s ease;
             border-left: 3px solid transparent;
             position: relative;
+            /* 모든 will-change와 transition 제거 - 렉 방지 */
         }
 
         .jof-menu-item::before {
@@ -371,18 +371,15 @@ function renderJofNavigation() {
             color: #95a5a6;
             font-size: 18px;
             font-weight: bold;
-            transition: all 0.2s;
         }
 
         .jof-menu-item:hover {
             background: #fffde7;
             border-left-color: #fbc02d;
-            padding-left: 38px;  /* 40px -> 38px */
         }
 
         .jof-menu-item:hover::before {
             color: #f57f17;
-            left: 21px;  /* 22px -> 21px */
         }
         
         .jof-menu-item:hover .menu-text {

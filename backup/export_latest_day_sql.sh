@@ -63,52 +63,72 @@ FAILED_COUNT=0
 FAILED_TABLES=""
 BACKUP_COUNT=0
 
+# 파티셔닝된 테이블 목록 (최근 마지막 달만 백업)
+PARTITIONED_TABLES=("torders" "torderproducts" "tbarcodein" "tbarcodeinv" "tbarcodeout")
+
+# 현재 달의 시작일과 다음 달의 시작일 계산
+CURRENT_MONTH_START=$(date +"%Y-%m-01 00:00:00")
+NEXT_MONTH_START=$(date -d "$(date +%Y-%m-01) +1 month" +"%Y-%m-01 00:00:00")
+
+echo "파티셔닝된 테이블: ${PARTITIONED_TABLES[@]} (최근 마지막 달: $CURRENT_MONTH_START ~ $NEXT_MONTH_START)"
 echo "시작일자 지정 백업 시작..."
 
 IFS=$'\n'
 for TABLE in $TABLES; do
     echo "백업 중: [$TABLE]"
     
+    # 파티셔닝된 테이블인지 확인
+    IS_PARTITIONED=false
+    for PT in "${PARTITIONED_TABLES[@]}"; do
+        if [ "$TABLE" == "$PT" ]; then
+            IS_PARTITIONED=true
+            break
+        fi
+    done
+    
     # 테이블별 백업 조건 설정
     WHERE_CONDITION=""
     DELETE_CONDITION=""
     
-    case $TABLE in
-        "tascinvt"|"tascinvt3"|"tbarcodein"|"tbarcodeinv"|"tbarcodeinv_m"|"tbarcodeout"|"tdayprod"|"tdayprod_lot"|"tevent"|"tgscodeout"|"tgscodeout_invent"|"tpurchase_in")
-            WHERE_CONDITION="date(increate_dt) >= '$START_DATE'"
-            DELETE_CONDITION="date(increate_dt) >= '$START_DATE'"
-            ;;
-        "tdayprod_mst"|"tdayprodmat_mst"|"torderproducts"|"torderproducts_add")
-            WHERE_CONDITION="date(create_dt) >= '$START_DATE'"
-            DELETE_CONDITION="date(create_dt) >= '$START_DATE'"
-            ;;
-        "tprodinvt")
-            WHERE_CONDITION="date(invt_dt) >= '$START_DATE'"
-            DELETE_CONDITION="date(invt_dt) >= '$START_DATE'"
-            ;;
-        "tpurchase_imp")
-            WHERE_CONDITION="date(import_dt) >= '$START_DATE'"
-            DELETE_CONDITION="date(import_dt) >= '$START_DATE'"
-            ;;
-        "tcomcode"|"tcomcodegs")
-            # 코드 테이블은 전체 백업
-            WHERE_CONDITION=""
-            DELETE_CONDITION=""
-            ;;
-        "torders")
-            WHERE_CONDITION="order_dt >= '$START_DATE_FORMAT'"
-            DELETE_CONDITION="order_dt >= '$START_DATE_FORMAT'"
-            ;;
-        "tpurchase")
-            WHERE_CONDITION="date(input_dt) >= '$START_DATE'"
-            DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
-            ;;
-        *)
-            # 날짜 컬럼이 없는 테이블은 전체 백업
-            WHERE_CONDITION=""
-            DELETE_CONDITION=""
-            ;;
-    esac
+    if [ "$IS_PARTITIONED" = true ]; then
+        # 파티셔닝된 테이블: 최근 마지막 달 + 시작일자 조건 결합
+        WHERE_CONDITION="create_dt >= '$CURRENT_MONTH_START' AND create_dt < '$NEXT_MONTH_START' AND date(create_dt) >= '$START_DATE'"
+        DELETE_CONDITION="create_dt >= '$CURRENT_MONTH_START' AND create_dt < '$NEXT_MONTH_START' AND date(create_dt) >= '$START_DATE'"
+    else
+        # 일반 테이블의 기존 로직
+        case $TABLE in
+            "tascinvt"|"tascinvt3"|"tbarcodeinv_m"|"tdayprod"|"tdayprod_lot"|"tevent"|"tgscodeout"|"tgscodeout_invent"|"tpurchase_in")
+                WHERE_CONDITION="date(increate_dt) >= '$START_DATE'"
+                DELETE_CONDITION="date(increate_dt) >= '$START_DATE'"
+                ;;
+            "tdayprod_mst"|"tdayprodmat_mst"|"torderproducts_add")
+                WHERE_CONDITION="date(create_dt) >= '$START_DATE'"
+                DELETE_CONDITION="date(create_dt) >= '$START_DATE'"
+                ;;
+            "tprodinvt")
+                WHERE_CONDITION="date(invt_dt) >= '$START_DATE'"
+                DELETE_CONDITION="date(invt_dt) >= '$START_DATE'"
+                ;;
+            "tpurchase_imp")
+                WHERE_CONDITION="date(import_dt) >= '$START_DATE'"
+                DELETE_CONDITION="date(import_dt) >= '$START_DATE'"
+                ;;
+            "tcomcode"|"tcomcodegs")
+                # 코드 테이블은 전체 백업
+                WHERE_CONDITION=""
+                DELETE_CONDITION=""
+                ;;
+            "tpurchase")
+                WHERE_CONDITION="date(input_dt) >= '$START_DATE'"
+                DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
+                ;;
+            *)
+                # 날짜 컬럼이 없는 테이블은 전체 백업
+                WHERE_CONDITION=""
+                DELETE_CONDITION=""
+                ;;
+        esac
+    fi
     
     # 백업할 레코드 수 확인
     if [ -n "$WHERE_CONDITION" ]; then
@@ -211,37 +231,47 @@ for FILE in $BACKUP_FILES; do
     # 테이블별 DELETE 조건을 다시 설정
     DELETE_CONDITION=""
     
-    case $TABLE_NAME in
-        tascinvt|tascinvt3|tbarcodein|tbarcodeinv|tbarcodeinv_m|tbarcodeout|tbarcodeout_invt|tdayprod|tdayprod_lot|tevent|tgscodeout|tgscodeout_invent|tpurchase_in)
-            DELETE_CONDITION="date(increate_dt) >= '$START_DATE'"
-            ;;
-        tdayprod_mst|tdayprodmat_mst|torderproducts|torderproducts_add)
-            DELETE_CONDITION="date(create_dt) >= '$START_DATE'"
-            ;;
-        tprodinvt)
-            DELETE_CONDITION="date(invt_dt) >= '$START_DATE'"
-            ;;
-        tpurchase_imp)
-            DELETE_CONDITION="date(import_dt) >= '$START_DATE'"
-            ;;
-        tcomcode|tcomcodegs|tcodebook|tasks)
-            # 코드 테이블은 전체 복원
-            DELETE_CONDITION=""
-            ;;
-        torders)
-            DELETE_CONDITION="order_dt >= '$START_DATE_FORMAT'"
-            ;;
-        tpurchase)
-            DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
-            ;;
-        toctopus_invt)
-            DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
-            ;;
-        *)
-            # 날짜 컬럼이 없는 테이블은 전체 복원
-            DELETE_CONDITION=""
-            ;;
-    esac
+    # 파티셔닝된 테이블인지 확인
+    IS_PARTITIONED_DEL=false
+    for PT in "${PARTITIONED_TABLES[@]}"; do
+        if [ "$TABLE_NAME" == "$PT" ]; then
+            IS_PARTITIONED_DEL=true
+            # 파티셔닝된 테이블: 최근 마지막 달 + 시작일자 조건
+            DELETE_CONDITION="create_dt >= '$CURRENT_MONTH_START' AND create_dt < '$NEXT_MONTH_START' AND date(create_dt) >= '$START_DATE'"
+            break
+        fi
+    done
+    
+    if [ "$IS_PARTITIONED_DEL" = false ]; then
+        case $TABLE_NAME in
+            tascinvt|tascinvt3|tbarcodeinv_m|tdayprod|tdayprod_lot|tevent|tgscodeout|tgscodeout_invent|tpurchase_in)
+                DELETE_CONDITION="date(increate_dt) >= '$START_DATE'"
+                ;;
+            tdayprod_mst|tdayprodmat_mst|torderproducts_add)
+                DELETE_CONDITION="date(create_dt) >= '$START_DATE'"
+                ;;
+            tprodinvt)
+                DELETE_CONDITION="date(invt_dt) >= '$START_DATE'"
+                ;;
+            tpurchase_imp)
+                DELETE_CONDITION="date(import_dt) >= '$START_DATE'"
+                ;;
+            tcomcode|tcomcodegs|tcodebook|tasks)
+                # 코드 테이블은 전체 복원
+                DELETE_CONDITION=""
+                ;;
+            tpurchase)
+                DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
+                ;;
+            toctopus_invt)
+                DELETE_CONDITION="date(input_dt) >= '$START_DATE'"
+                ;;
+            *)
+                # 날짜 컬럼이 없는 테이블은 전체 복원
+                DELETE_CONDITION=""
+                ;;
+        esac
+    fi
     
     # 타겟 DB에서 시작일자 이후 데이터 삭제
     if [ -n "$DELETE_CONDITION" ]; then

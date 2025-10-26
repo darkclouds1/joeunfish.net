@@ -172,6 +172,8 @@ table.type10 {
   margin: 0px 0px;
   font-size: 13px;
   overflow-x: auto;
+  /* 성능 최적화: 레이아웃 계산 범위 제한 */
+  contain: layout style paint;
 }
 
 table.type10 td {
@@ -269,22 +271,15 @@ button:hover {
   cursor: pointer;
 }
 
-.selected-row {
-    background-color: #90EE90 !important; /* 연한 초록색 */
-}
-
-.type10 tbody tr:hover {
+/* row 선택은 inline style로 처리 (렉 방지) */
+table.type10 tbody tr {
     cursor: pointer;
-    background-color: #90EE90 !important; /* 연한 녹색 */
-    transition: background-color 0.3s ease;
+    /* transition 완전 제거 - 즉시 반응하여 렉 방지 */
 }
 
-.selected-row {
-    background-color: #90EE90 !important; /* 연한 초록색 */
-}
-
-.type10 tbody tr:hover {
-    cursor: pointer;
+/* hover 효과 추가 */
+table.type10 tbody tr:hover {
+    background-color: #E8F5E9 !important; /* 매우 연한 녹색 */
 }
 
 /* ------------------------------ */

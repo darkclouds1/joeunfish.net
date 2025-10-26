@@ -160,3 +160,26 @@
 #check-unit-price:hover {
   background-color: #45a049;
 }
+
+/* 버튼 컨테이너 및 search-row 스타일 */
+.button-container.search-row,
+.search-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f0f7ff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin: 5px 0;
+  padding: 3px;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+.button-container.search-row:hover,
+.search-row:hover {
+  border-color: #4a90e2; /* 테두리 색상 변경 */
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); /* 그림자 효과 강화 */
+  background-color: #FFFF54; /* 노란색 배경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}

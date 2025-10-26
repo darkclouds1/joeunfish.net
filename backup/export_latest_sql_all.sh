@@ -42,16 +42,48 @@ fi
 echo "Creating a backup of the KVM database..."
 TABLES=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" -e "SHOW TABLES LIKE 't%'" | grep -v "Tables_in")
 
-# t로 시작하는 테이블 백업 (전체 데이터)
+# 파티셔닝된 테이블 목록 (최근 마지막 달만 백업)
+PARTITIONED_TABLES=("torders" "torderproducts" "tbarcodein" "tbarcodeinv" "tbarcodeout")
+
+# 현재 날짜 기준으로 이번 달의 첫날과 다음 달의 첫날 계산
+CURRENT_MONTH_START=$(date +"%Y-%m-01 00:00:00")
+NEXT_MONTH_START=$(date -d "$(date +%Y-%m-01) +1 month" +"%Y-%m-01 00:00:00")
+
+echo "백업 기간: $CURRENT_MONTH_START ~ $NEXT_MONTH_START"
+echo "파티셔닝된 테이블: ${PARTITIONED_TABLES[@]} (최근 마지막 달만)"
+echo ""
+
+# t로 시작하는 테이블 백업
 for TABLE in $TABLES; do
-    echo "Backing up table: $TABLE (전체 데이터)"
+    # 파티셔닝된 테이블인지 확인
+    IS_PARTITIONED=false
+    for PT in "${PARTITIONED_TABLES[@]}"; do
+        if [ "$TABLE" == "$PT" ]; then
+            IS_PARTITIONED=true
+            break
+        fi
+    done
     
-    # 전체 테이블 백업 (데이터만, 트리거 비활성화)
-    mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
-        --no-create-info --no-create-db \
-        --skip-triggers --skip-routines --skip-events \
-        --single-transaction --lock-tables=false \
-        "$SOURCE_DB" "$TABLE" > "$BACKUP_DIR/t_${TABLE}.sql"
+    if [ "$IS_PARTITIONED" = true ]; then
+        # 파티셔닝된 테이블: 최근 마지막 달만 백업
+        echo "Backing up table: $TABLE (최근 마지막 달: $CURRENT_MONTH_START ~ $NEXT_MONTH_START)"
+        
+        mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
+            --no-create-info --no-create-db \
+            --skip-triggers --skip-routines --skip-events \
+            --single-transaction --lock-tables=false \
+            --where="create_dt >= '$CURRENT_MONTH_START' AND create_dt < '$NEXT_MONTH_START'" \
+            "$SOURCE_DB" "$TABLE" > "$BACKUP_DIR/t_${TABLE}.sql"
+    else
+        # 일반 테이블: 전체 데이터 백업
+        echo "Backing up table: $TABLE (전체 데이터)"
+        
+        mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
+            --no-create-info --no-create-db \
+            --skip-triggers --skip-routines --skip-events \
+            --single-transaction --lock-tables=false \
+            "$SOURCE_DB" "$TABLE" > "$BACKUP_DIR/t_${TABLE}.sql"
+    fi
 done
 
 # wp_users 테이블을 백업 (전체 데이터)

@@ -31,20 +31,23 @@ function barcodeInvShortCode()
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
         <title>barcode scanner IN</title>
 
-        <script src="/wp-content/plugins/barcodeInv/CodeInvClass.js"></script>
-        <script src="/wp-content/plugins/barcodeInv/CodeInvSumClass.js"></script>
+        <script src="/wp-content/plugins/barcodeInv/CodeInvClass.js?ver=<?php echo time(); ?>"></script>
+        <script src="/wp-content/plugins/barcodeInv/CodeInvSumClass.js?ver=<?php echo time(); ?>"></script>
         <script>
             // 인스턴스 생성을 최우선으로 실행
             var codeOutClass = new CodeInvClass();
             var codeSumClass = new CodeInvSumClass();
             var isEditorOrAbove = <?php echo json_encode($isEditorOrAbove); ?>; // 관리자 또는 편집자 이상
         </script>
-        <script rel="preload" src="/jof/js/common.js"></script>
-        <script rel="preload" src="/include/JavaScript/tableSort.js" async></script>
-        <!-- css -->
-        <link rel="stylesheet" type="text/css" href="/wp-content/plugins/barcodeInv/joeunfishInv.css?ver=<?php echo filemtime(get_stylesheet_directory() . '/wp-content/plugins/barcodeInv/joeunfishInv.css'); ?>" />
+        <script rel="preload" src="/jof/js/common.js?ver=<?php echo time(); ?>"></script>
+        <script rel="preload" src="/include/JavaScript/tableSort.js?ver=<?php echo time(); ?>" async></script>
+        <!-- css: 캐시 방지를 위해 time() 사용 -->
+        <link rel="stylesheet" type="text/css" href="/wp-content/plugins/barcodeInv/joeunfishInv.css?ver=<?php echo time(); ?>" />
 
     </head>
 
@@ -766,10 +769,26 @@ function barcodeInvShortCode()
                     if (category == 1 || category == 3) {
                         codeOutClass.makeTabletr2Mobile(data);
                     } else {
-                        // category == 2::모바일 조회 데이터
+                        // category == 2::조회 데이터
                         codeOutClass.makeTableHead();
                         codeOutClass.makeTabletr(data);
-                        if (table1.rows.length > 2) setSort();
+                        
+                        // ★ 성능 최적화: requestAnimationFrame으로 정렬 기능 활성화
+                        // 테이블 렌더링 후 다음 프레임에 정렬 함수 실행
+                        if (table1.rows.length > 2) {
+                            requestAnimationFrame(() => {
+                                setTimeout(() => {
+                                    try {
+                                        if (typeof setSort === 'function') {
+                                            setSort();
+                                            console.log("✅ 정렬 기능 활성화됨 - 데이터 " + table1.rows.length + "행");
+                                        }
+                                    } catch (sortError) {
+                                        console.error("[에러] setSort 실패:", sortError.message);
+                                    }
+                                }, 100); // 100ms 지연으로 안정성 확보
+                            });
+                        }
                     }
                 } else {
                     // category == 2::모바일 조회 데이터

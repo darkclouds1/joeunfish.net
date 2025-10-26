@@ -25,18 +25,21 @@ function barcodeOutShortCode()
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
         <title>barcode scanner IN</title>
 
-        <script src="/wp-content/plugins/barcodeOut/CodeOutClass.js"></script>
+        <script src="/wp-content/plugins/barcodeOut/CodeOutClass.js?ver=<?php echo time(); ?>"></script>
         <script>
             // 인스턴스 생성을 최우선으로 실행
             var codeOutClass = new CodeOutClass();
         </script>
-        <script rel="preload" src="/jof/js/common.js"></script>
-        <script rel="preload" src="/include/JavaScript/tableSort.js" async></script>
+        <script rel="preload" src="/jof/js/common.js?ver=<?php echo time(); ?>"></script>
+        <script rel="preload" src="/include/JavaScript/tableSort.js?ver=<?php echo time(); ?>" async></script>
 
-        <!-- css -->
-        <link rel="stylesheet" type="text/css" href="/wp-content/plugins/barcodeOut/joeunfishOut.css?ver=<?php echo filemtime(get_stylesheet_directory() . '/wp-content/plugins/barcodeOut/joeunfishOut.css'); ?>" />
+        <!-- css: 캐시 방지를 위해 time() 사용 -->
+        <link rel="stylesheet" type="text/css" href="/wp-content/plugins/barcodeOut/joeunfishOut.css?ver=<?php echo time(); ?>" />
 
     </head>
 
@@ -732,19 +735,26 @@ function barcodeOutShortCode()
                     if (category == 1) {
                         codeOutClass.makeTabletr2Mobile(data);
                     } else {
-                        // category == 2::모바일 조회 데이터
+                        // category == 2::조회 데이터
                         codeOutClass.makeTableHead();
                         codeOutClass.makeTabletr(data);
                         
-                        // setSort 비활성화 (500개 이상 데이터에서 심각한 렉 발생)
-                        if (table1.rows.length > 2 && table1.rows.length < 500) {
-                            try {
-                                setSort();
-                            } catch (sortError) {
-                                console.error("[에러] setSort 실패:", sortError.message);
-                            }
+                        // ★ 성능 최적화: requestAnimationFrame으로 정렬 기능 활성화
+                        // 테이블 렌더링 후 다음 프레임에 정렬 함수 실행
+                        if (table1.rows.length > 2) {
+                            requestAnimationFrame(() => {
+                                setTimeout(() => {
+                                    try {
+                                        if (typeof setSort === 'function') {
+                                            setSort();
+                                            console.log("✅ 정렬 기능 활성화됨 - 데이터 " + table1.rows.length + "행");
+                                        }
+                                    } catch (sortError) {
+                                        console.error("[에러] setSort 실패:", sortError.message);
+                                    }
+                                }, 100); // 100ms 지연으로 안정성 확보
+                            });
                         }
-                        // 500개 이상은 정렬 기능 비활성화 (성능 최적화)
                     }
                 } else {
                     // category == 2::모바일 조회 데이터
