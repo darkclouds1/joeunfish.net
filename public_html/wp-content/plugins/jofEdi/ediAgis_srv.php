@@ -10,7 +10,6 @@ $conn     = $dbConn->conn();
 mysqli_set_charset($conn, 'utf8'); 
 mysqli_query($conn, "SET time_zone = '+09:00'");
 
-
 $logFilePath = $_SERVER['DOCUMENT_ROOT'] . "/logfile.log"; 
 
 $category    = isset($_GET['category']) ? $_GET['category'] : 'order';
@@ -19,32 +18,49 @@ isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
 if ($category == 'order') {
     $supply_date = isset($_GET['date']) ? date('Ymd', strtotime($_GET['date'])) : date('Ymd'); // 날짜 형식을 yyyymmdd로 변경
     // 주문 관련 로직 처리
-    $sql = "WITH base_data AS (
+    $sql = "WITH orders_on_day AS (
+                    SELECT /*+ INDEX(ord idx_torders_supply_dt_doc_region) */
+                           doc_no, region, msgtype
+                    FROM torders ord
+                    WHERE ord.supply_dt = '$supply_date'
+                ),
+                order_items_on_day AS (
+                    SELECT /* STRAIGHT_JOIN to ensure date-filtered orders drive the join */
+                           p.product_code,
+                           o.region,
+                           o.msgtype,
+                           p.quantity,
+                           p.quantity_modified
+                    FROM orders_on_day o
+                    STRAIGHT_JOIN torderproducts p ON p.doc_no = o.doc_no
+                ),
+                latest_invt AS (
+                    SELECT c.store_code,
+                           (
+                             SELECT i2.invt_cnt
+                             FROM tprodinvt i2
+                             WHERE i2.store_code = c.store_code
+                               AND i2.invt_dt <= '$supply_date'
+                             ORDER BY i2.invt_dt DESC
+                             LIMIT 1
+                           ) AS invt_cnt
+                    FROM (SELECT DISTINCT store_code FROM tcomcode WHERE use_yn = 'y' AND grp_code = '2') c
+                ),
+                base_data AS (
                     SELECT
                         c.store_code,
                         c.code_exp,
                         c.order_num,
-                        COALESCE(latest_invt.invt_cnt, 0) AS invt_cnt,
-                        ord.region,
-                        COALESCE(prd.quantity, 0) AS quantity
+                        COALESCE(li.invt_cnt, 0) AS invt_cnt,
+                        oi.region,
+                        oi.msgtype,
+                        COALESCE(oi.quantity, 0) AS quantity,
+                        COALESCE(oi.quantity_modified, 0) AS quantity_modified
                     FROM tcomcode c FORCE INDEX (idx_tcomcode_grp_use_order)
-                    LEFT JOIN (
-                        SELECT product_code, doc_no, quantity
-                        FROM torderproducts
-                    ) prd ON c.store_code = prd.product_code
-                    LEFT JOIN torders ord ON prd.doc_no = ord.doc_no AND ord.supply_dt = '$supply_date'
-                    LEFT JOIN (
-                        SELECT i.store_code, i.invt_cnt
-                        FROM tprodinvt i
-                        JOIN (
-                            SELECT store_code, MAX(invt_dt) AS max_dt
-                            FROM tprodinvt
-                            WHERE invt_dt <= '$supply_date'
-                            GROUP BY store_code
-                        ) m ON i.store_code = m.store_code AND i.invt_dt = m.max_dt
-                    ) latest_invt ON c.store_code = latest_invt.store_code
+                    LEFT JOIN latest_invt li   ON li.store_code = c.store_code
+                    LEFT JOIN order_items_on_day oi ON oi.product_code = c.store_code
                     WHERE c.use_yn = 'y'
-                    AND c.grp_code = '2'
+                      AND c.grp_code = '2'
                 ),
                 pivot_data AS (
                     SELECT
@@ -52,6 +68,7 @@ if ($category == 'order') {
                         code_exp,
                         order_num,
                         invt_cnt,
+                        GROUP_CONCAT(DISTINCT CASE WHEN quantity_modified = 1 THEN region END) AS ordchg_regions,
                         SUM(CASE WHEN region = '양평점' THEN quantity ELSE 0 END) AS `양평(850)`,
                         SUM(CASE WHEN region = '양재점' THEN quantity ELSE 0 END) AS `양재(853)`,
                         SUM(CASE WHEN region = '상봉점' THEN quantity ELSE 0 END) AS `상봉(854)`,
@@ -86,6 +103,7 @@ if ($category == 'order') {
                     store_code AS product_code,
                     code_exp AS product_name,
                     invt_cnt AS `재고`,
+                    ordchg_regions,
                     `양평(850)`, `양재(853)`, `상봉(854)`, `일산(855)`,
                     `대전(852)`, `광명(051)`, `의정부(053)`, `천안(052)`,
                     `공세(056)`, `송도(057)`, `세종(058)`, `하남(060)`,
@@ -93,8 +111,8 @@ if ($category == 'order') {
                     `대구(851)`, `혁신(059)`, `부산(856)`, `울산(050)`, `김해(061)`,
                     `서울소계`, `지방소계`, (`서울소계` + `지방소계`) AS `총합계`
                 FROM pivot_data
-                HAVING (`서울소계` + `지방소계`) > 0
-                OR store_code IN ('0200000656896', '2000000590654', '0200000657529', '0200000661818')
+                WHERE (`서울소계` + `지방소계`) > 0
+                   OR store_code IN ('0200000656896', '2000000590654', '0200000657529', '0200000661818')
                 ORDER BY order_num ASC;
                     ";
 

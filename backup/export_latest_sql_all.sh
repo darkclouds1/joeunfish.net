@@ -1,8 +1,20 @@
 #!/bin/bash
 
 # KVM 서버에서 전체 데이터를 백업하여 webhosting으로 복원하는 스크립트
-# 기존 데이터는 절대 삭제되지 않습니다 (INSERT IGNORE 사용)
+# 운영DB와 백업DB를 완벽하게 동기화합니다 (DELETE/TRUNCATE 후 INSERT 방식)
+# - 파티셔닝된 테이블(Top 5): 이번 달 데이터만 동기화
+# - 일반 테이블: 전체 데이터 동기화
 # 트리거로 인한 에러를 방지하기 위해 백업 시 트리거를 제외하고 임포트 시 제약조건을 비활성화합니다
+#
+# 사용법:
+#   ./export_latest_sql_all.sh        # 대화형 모드 (확인 필요)
+#   ./export_latest_sql_all.sh -y     # 자동 실행 모드 (crontab용)
+
+# 커맨드 라인 인자 처리
+SKIP_CONFIRM=false
+if [ "$1" == "--yes" ] || [ "$1" == "-y" ]; then
+    SKIP_CONFIRM=true
+fi
 
 # KVM 서버 (소스)
 SOURCE_DB="joeu_fish"
@@ -31,18 +43,24 @@ echo "타겟: $TARGET_HOST/$TARGET_DB"
 echo "백업 범위: 전체 데이터"
 echo "트리거 처리: 백업 시 제외, 임포트 시 제약조건 비활성화"
 echo ""
-read -p "계속하시겠습니까? (y/N): " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "작업이 취소되었습니다."
-    exit 0
+
+# -y 옵션이 없으면 확인 요청
+if [ "$SKIP_CONFIRM" != "true" ]; then
+    read -p "계속하시겠습니까? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "작업이 취소되었습니다."
+        exit 0
+    fi
+else
+    echo "자동 실행 모드: 확인 건너뜀"
 fi
 
 # 데이터베이스 덤프 생성 (KVM에서)
 echo "Creating a backup of the KVM database..."
 TABLES=$(mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -D "$SOURCE_DB" -e "SHOW TABLES LIKE 't%'" | grep -v "Tables_in")
 
-# 파티셔닝된 테이블 목록 (최근 마지막 달만 백업)
+# 파티셔닝된 테이블 목록 (Top 5 용량 테이블, 이번 달만 백업하여 속도 최적화)
 PARTITIONED_TABLES=("torders" "torderproducts" "tbarcodein" "tbarcodeinv" "tbarcodeout")
 
 # 현재 날짜 기준으로 이번 달의 첫날과 다음 달의 첫날 계산
@@ -50,7 +68,7 @@ CURRENT_MONTH_START=$(date +"%Y-%m-01 00:00:00")
 NEXT_MONTH_START=$(date -d "$(date +%Y-%m-01) +1 month" +"%Y-%m-01 00:00:00")
 
 echo "백업 기간: $CURRENT_MONTH_START ~ $NEXT_MONTH_START"
-echo "파티셔닝된 테이블: ${PARTITIONED_TABLES[@]} (최근 마지막 달만)"
+echo "파티셔닝된 테이블: ${PARTITIONED_TABLES[@]} (이번 달 데이터만 - 속도 최적화)"
 echo ""
 
 # t로 시작하는 테이블 백업
@@ -65,8 +83,8 @@ for TABLE in $TABLES; do
     done
     
     if [ "$IS_PARTITIONED" = true ]; then
-        # 파티셔닝된 테이블: 최근 마지막 달만 백업
-        echo "Backing up table: $TABLE (최근 마지막 달: $CURRENT_MONTH_START ~ $NEXT_MONTH_START)"
+        # 파티셔닝된 테이블: 이번 달 데이터만 백업 (속도 최적화)
+        echo "Backing up table: $TABLE (이번 달만: $CURRENT_MONTH_START ~ $NEXT_MONTH_START)"
         
         mysqldump -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
             --no-create-info --no-create-db \
@@ -171,9 +189,8 @@ for FILE in $SQL_FILES; do
         }
     }
     
-    # INSERT INTO를 INSERT IGNORE INTO로 변경하여 중복 방지
+    # INSERT INTO 그대로 사용 (이미 데이터를 정리했으므로 중복 없음)
     /^INSERT INTO/ { 
-        gsub(/^INSERT INTO/, "INSERT IGNORE INTO")
         print
         next
     }
@@ -182,33 +199,72 @@ for FILE in $SQL_FILES; do
     !skip && !in_trigger && !in_incomplete_query && !in_delimiter { print }
     ' "$FILE" > "$TEMP_FILE"
     
-    # webhosting 데이터베이스에 임포트 (중복 데이터 방지)
+    # 파일명에서 테이블명 추출
+    TABLE_NAME=$(basename "$FILE" | sed 's/^t_//; s/\.sql$//')
+    
+    # 파티셔닝된 테이블인지 확인
+    IS_PARTITIONED_TABLE=false
+    for PT in "${PARTITIONED_TABLES[@]}"; do
+        if [ "$TABLE_NAME" == "$PT" ]; then
+            IS_PARTITIONED_TABLE=true
+            break
+        fi
+    done
+    
+    # webhosting 데이터베이스에 임포트 (완벽한 동기화)
     if [ "$DISABLE_TRIGGERS_DURING_IMPORT" = true ]; then
-        # 트리거 비활성화 후 임포트
-        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" -e "
-            SET @OLD_SQL_MODE=@@SQL_MODE;
-            SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
-            SET FOREIGN_KEY_CHECKS=0;
-            SET UNIQUE_CHECKS=0;
-            SET AUTOCOMMIT=0;
-        "
+        # 임포트 전에 기존 데이터 정리 (완벽한 동기화를 위해)
+        if [ "$IS_PARTITIONED_TABLE" = true ]; then
+            # 파티셔닝된 테이블: 이번 달 데이터만 삭제
+            echo "Clearing current month data from $TABLE_NAME ($CURRENT_MONTH_START ~ $NEXT_MONTH_START)"
+            mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" -e "
+                DELETE FROM $TABLE_NAME 
+                WHERE create_dt >= '$CURRENT_MONTH_START' 
+                AND create_dt < '$NEXT_MONTH_START';
+            " || echo "Warning: Could not clear data from $TABLE_NAME"
+        else
+            # 일반 테이블: 전체 데이터 삭제 (TRUNCATE)
+            echo "Truncating table $TABLE_NAME (full sync)"
+            mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" -e "
+                TRUNCATE TABLE $TABLE_NAME;
+            " || echo "Warning: Could not truncate $TABLE_NAME"
+        fi
         
-        # 데이터 임포트 (에러 무시)
-        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$TEMP_FILE" 2>/dev/null || {
-            echo "Warning: Some data import errors occurred but continuing..."
-            # 에러가 있어도 계속 진행
-        }
+        # 트리거 비활성화 후 임포트 (동일 세션)
+        INIT_SQL="${TEMP_FILE}.init"
+        FOOTER_SQL="${TEMP_FILE}.footer"
+        COMBINED_SQL="${TEMP_FILE}.import"
+
+        cat > "$INIT_SQL" <<'EOF'
+SET @OLD_SQL_MODE=@@SESSION.SQL_MODE;
+SET @OLD_FOREIGN_KEY_CHECKS=@@SESSION.FOREIGN_KEY_CHECKS;
+SET @OLD_UNIQUE_CHECKS=@@SESSION.UNIQUE_CHECKS;
+SET @OLD_AUTOCOMMIT=@@SESSION.AUTOCOMMIT;
+SET SESSION SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
+SET SESSION FOREIGN_KEY_CHECKS=0;
+SET SESSION UNIQUE_CHECKS=0;
+SET SESSION AUTOCOMMIT=0;
+START TRANSACTION;
+EOF
+
+        cat > "$FOOTER_SQL" <<'EOF'
+COMMIT;
+SET SESSION FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET SESSION UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+SET SESSION AUTOCOMMIT=@OLD_AUTOCOMMIT;
+SET SESSION SQL_MODE=@OLD_SQL_MODE;
+EOF
+
+        cat "$INIT_SQL" "$TEMP_FILE" "$FOOTER_SQL" > "$COMBINED_SQL"
+
+        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$COMBINED_SQL"
+        IMPORT_EXIT_CODE=$?
+
+        rm -f "$INIT_SQL" "$FOOTER_SQL" "$COMBINED_SQL"
         
-        # 설정 복원
-        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" -e "
-            SET FOREIGN_KEY_CHECKS=1;
-            SET UNIQUE_CHECKS=1;
-            SET AUTOCOMMIT=1;
-            COMMIT;
-        "
-        
-        # SQL_MODE 복원 (안전한 방식)
-        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" -e "SET SQL_MODE='';" 2>/dev/null || echo "Warning: Could not restore SQL_MODE"
+        if [ $IMPORT_EXIT_CODE -ne 0 ]; then
+            echo "Warning: Data import for $TABLE_NAME failed with exit code $IMPORT_EXIT_CODE"
+        fi
     else
         mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$TEMP_FILE"
     fi
@@ -217,7 +273,7 @@ for FILE in $SQL_FILES; do
     rm -f "$TEMP_FILE"
 
     # 실행 결과 확인 (에러가 있어도 계속 진행)
-    if [ $? -eq 0 ]; then
+    if [ ${IMPORT_EXIT_CODE:-0} -eq 0 ]; then
         echo "Import of $FILE to webhosting successful!"
     else
         echo "Warning: Import of $FILE had some issues but continuing..."

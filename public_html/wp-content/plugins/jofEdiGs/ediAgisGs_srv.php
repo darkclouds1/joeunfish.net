@@ -3,9 +3,7 @@
 session_start();
 date_default_timezone_set('Asia/Seoul');
 
-// 경로 설정 수정
-$documentRoot = '/home/joeunfish.net/public_html';
-require_once $documentRoot . '/classphp/dbConn_fish.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/classphp/dbConn_fish.php';
 
 $dbConn = new dbconnClassFish;
 $conn     = $dbConn->conn();
@@ -20,90 +18,106 @@ isset($_GET['user_id']) ? $user_id = $_GET['user_id'] : $user_id = "";
 
 if ($category == 'order') {
     $supply_date = isset($_GET['date']) ? date('Ymd', strtotime($_GET['date'])) : date('Ymd'); // 날짜 형식을 yyyymmdd로 변경
-    // 주문 관련 로직 처리
-    $sql =" WITH fixed_products AS (
-            SELECT DISTINCT
-                c.store_code AS product_code,
-                c.code_exp AS product_name,
-                c.unit
-            FROM
-                tcomcodegs c
-            JOIN
-                torderproducts p ON c.store_code = p.product_code
-            WHERE
-                c.grp_code = '2'
-                AND c.use_yn = 'y'
-            ORDER BY
-                c.order_num ASC
-        )
-
-        SELECT 
-            FP.product_code,
-            COM.code_exp AS product_name,
+    
+    // 1단계: 활성화된 납품처 목록 가져오기 (grp_code = '1', use_yn = 'y')
+    $dest_sql = "SELECT store_code, code_exp, order_num 
+                 FROM tcomcodegs 
+                 WHERE grp_code = '1' AND use_yn = 'y' 
+                 ORDER BY order_num ASC";
+    $dest_result = $conn->query($dest_sql);
+    
+    $dest_codes = array();
+    $dest_columns = "";
+    
+    while ($row = $dest_result->fetch_assoc()) {
+        $dest_codes[] = "'" . $row['store_code'] . "'";
+        
+        // store_code가 60000인 경우 GSCT04:DC 전체 합계 (dest_code 조건 없음), 그 외에는 GSSM01:DC + dest_code 조건
+        if ($row['store_code'] == '60000') {
+            $dest_columns .= "COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSCT04:DC' THEN PRD.quantity ELSE 0 END), 0) AS '" . $row['code_exp'] . "|" . $row['store_code'] . "',\n            ";
+        } else {
+            $dest_columns .= "COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '" . $row['store_code'] . "' THEN PRD.quantity ELSE 0 END), 0) AS '" . $row['code_exp'] . "|" . $row['store_code'] . "',\n            ";
+        }
+    }
+    
+    $dest_codes_str = count($dest_codes) > 0 ? implode(', ', $dest_codes) : "''";
+    
+    // 디버깅: 납품처 목록 확인
+    // error_log('Active dest_codes: ' . $dest_codes_str, 3, $logFilePath);
+    
+    // 2단계: 동적 SQL 생성 (최적화 버전)
+    // 핵심 개선: JOIN 순서 변경 - supply_dt로 먼저 필터링하여 스캔 범위 최소화
+    $sql =" SELECT 
+            FP.store_code AS product_code,
+            FP.code_exp AS product_name,
             ROUND(COALESCE(SUM(CASE 
-                WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '62980', '68970','67370') 
+                WHEN (ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ($dest_codes_str))
+                     OR ORD.msgfrom = 'GSCT04:DC'
                 THEN PRD.quantity ELSE 0 
             END) / 
             CASE 
-                WHEN FP.product_code = '8809611290037' THEN 4
-                WHEN FP.product_code = '8809611290365' THEN 2
-                WHEN FP.product_code = '8809611290266' THEN 4
+                WHEN FP.store_code = '8809611290037' THEN 4
+                WHEN FP.store_code = '8809611290365' THEN 2
+                WHEN FP.store_code = '8809611290266' THEN 4
                 ELSE 1 
             END, 0)) AS '박스',
 
             CASE 
                 WHEN SUM(CASE 
-                    WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '62980', '68970','67370') 
+                    WHEN (ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ($dest_codes_str))
+                         OR ORD.msgfrom = 'GSCT04:DC'
                     THEN PRD.quantity ELSE 0 
                 END) = 0 THEN 0
-                WHEN FP.product_code = '8809611290037' THEN 4
-                WHEN FP.product_code = '8809611290365' THEN 2
-                WHEN FP.product_code = '8809611290266' THEN 4
+                WHEN FP.store_code = '8809611290037' THEN 4
+                WHEN FP.store_code = '8809611290365' THEN 2
+                WHEN FP.store_code = '8809611290266' THEN 4
                 ELSE 1 
             END AS '입수',
-            COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '62970' THEN PRD.quantity ELSE 0 END), 0) AS '이천|62970',
-            COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '60470' THEN PRD.quantity ELSE 0 END), 0) AS '양산|60470',
-            COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '62980' THEN PRD.quantity ELSE 0 END), 0) AS '이천2|62980',
-            COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '68970' THEN PRD.quantity ELSE 0 END), 0) AS '부산|68970',
-            COALESCE(SUM(CASE WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code = '67370' THEN PRD.quantity ELSE 0 END), 0) AS '화성|67370',
-            COALESCE(GS.GS_qty, 0) AS 'GS편의점',
+            $dest_columns
             COALESCE(SUM(CASE 
-                WHEN ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ('62970', '60470', '66970', '62980', '68970','67370') 
+                WHEN (ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ($dest_codes_str))
+                     OR ORD.msgfrom = 'GSCT04:DC'
                 THEN PRD.quantity ELSE 0 
-            END), 0) + COALESCE(GS.GS_qty, 0) AS '총수량'
+            END), 0) AS '총수량'
 
         FROM 
-            fixed_products FP
-        LEFT JOIN 
-            tcomcodegs COM ON FP.product_code = COM.store_code
-        LEFT JOIN 
-            torderproducts PRD ON FP.product_code = PRD.product_code
-        LEFT JOIN 
-            torders ORD ON ORD.doc_no = PRD.doc_no AND ORD.supply_dt = ?
-        LEFT JOIN 
-            (
-                SELECT 
-                    PRD.product_code AS GS_code,
-                    SUM(PRD.quantity) AS GS_qty
-                FROM 
-                    torderproducts PRD
-                INNER JOIN 
-                    torders ORD ON PRD.doc_no = ORD.doc_no
-                WHERE 
-                    ORD.supply_dt = ?
-                    AND ORD.msgfrom = 'GSCT04:DC'
-                GROUP BY PRD.product_code
-            ) GS ON FP.product_code = GS.GS_code
+            tcomcodegs FP
+        LEFT JOIN (
+            SELECT PRD.product_code, PRD.quantity, PRD.doc_no
+            FROM torders ORD FORCE INDEX (idx_torders_supply_dt_msgfrom)
+            INNER JOIN torderproducts PRD ON PRD.doc_no = ORD.doc_no
+            WHERE ORD.supply_dt = ?
+                AND (
+                    (ORD.msgfrom = 'GSSM01:DC' AND ORD.dest_code IN ($dest_codes_str))
+                    OR ORD.msgfrom = 'GSCT04:DC'
+                )
+        ) PRD ON FP.store_code = PRD.product_code
+        LEFT JOIN torders ORD ON ORD.doc_no = PRD.doc_no
+        
+        WHERE FP.grp_code = '2' AND FP.use_yn = 'y'
 
         GROUP BY 
-            FP.product_code, COM.code_exp, COM.order_num, GS.GS_code, GS.GS_qty
+            FP.store_code, FP.code_exp, FP.order_num
         ORDER BY 
-            COM.order_num;
+            FP.order_num;
     ";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $supply_date, $supply_date); // 두 곳에 ?가 있으므로 "ss"
-    $stmt->execute();
+    if (!$stmt) {
+        error_log('Prepare failed: ' . $conn->error, 3, $logFilePath);
+        echo json_encode(array("result" => "error", "message" => "SQL prepare error: " . $conn->error));
+        exit;
+    }
+    
+    $stmt->bind_param("s", $supply_date); // 한 곳에 ?가 있으므로 "s"
+    
+    if (!$stmt->execute()) {
+        error_log('Execute failed: ' . $stmt->error, 3, $logFilePath);
+        echo json_encode(array("result" => "error", "message" => "SQL execute error: " . $stmt->error));
+        $stmt->close();
+        exit;
+    }
+    
     $result = $stmt->get_result();
     $json_string = $dbConn->rs2Json1($result, '00');
     echo $json_string;

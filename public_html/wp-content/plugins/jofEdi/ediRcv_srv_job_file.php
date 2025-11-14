@@ -193,21 +193,43 @@
 
             $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tableOrderProducts WHERE doc_no = %s AND product_code = %s", $order['msgId'], $product->productCode));
 
-            // 이미 주문번호가 있으면 quantity_new, weights 값을 가져온 후 삭제하고 새로 추가할 때 사용
+                        // ========== [수량 변경 체크 시작] ==========
+            // 수량 변경 여부 초기값
+            $quantityModified = 0;
+
+            // 이미 주문번호가 있으면 기존 데이터 값을 가져온 후 삭제하고 새로 추가할 때 사용
             if ($exists > 0) {
-                $existingWeights = $wpdb->get_results($wpdb->prepare("SELECT expi_date, quantity_new, weights FROM $tableOrderProducts WHERE doc_no = %s AND product_code = %s", $order['msgId'], $product->productCode), ARRAY_A);
-                if (!empty($existingWeights) && isset($existingWeights[0]['expi_date'])) {
-                    $productData['expi_date'] = $existingWeights[0]['expi_date'];
-                }
-                if (!empty($existingWeights) && isset($existingWeights[0]['quantity_new'])) {
-                    $productData['quantity_new'] = $existingWeights[0]['quantity_new'];
-                }
-                if (!empty($existingWeights) && isset($existingWeights[0]['weights'])) {
-                    $productData['weights'] = $existingWeights[0]['weights'];
+                // quantity 컬럼 추가
+                $existingData = $wpdb->get_results($wpdb->prepare("SELECT expi_date, quantity_new, weights, quantity FROM $tableOrderProducts WHERE doc_no = %s AND product_code = %s", $order['msgId'], $product->productCode), ARRAY_A);
+                
+                if (!empty($existingData)) {
+                    // 기존 값 보존
+                    if (isset($existingData[0]['expi_date'])) {
+                        $productData['expi_date'] = $existingData[0]['expi_date'];
+                    }
+                    if (isset($existingData[0]['quantity_new'])) {
+                        $productData['quantity_new'] = $existingData[0]['quantity_new'];
+                    }
+                    if (isset($existingData[0]['weights'])) {
+                        $productData['weights'] = $existingData[0]['weights'];
+                    }
+                    
+                    // 수량 변경 체크 (기존 quantity와 신규 quantity 비교)
+                    if (isset($existingData[0]['quantity'])) {
+                        $oldQuantity = intval($existingData[0]['quantity']);
+                        $newQuantity = intval($product->quantity);
+                        
+                        if ($oldQuantity != $newQuantity) {
+                            $quantityModified = 1;
+                        }
+                    }
                 }
             }
 
-            // 삭제하고 INSERT
+            // quantity_modified 필드 추가
+            $productData['quantity_modified'] = $quantityModified;
+            // ========== [수량 변경 체크 끝] ==========
+
             $wpdb->query($wpdb->prepare("DELETE FROM $tableOrderProducts WHERE doc_no = %s AND product_code = %s", $order['msgId'], $product->productCode));
             $wpdb->insert($tableOrderProducts, $productData);
             if ($wpdb->last_error) {

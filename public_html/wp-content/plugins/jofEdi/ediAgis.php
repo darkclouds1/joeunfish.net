@@ -190,6 +190,8 @@ function ediAgis()
             <script>
                 let platForm = 'computer';
                 let subul_srv = '/wp-content/plugins/jofSubul/subul_srv.php';
+                let currentRecvFile = ''; // 현재 recv 파일명 저장
+                let fileCheckInterval = null; // 파일 체크 인터벌 저장
 
                 document.addEventListener('DOMContentLoaded', function() {
                     // 엑셀 양식 업로드
@@ -353,7 +355,12 @@ function ediAgis()
 
                     console.log('[ln:225] 입고일자: ', formattedTomorrow);
                     document.getElementById('arrivalDate').value = formattedTomorrow;
-                    document.getElementById('orderList').textContent = `주문목록 (${formattedTomorrow})`;
+                    
+                    // recv 폴더의 최신 파일명 가져오기
+                    updateOrderListWithRecvFile(formattedTomorrow);
+
+                    // 자동 파일 모니터링 시작 (5분마다 체크)
+                    startRecvFileMonitoring();
 
                     fetchOrders(); 
                 });
@@ -368,6 +375,59 @@ function ediAgis()
                     });
                 });
 
+                // recv 폴더의 최신 파일명을 가져와서 orderList에 표시하는 함수
+                function updateOrderListWithRecvFile(dateText, forceUpdate = false) {
+                    fetch('/wp-content/plugins/jofEdi/ediAgis_srv.php?category=modify_dt')
+                        .then(response => response.json())
+                        .then(data => {
+                            let orderListText = `주문목록 (${dateText})`;
+                            if (data.status === 'success' && data.modify_dt) {
+                                orderListText += ` [수신: ${data.modify_dt}]`;
+                                
+                                // 파일명이 변경되었는지 체크
+                                if (currentRecvFile !== data.modify_dt) {
+                                    const oldFile = currentRecvFile;
+                                    currentRecvFile = data.modify_dt;
+                                    
+                                    // 파일명이 변경되었음을 콘솔에 출력
+                                    if (oldFile && oldFile !== data.modify_dt) {
+                                        console.log(`[파일 업데이트] ${oldFile} → ${data.modify_dt}`);
+                                    }
+                                }
+                            }
+                            document.getElementById('orderList').textContent = orderListText;
+                        })
+                        .catch(error => {
+                            console.error('recv 파일 조회 오류:', error);
+                            document.getElementById('orderList').textContent = `주문목록 (${dateText})`;
+                        });
+                }
+
+                // 주기적으로 recv 파일을 체크하는 함수
+                function startRecvFileMonitoring() {
+                    // 기존 인터벌이 있으면 제거
+                    if (fileCheckInterval) {
+                        clearInterval(fileCheckInterval);
+                    }
+                    
+                    // 5분(300000ms)마다 파일명 체크
+                    // 테스트를 위해 1분(60000ms)으로 설정할 수도 있습니다
+                    fileCheckInterval = setInterval(() => {
+                        const arrivalDate = document.getElementById('arrivalDate').value;
+                        updateOrderListWithRecvFile(arrivalDate, true);
+                        console.log('[자동 체크] recv 파일명 업데이트 확인');
+                    }, 300000); // 5분 = 300000ms
+                    
+                    console.log('[모니터링 시작] 5분마다 recv 파일명을 자동으로 체크합니다.');
+                }
+
+                // 페이지를 떠날 때 인터벌 정리
+                window.addEventListener('beforeunload', function() {
+                    if (fileCheckInterval) {
+                        clearInterval(fileCheckInterval);
+                    }
+                });
+
                 function fetchOrders() {
                     move();
 
@@ -379,7 +439,29 @@ function ediAgis()
                         .then(data => {
                             const totalCount = data.response.body.totalCount;
                             if (totalCount > 0) {
-                                document.getElementById('orderList').textContent = `주문(${arrivalDate})(총 ${totalCount}개의 상품)`;
+                                // recv 폴더의 최신 파일명을 가져와서 함께 표시
+                                fetch('/wp-content/plugins/jofEdi/ediAgis_srv.php?category=modify_dt')
+                                    .then(response => response.json())
+                                    .then(fileData => {
+                                        let orderListText = `주문(${arrivalDate})(총 ${totalCount}개의 상품)`;
+                                        if (fileData.status === 'success' && fileData.modify_dt) {
+                                            orderListText += ` [수신: ${fileData.modify_dt}]`;
+                                            // 현재 파일명 업데이트
+                                            if (currentRecvFile !== fileData.modify_dt) {
+                                                const oldFile = currentRecvFile;
+                                                currentRecvFile = fileData.modify_dt;
+                                                if (oldFile && oldFile !== fileData.modify_dt) {
+                                                    console.log(`[파일 업데이트] ${oldFile} → ${fileData.modify_dt}`);
+                                                }
+                                            }
+                                        }
+                                        document.getElementById('orderList').textContent = orderListText;
+                                    })
+                                    .catch(error => {
+                                        console.error('recv 파일 조회 오류:', error);
+                                        document.getElementById('orderList').textContent = `주문(${arrivalDate})(총 ${totalCount}개의 상품)`;
+                                    });
+                                
                                 let output = '';
 
                                 if (platForm === 'mobile') {
@@ -433,30 +515,40 @@ function ediAgis()
                                                 </div>
                                                 <div class="orders-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding: 1px;">`;
 
-                                        // 주문량 표시
-                                        Object.keys(item).forEach(key => {
-                                            if (!['product_name', 'product_code', '재고'].includes(key) &&
-                                                item[key] !== '0') {
-                                                let value = item[key];
-                                                if (value.endsWith('.0')) {
-                                                    value = value.slice(0, -2);
-                                                }
+                                                // ORDCHG 지역 목록 파싱
+                                                const ordchgRegions = item.ordchg_regions ? item.ordchg_regions.split(',') : [];
 
-                                                const isTotal = key === '서울소계' || key === '지방소계' || key === '총합계';
-                                                const style = isTotal ?
-                                                    'grid-column: 1 / -1; background-color: #e6e6e6; margin-top: 1px;' :
-                                                    'background-color: #ffffff;';
-                                                const textColor = key === '총합계' ? 'color: #d00;' : '';
+                                                // 주문량 표시
+                                                Object.keys(item).forEach(key => {
+                                                    if (!['product_name', 'product_code', '재고', 'ordchg_regions'].includes(key) &&
+                                                        item[key] !== '0' && item[key] !== 0) {
+                                                        let value = item[key];
+                                                        if (typeof value === 'string' && value.endsWith('.0')) {
+                                                            value = value.slice(0, -2);
+                                                        }
 
-                                                output += `
-                                                    <div class="order-item" style="padding: 3px; border: 1px solid #eee; ${style}">
-                                                        <div style="font-size: 14px; display: flex; justify-content: space-between; align-items: center; ${textColor}">
-                                                            <span style="font-weight: ${isTotal ? 'bold' : 'normal'}">${key}</span>
-                                                            <span style="font-weight: bold;">${value}</span>
-                                                        </div>
-                                                    </div>`;
-                                            }
-                                        });
+                                                        const isTotal = key === '서울소계' || key === '지방소계' || key === '총합계';
+                                                        const style = isTotal ?
+                                                            'grid-column: 1 / -1; background-color: #e6e6e6; margin-top: 1px;' :
+                                                            'background-color: #ffffff;';
+                                                        
+                                                        // ORDCHG 여부 확인: key에서 지역명 추출
+                                                        const regionName = key.split('(')[0] + '점';
+                                                        const isOrdchg = ordchgRegions.includes(regionName);
+                                                        let textColor = key === '총합계' ? 'color: #d00;' : '';
+                                                        if (isOrdchg && key !== '총합계') {
+                                                            textColor = 'color: red; font-weight: bold;';
+                                                        }
+
+                                                        output += `
+                                                            <div class="order-item" style="padding: 3px; border: 1px solid #eee; ${style}">
+                                                                <div style="font-size: 14px; display: flex; justify-content: space-between; align-items: center; ${textColor}">
+                                                                    <span style="font-weight: ${isTotal ? 'bold' : 'normal'}">${key}</span>
+                                                                    <span style="font-weight: bold;">${value}</span>
+                                                                </div>
+                                                            </div>`;
+                                                    }
+                                                });
                                         output += `</div></li>`;
                                     });
                                     output += `</div>`;
@@ -480,7 +572,7 @@ function ediAgis()
                                             output += `<th style="width: 70px;">${key}</th>`;
                                         } else if (key === '총합계') {
                                             output += `<th style="width: 60px;">${key}</th>`;
-                                        } else if (key === 'product_code') {
+                                        } else if (key === 'product_code' || key === 'ordchg_regions') {
                                             // 이 경우는 그냥 넘김
                                         } else {
                                             output += `<th>${key}</th>`;
@@ -502,6 +594,9 @@ function ediAgis()
                                         }
                                         output += `<tr style="background-color: ${color}; height: 25px;">`;
 
+                                        // ORDCHG 지역 목록 파싱
+                                        const ordchgRegions = item.ordchg_regions ? item.ordchg_regions.split(',') : [];
+
                                         Object.keys(item).forEach(key => {
 
                                             if (key === '재고') {
@@ -509,20 +604,23 @@ function ediAgis()
                                                     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                                                 };
                                                 output += `<td><input type="text" style="width: 50px; margin: 0px; padding: 1px; text-align: right; font-size: 11px;" value="${numberWithCommas(item[key])}" data-store-code="${item.product_code}" onchange="updateStock(this)" maxlength="6" onkeypress="return event.keyCode !== 13;"></td>`;
+                                            } else if (key === 'product_code' || key === 'ordchg_regions') {
+                                                // 이 경우는 그냥 넘김
                                             } else {
-                                                if (item[key].endsWith('.0')) {
+                                                if (typeof item[key] === 'string' && item[key].endsWith('.0')) {
                                                     item[key] = item[key].slice(0, -2);
                                                 }
-                                                if (item[key] !== '0') {
+                                                if (item[key] !== '0' && item[key] !== 0) {
                                                     if (key === 'product_name') {
                                                         output += `<td style="font-weight:bold;">${item[key]}</td>`;
                                                     } else if (key === '총합계') {
                                                         output += `<td style="color:red; text-align: right;">${item[key]}</td>`;
-                                                    } else if (key === 'product_code') {
-                                                        // 이 경우는 그냥 넘김
-
                                                     } else {
-                                                        output += `<td style="text-align: right;">${item[key]}</td>`;
+                                                        // ORDCHG 여부 확인: key에서 지역명 추출 (예: "양평(850)" → "양평점")
+                                                        const regionName = key.split('(')[0] + '점';
+                                                        const isOrdchg = ordchgRegions.includes(regionName);
+                                                        const textColor = isOrdchg ? 'color:red; font-weight: bold;' : '';
+                                                        output += `<td style="text-align: right; ${textColor}">${item[key]}</td>`;
                                                     }
                                                 } else {
                                                     output += `<td></td>`;
@@ -579,7 +677,28 @@ function ediAgis()
                                     });
                                 });
                             } else {
-                                document.getElementById('orderList').textContent = `주문목록 (${arrivalDate})(상품이 없습니다)`;
+                                // 주문이 없을 때도 recv 파일명 표시
+                                fetch('/wp-content/plugins/jofEdi/ediAgis_srv.php?category=modify_dt')
+                                    .then(response => response.json())
+                                    .then(fileData => {
+                                        let orderListText = `주문목록 (${arrivalDate})(상품이 없습니다)`;
+                                        if (fileData.status === 'success' && fileData.modify_dt) {
+                                            orderListText += ` [수신: ${fileData.modify_dt}]`;
+                                            // 현재 파일명 업데이트
+                                            if (currentRecvFile !== fileData.modify_dt) {
+                                                const oldFile = currentRecvFile;
+                                                currentRecvFile = fileData.modify_dt;
+                                                if (oldFile && oldFile !== fileData.modify_dt) {
+                                                    console.log(`[파일 업데이트] ${oldFile} → ${fileData.modify_dt}`);
+                                                }
+                                            }
+                                        }
+                                        document.getElementById('orderList').textContent = orderListText;
+                                    })
+                                    .catch(error => {
+                                        console.error('recv 파일 조회 오류:', error);
+                                        document.getElementById('orderList').textContent = `주문목록 (${arrivalDate})(상품이 없습니다)`;
+                                    });
                                 document.getElementById('resultsContainer').innerHTML = "";
                             }
                         })

@@ -35,7 +35,7 @@ if ($category == 'price') {
             ORDER BY DATE(cache.supply_dt) DESC, COALESCE(c.code_exp, g.code_exp) ASC;
     ";
 
-    error_log("\n[price] sql=" . $sql, 3, $logFilePath);
+    // error_log("\n[price] sql=" . $sql, 3, $logFilePath);
     $result = $conn->query($sql);
     $data = array();
     while ($row = $result->fetch_assoc()) {

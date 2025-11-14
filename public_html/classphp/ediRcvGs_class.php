@@ -66,7 +66,7 @@ if (!class_exists('OrderParserClass')) {
                         $parsedData->deliveryName = "(주)지에스리테일";
                         // 배송지 정보 추출
                         // $targetValues = [62970, 60470, 66970, 62980, 68970]; -by 정순장 2025-07-20 화성 추가
-                        $targetValues = [62970, 60470, 62980, 68970, 67370];
+                        $targetValues = [62970, 60470, 66970, 62980, 68970, 67370, 67570];
                         $deliveryFound = false; // 배송지 정보 찾기 성공 여부
                         
                         // 디버그: 배열 크기와 내용 확인
@@ -78,13 +78,14 @@ if (!class_exists('OrderParserClass')) {
                             foreach ($details as $index => $detail) {
                                 // 숫자만 추출해서 비교 (예: "지67370"에서 67370 추출)
                                 $numericPart = preg_replace('/[^0-9]/', '', $detail);
-                                if ($numericPart == $target) {
+                                // 정확히 일치하거나, 5자리보다 길고 끝 5자리가 일치하는 경우 (예: "1266970"에서 "66970" 찾기)
+                                if ($numericPart == $target || (strlen($numericPart) > 5 && substr($numericPart, -5) == $target)) {
                                     $targetIndexes[] = $index;
                                 }
                             }
                             
                             // 디버그: 각 target 검색 결과
-                            // error_log("\nln80::target=" . $target . " indexes=" . print_r($targetIndexes, true), 3, $this->logFilePath);
+                            // error_log("\nln87::target=" . $target . " indexes=" . print_r($targetIndexes, true), 3, $this->logFilePath);
                             
                             // target 값이 2개 이상 있으면 배송지 정보 추출
                             if (count($targetIndexes) >= 2) {
@@ -101,7 +102,7 @@ if (!class_exists('OrderParserClass')) {
                                         $parsedData->deliveryCode = $target;
                                         $parsedData->regionName = $details[$i];
                                         $deliveryFound = true;
-                                        // error_log("\nln95::배송지 정보 찾음 - deliveryCode=" . $target . " regionName=" . $details[$i], 3, $this->logFilePath);
+                                        // error_log("\nln111::배송지 정보 찾음 - deliveryCode=" . $target . " regionName=" . $details[$i], 3, $this->logFilePath);
                                         break 2; // 두 개의 foreach 모두 종료
                                     }
                                 }
@@ -112,7 +113,7 @@ if (!class_exists('OrderParserClass')) {
                         if (!$deliveryFound) {
                             $parsedData->deliveryCode = '';
                             $parsedData->regionName = '';
-                            // error_log("\nln106::배송지 정보 없음 =" . print_r($parsedData, true), 3,  $this->logFilePath);
+                            // error_log("\nln123::배송지 정보 없음 - msgId=" . $parsedData->msgId . " orderDate=" . $parsedData->orderDate, 3,  $this->logFilePath);
                         }
                     } elseif ($parsedData->msgFrom == "GSCT04:DC") {
                         $parsedData->deliveryName = "GS25물류센터";

@@ -68,8 +68,20 @@ function fetchOrders() {
   console.log("url=" + url);
 
   fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
+    .then((response) => {
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
+      return response.text(); // 먼저 text로 받아서 확인
+    })
+    .then((text) => {
+      // console.log("Response text:", text);
+      const data = JSON.parse(text); // JSON 파싱
+      
+      // 에러 체크
+      if (data.result === "error") {
+        throw new Error(data.message || "Unknown error");
+      }
+      
       const totalCount = data.response.body.items.filter(item => 
         item.총수량 && 
         item.총수량 !== '0' && 
@@ -145,13 +157,25 @@ function fetchOrders() {
           '<table class="fixed-header" border="1" style="font-size: 13px; width: 100%; table-layout: fixed;"><thead><tr style="background-color: #d3d3d3; height: 40px;">';
         
         const keys = Object.keys(data.response.body.items[0]);
-        const remainingWidth = `${(100 - ((150 * 2) / document.documentElement.clientWidth * 100)) / (keys.length - 2)}%`;  // 남은 너비를 균등 분배
+        
+        // 작은 컬럼('박스','입수','총수량') 개수 계산
+        const smallColumns = keys.filter(key => ['박스', '입수', '총수량'].includes(key)).length;
+        const smallColumnWidth = 70; // 작은 컬럼 넓이 (픽셀)
+        
+        // 나머지 센터별 컬럼의 개수 계산 (product_name, product_code, 박스, 입수, 총수량 제외)
+        const normalColumns = keys.length - 2 - smallColumns;
+        
+        // 나머지 컬럼들에 균등 분배할 넓이 계산
+        const fixedWidth = 200 + 130 + (smallColumns * smallColumnWidth); // 제품명 + 제품코드 + 작은컬럼들
+        const remainingWidth = `${(100 - (fixedWidth / document.documentElement.clientWidth * 100)) / normalColumns}%`;
 
         keys.forEach((key) => {
           if (key === "product_name" || key === "제품명") {
             output += `<th style="width: 200px;">제품명</th>`;
           } else if (key === "product_code") {
             output += `<th style="width: 130px;">제품코드</th>`;
+          } else if (['박스', '입수', '총수량'].includes(key)) {
+            output += `<th style="width: ${smallColumnWidth}px;">${key}</th>`;
           } else {
             output += `<th style="width: ${remainingWidth};">${key}</th>`;
           }
