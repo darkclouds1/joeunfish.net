@@ -61,6 +61,31 @@ if (
 // category 1:입력, i:Insert
 if ($category === "1i") {
     try {
+
+        // 중복 체크 -by 먹구름(요청자:이지영) 2025.11.15 추가 
+        if ($barcode_out !== null && trim($barcode_out) !== '') {
+            $checkStmt = $conn->prepare("SELECT COUNT(*) AS cnt FROM tbarcodeout WHERE barcode_out = ?");
+            if (!$checkStmt) {
+                throw new Exception('중복 체크 준비 오류: ' . $conn->error);
+            }
+
+            if (!$checkStmt->bind_param("s", $barcode_out)) {
+                throw new Exception('중복 체크 바인딩 오류: ' . $checkStmt->error);
+            }
+
+            if (!$checkStmt->execute()) {
+                throw new Exception('중복 체크 실행 오류: ' . $checkStmt->error);
+            }
+
+            $checkStmt->bind_result($dupCnt);
+            if ($checkStmt->fetch() && (int)$dupCnt > 0) {
+                throw new Exception('DB중복! 이전에 입력한 바코드입니다!');
+            }
+
+            $checkStmt->free_result();
+            $checkStmt->close();
+        }
+
         // SQL 인젝션을 방지하기 위해 준비된 문장 사용
         $stmt = $conn->prepare("INSERT INTO tbarcodeout (increate_dt, barcode_out, lc_no, store_code, origin_store_code, store_no, pack_color, manu_date, expi_date, weight, prod_code, prod_nm, create_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
