@@ -146,6 +146,12 @@ class subulPdClass {
           cell.addEventListener('click', () => this.makeCellEditable(cell, date, 'saengsan'));
         }
 
+        // '실제작업' 행의 숫자 셀에 편집 기능 추가
+        if (rowData['구분'] === '실제작업' && isNumeric) {
+          cell.classList.add('editable');
+          cell.addEventListener('click', () => this.makeCellEditable(cell, date, 'silje'));
+        }
+
         // '통관재고' 행의 일요일(첫번째) 숫자 셀에만 편집 기능 추가
         if (rowData['구분'] === '통관재고' && isNumeric && index === 0) {
             cell.classList.add('editable');
@@ -256,6 +262,12 @@ class subulPdClass {
           valueSpan.addEventListener('click', () => this.makeCellEditable(valueSpan, date, 'saengsan'));
         }
         
+        // '실제작업' 항목의 숫자 값에 편집 기능 추가
+        if (category === '실제작업' && isNumeric) {
+          dataRow.classList.add('editable');
+          valueSpan.addEventListener('click', () => this.makeCellEditable(valueSpan, date, 'silje'));
+        }
+        
         // '통관재고' 항목의 일요일(첫번째) 숫자 값에만 편집 기능 추가
         if (category === '통관재고' && isNumeric && index === 0) {
             dataRow.classList.add('editable');
@@ -308,6 +320,8 @@ class subulPdClass {
       if (newValue !== numValue && newValue.trim() !== '') {
         if (stockType === 'saengsan') {
             this.updateStock(date, newValue); // 값이 변경되었으면 저장
+        } else if (stockType === 'silje') {
+            this.updateSilje(date, newValue);
         } else if (stockType === 'tongwan') {
             this.updateTongwanStock(date, newValue);
         } else if (stockType === 'rowsale') {
@@ -393,6 +407,38 @@ class subulPdClass {
     .catch(error => {
         console.error('Error updating stock:', error);
         alert('재고 업데이트 중 오류 발생');
+        this.loadData(); // 오류 발생 시에도 최신 데이터로 화면 갱신
+    });
+  }
+
+  // 서버로 실제작업 데이터를 업데이트하는 함수
+  updateSilje(date, value) {
+    move(); // 로딩 시작
+
+    const url = `${window.subul_pd_srv}`;
+    const params = new URLSearchParams({
+        category: 'update_daily_silje',
+        invt_date: date,
+        daily_silje: value
+    });
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status !== 'success') {
+            alert('실제작업 업데이트 실패: ' + result.message);
+        }
+        this.loadData(); // 성공/실패 여부와 관계없이 최신 데이터로 화면 갱신
+    })
+    .catch(error => {
+        console.error('Error updating silje:', error);
+        alert('실제작업 업데이트 중 오류 발생');
         this.loadData(); // 오류 발생 시에도 최신 데이터로 화면 갱신
     });
   }
