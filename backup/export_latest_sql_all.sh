@@ -141,7 +141,7 @@ for FILE in $SQL_FILES; do
     
     # awk를 사용하여 더 정확한 라인 제거 및 INSERT IGNORE로 변경
     awk '
-    BEGIN { skip = 0; in_trigger = 0; in_incomplete_query = 0; in_delimiter = 0 }
+    BEGIN { skip = 0; in_trigger = 0; in_incomplete_query = 0; in_delimiter = 0; in_insert = 0 }
     
     # DROP TABLE 구문 완전 제거 (기존 데이터 보호)
     /^DROP TABLE/ { skip = 1; next }
@@ -189,9 +189,22 @@ for FILE in $SQL_FILES; do
         }
     }
     
-    # INSERT INTO 그대로 사용 (이미 데이터를 정리했으므로 중복 없음)
+    # INSERT INTO 문 처리 (여러 줄 지원)
     /^INSERT INTO/ { 
+        # INSERT IGNORE로 변경하여 중복 키 에러 방지
+        gsub(/^INSERT INTO/, "INSERT IGNORE INTO")
         print
+        in_insert = 1
+        next
+    }
+    
+    # INSERT 문 내부 처리 (세미콜론이 나올 때까지 모든 줄 포함)
+    in_insert {
+        print
+        # 세미콜론으로 끝나거나 세미콜론만 있는 줄에서 INSERT 문 종료
+        if (/;$/ || /^;?$/) {
+            in_insert = 0
+        }
         next
     }
     
@@ -213,6 +226,15 @@ for FILE in $SQL_FILES; do
     
     # webhosting 데이터베이스에 임포트 (완벽한 동기화)
     if [ "$DISABLE_TRIGGERS_DURING_IMPORT" = true ]; then
+        # 트리거가 있는 테이블인지 확인하고 임시로 삭제 (ERROR 1172 방지)
+        if [ "$TABLE_NAME" == "torderproducts" ]; then
+            echo "트리거를 임시로 삭제합니다 (ERROR 1172 방지)..."
+            mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" -e "
+                DROP TRIGGER IF EXISTS trg_torderproducts_after_insert;
+                DROP TRIGGER IF EXISTS trg_torderproducts_after_update;
+            " || echo "Warning: Could not drop triggers for $TABLE_NAME"
+        fi
+        
         # 임포트 전에 기존 데이터 정리 (완벽한 동기화를 위해)
         if [ "$IS_PARTITIONED_TABLE" = true ]; then
             # 파티셔닝된 테이블: 이번 달 데이터만 삭제
@@ -257,13 +279,111 @@ EOF
 
         cat "$INIT_SQL" "$TEMP_FILE" "$FOOTER_SQL" > "$COMBINED_SQL"
 
-        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$COMBINED_SQL"
-        IMPORT_EXIT_CODE=$?
+        echo "Importing $(basename "$FILE") into webhosting database..."
+        mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" --show-warnings --force < "$COMBINED_SQL" 2>&1 | tee "${TEMP_FILE}.error.log"
+        IMPORT_EXIT_CODE=${PIPESTATUS[0]}
 
         rm -f "$INIT_SQL" "$FOOTER_SQL" "$COMBINED_SQL"
         
         if [ $IMPORT_EXIT_CODE -ne 0 ]; then
             echo "Warning: Data import for $TABLE_NAME failed with exit code $IMPORT_EXIT_CODE"
+            echo "마지막 20줄 에러 로그:"
+            tail -20 "${TEMP_FILE}.error.log" 2>/dev/null || echo "로그 파일을 읽을 수 없습니다."
+        else
+            # 성공한 경우 에러 로그 파일 삭제
+            rm -f "${TEMP_FILE}.error.log"
+        fi
+        
+        # 트리거 복원 (torderproducts 테이블인 경우)
+        if [ "$TABLE_NAME" == "torderproducts" ]; then
+            echo "트리거를 복원합니다..."
+            TRIGGER_RESTORE_SQL="${TEMP_FILE}.trigger_restore.sql"
+            cat > "$TRIGGER_RESTORE_SQL" <<'TRIGGER_EOF'
+DROP TRIGGER IF EXISTS trg_torderproducts_after_insert;
+DROP TRIGGER IF EXISTS trg_torderproducts_after_update;
+
+DELIMITER $$
+
+CREATE TRIGGER trg_torderproducts_after_insert
+AFTER INSERT ON torderproducts
+FOR EACH ROW
+BEGIN
+    DECLARE v_supply_dt DATETIME;
+    DECLARE v_current_supply_dt DATETIME;
+    
+    IF NEW.unit_price > 0 THEN
+        SELECT supply_dt INTO v_supply_dt
+        FROM torders 
+        WHERE doc_no = NEW.doc_no
+        LIMIT 1;
+        
+        SELECT supply_dt INTO v_current_supply_dt
+        FROM torderproducts_latest_price
+        WHERE product_code = NEW.product_code;
+        
+        IF v_current_supply_dt IS NULL OR v_supply_dt > v_current_supply_dt THEN
+            INSERT INTO torderproducts_latest_price 
+                (product_code, unit_price, supply_dt, doc_no)
+            VALUES 
+                (NEW.product_code, NEW.unit_price, v_supply_dt, NEW.doc_no)
+            ON DUPLICATE KEY UPDATE
+                unit_price = NEW.unit_price,
+                supply_dt = v_supply_dt,
+                doc_no = NEW.doc_no;
+        ELSEIF v_supply_dt = v_current_supply_dt THEN
+            UPDATE torderproducts_latest_price
+            SET unit_price = GREATEST(unit_price, NEW.unit_price),
+                doc_no = NEW.doc_no
+            WHERE product_code = NEW.product_code;
+        END IF;
+    END IF;
+END$$
+
+CREATE TRIGGER trg_torderproducts_after_update
+AFTER UPDATE ON torderproducts
+FOR EACH ROW
+BEGIN
+    DECLARE v_supply_dt DATETIME;
+    DECLARE v_current_supply_dt DATETIME;
+    
+    IF NEW.unit_price > 0 THEN
+        SELECT supply_dt INTO v_supply_dt
+        FROM torders 
+        WHERE doc_no = NEW.doc_no
+        LIMIT 1;
+        
+        SELECT supply_dt INTO v_current_supply_dt
+        FROM torderproducts_latest_price
+        WHERE product_code = NEW.product_code;
+        
+        IF v_current_supply_dt IS NULL OR v_supply_dt > v_current_supply_dt THEN
+            INSERT INTO torderproducts_latest_price 
+                (product_code, unit_price, supply_dt, doc_no)
+            VALUES 
+                (NEW.product_code, NEW.unit_price, v_supply_dt, NEW.doc_no)
+            ON DUPLICATE KEY UPDATE
+                unit_price = NEW.unit_price,
+                supply_dt = v_supply_dt,
+                doc_no = NEW.doc_no;
+        ELSEIF v_supply_dt = v_current_supply_dt THEN
+            UPDATE torderproducts_latest_price
+            SET unit_price = GREATEST(unit_price, NEW.unit_price),
+                doc_no = NEW.doc_no
+            WHERE product_code = NEW.product_code;
+        END IF;
+    END IF;
+END$$
+
+DELIMITER ;
+TRIGGER_EOF
+            mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$TRIGGER_RESTORE_SQL"
+            if [ $? -eq 0 ]; then
+                echo "트리거 복원 완료 (LIMIT 1 추가로 ERROR 1172 방지)"
+                rm -f "$TRIGGER_RESTORE_SQL"
+            else
+                echo "Warning: 트리거 복원 실패. 수동으로 복원이 필요할 수 있습니다."
+                echo "트리거 SQL 파일: $TRIGGER_RESTORE_SQL"
+            fi
         fi
     else
         mysql -h "$TARGET_HOST" -u "$TARGET_USER" -p"$TARGET_PASS" "$TARGET_DB" < "$TEMP_FILE"
